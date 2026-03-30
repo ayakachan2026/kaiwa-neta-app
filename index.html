@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>会話ネタジェネレーター</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Hiragino Sans', 'Noto Sans JP', 'Yu Gothic', sans-serif;
+      background: #f0f4f8;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 16px;
+    }
+
+    h1 { font-size: 1.4rem; color: #555; letter-spacing: 0.05em; margin-bottom: 24px; }
+
+    .level-selector { display: flex; gap: 12px; margin-bottom: 32px; }
+
+    .level-btn {
+      padding: 10px 28px;
+      border: 2px solid #ccc;
+      border-radius: 999px;
+      background: white;
+      font-size: 1rem;
+      cursor: pointer;
+      color: #666;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .level-btn:hover { border-color: #4A90D9; color: #4A90D9; }
+    .level-btn.active { background: #4A90D9; border-color: #4A90D9; color: white; font-weight: bold; }
+
+    .card {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      width: 100%;
+      max-width: 680px;
+      padding: 48px 40px 32px;
+      margin-bottom: 20px;
+    }
+
+    .topic-label { font-size: 0.8rem; color: #aaa; letter-spacing: 0.1em; margin-bottom: 20px; }
+
+    .topic-text {
+      font-size: 2rem;
+      color: #222;
+      line-height: 2.8;
+      margin-bottom: 32px;
+      min-height: 80px;
+    }
+
+    rt { font-size: 0.5em; color: #555; font-weight: normal; vertical-align: top; }
+
+    .accordion { border-top: 1px solid #eee; }
+
+    .accordion-btn {
+      width: 100%;
+      padding: 16px 0;
+      background: none;
+      border: none;
+      border-bottom: 1px solid #eee;
+      text-align: left;
+      font-size: 0.95rem;
+      color: #4A90D9;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: inherit;
+      transition: color 0.2s;
+    }
+    .accordion-btn:hover { color: #2a70b9; }
+    .accordion-btn .arrow { transition: transform 0.3s; font-style: normal; }
+    .accordion-btn.open .arrow { transform: rotate(180deg); }
+
+    .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
+    .accordion-content.open { max-height: 300px; }
+    .accordion-inner { padding: 16px 0 20px; }
+
+    .english-text { font-size: 1.3rem; color: #444; line-height: 1.6; }
+
+    .hint-section { margin-bottom: 12px; }
+    .hint-label { font-size: 0.8rem; color: #aaa; font-weight: bold; letter-spacing: 0.08em; margin-bottom: 8px; }
+    .hint-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tag { background: #f0f4f8; border-radius: 999px; padding: 5px 14px; font-size: 0.9rem; color: #444; }
+    .tag.grammar { background: #fff8e8; color: #b07d00; }
+
+    .btn-row { display: flex; gap: 12px; width: 100%; max-width: 680px; }
+    .btn { flex: 1; padding: 16px; border-radius: 14px; font-size: 1rem; cursor: pointer; border: none; font-family: inherit; transition: all 0.2s; }
+    .btn-skip { background: white; color: #888; border: 2px solid #ddd; }
+    .btn-skip:hover { border-color: #aaa; color: #555; }
+    .btn-next { background: #4A90D9; color: white; font-weight: bold; font-size: 1.1rem; }
+    .btn-next:hover { background: #2a70b9; }
+
+    .topic-count { margin-top: 16px; font-size: 0.8rem; color: #bbb; }
+  </style>
+</head>
+<body>
+
+  <h1>会話ネタジェネレーター</h1>
+
+  <div class="level-selector">
+    <button class="level-btn active" onclick="setLevel('beginner', this)">初級</button>
+    <button class="level-btn" onclick="setLevel('intermediate', this)">中級</button>
+    <button class="level-btn" onclick="setLevel('advanced', this)">上級</button>
+  </div>
+
+  <div class="card">
+    <div class="topic-label">TODAY'S TOPIC</div>
+    <div class="topic-text" id="topic-text">ボタンを<ruby>押<rt>お</rt></ruby>してネタを<ruby>出<rt>だ</rt></ruby>してください。</div>
+
+    <div class="accordion">
+      <button class="accordion-btn" id="eng-btn" onclick="toggleAccordion('eng')">
+        英語訳を見る <i class="arrow">▼</i>
+      </button>
+      <div class="accordion-content" id="eng-content">
+        <div class="accordion-inner">
+          <div class="english-text" id="english-text">—</div>
+        </div>
+      </div>
+
+      <button class="accordion-btn" id="hint-btn" onclick="toggleAccordion('hint')">
+        💡 ヒントを見る（単語・文型） <i class="arrow">▼</i>
+      </button>
+      <div class="accordion-content" id="hint-content">
+        <div class="accordion-inner">
+          <div class="hint-section">
+            <div class="hint-label">📝 単語</div>
+            <div class="hint-tags" id="vocab-tags"></div>
+          </div>
+          <div class="hint-section">
+            <div class="hint-label">📐 文型</div>
+            <div class="hint-tags" id="grammar-tags"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-skip" onclick="skip()">スキップ</button>
+    <button class="btn btn-next" onclick="next()">次のネタ 🎲</button>
+  </div>
+  <div class="topic-count" id="topic-count"></div>
+
+<script>
+const topics = {
+  beginner: [
+    {
+      japanese: "<ruby>今日<rt>きょう</rt></ruby>の<ruby>朝<rt>あさ</rt></ruby>ごはんは<ruby>何<rt>なん</rt></ruby>でしたか？",
+      english: "What did you have for breakfast today?",
+      vocab: ["朝ごはん (breakfast)", "食べる (to eat)", "おいしい (delicious)", "〜が好き (like ~)"],
+      grammar: ["〜を食べました", "〜が好きです", "毎朝〜します"]
+    },
+    {
+      japanese: "<ruby>好<rt>す</rt></ruby>きな<ruby>食<rt>た</rt></ruby>べ<ruby>物<rt>もの</rt></ruby>は<ruby>何<rt>なん</rt></ruby>ですか？",
+      english: "What is your favorite food?",
+      vocab: ["好き (favorite/like)", "食べ物 (food)", "甘い (sweet)", "辛い (spicy)", "おいしい (delicious)"],
+      grammar: ["〜が好きです", "〜は〜です", "一番好きなのは〜です"]
+    },
+    {
+      japanese: "<ruby>今日<rt>きょう</rt></ruby>の<ruby>天気<rt>てんき</rt></ruby>はどうですか？",
+      english: "How is the weather today?",
+      vocab: ["天気 (weather)", "晴れ (sunny)", "雨 (rain)", "曇り (cloudy)", "寒い (cold)", "暑い (hot)"],
+      grammar: ["今日は〜です", "〜ですね", "〜と思います"]
+    },
+    {
+      japanese: "<ruby>週末<rt>しゅうまつ</rt></ruby>は<ruby>何<rt>なに</rt></ruby>をしましたか？",
+      english: "What did you do on the weekend?",
+      vocab: ["週末 (weekend)", "映画 (movie)", "買い物 (shopping)", "友達 (friend)", "家 (home)"],
+      grammar: ["〜をしました", "〜に行きました", "〜で〜しました"]
+    },
+    {
+      japanese: "<ruby>好<rt>す</rt></ruby>きな<ruby>季節<rt>きせつ</rt></ruby>はいつですか？",
+      english: "What is your favorite season?",
+      vocab: ["春 (spring)", "夏 (summer)", "秋 (autumn)", "冬 (winter)", "好き (like)"],
+      grammar: ["〜が好きです", "〜は〜からです", "〜のとき、〜します"]
+    },
+    {
+      japanese: "ペットはいますか？",
+      english: "Do you have a pet?",
+      vocab: ["ペット (pet)", "犬 (dog)", "猫 (cat)", "飼う (to keep/raise)", "かわいい (cute)"],
+      grammar: ["〜がいます", "〜を飼っています", "〜はいません"]
+    },
+    {
+      japanese: "<ruby>趣味<rt>しゅみ</rt></ruby>は<ruby>何<rt>なん</rt></ruby>ですか？",
+      english: "What are your hobbies?",
+      vocab: ["趣味 (hobby)", "音楽 (music)", "読書 (reading)", "料理 (cooking)", "スポーツ (sports)"],
+      grammar: ["趣味は〜です", "〜が好きです", "よく〜します"]
+    },
+    {
+      japanese: "<ruby>好<rt>す</rt></ruby>きな<ruby>飲<rt>の</rt></ruby>み<ruby>物<rt>もの</rt></ruby>は<ruby>何<rt>なん</rt></ruby>ですか？",
+      english: "What is your favorite drink?",
+      vocab: ["飲み物 (drink)", "コーヒー (coffee)", "お茶 (tea)", "水 (water)", "ジュース (juice)"],
+      grammar: ["〜が好きです", "毎日〜を飲みます", "〜より〜の方が好きです"]
+    },
+    {
+      japanese: "<ruby>今日<rt>きょう</rt></ruby>は<ruby>何時<rt>なんじ</rt></ruby>に<ruby>起<rt>お</rt></ruby>きましたか？",
+      english: "What time did you wake up today?",
+      vocab: ["起きる (to wake up)", "〜時 (o'clock)", "早い (early)", "遅い (late)", "眠い (sleepy)"],
+      grammar: ["〜時に起きました", "いつも〜時ごろ起きます", "今日は〜かったです"]
+    },
+    {
+      japanese: "<ruby>好<rt>す</rt></ruby>きなスポーツはありますか？",
+      english: "Do you have a favorite sport?",
+      vocab: ["スポーツ (sport)", "サッカー (soccer)", "テニス (tennis)", "見る (to watch)", "する (to do/play)"],
+      grammar: ["〜が好きです", "〜をします", "〜を見るのが好きです"]
+    },
+    {
+      japanese: "<ruby>休<rt>やす</rt></ruby>みの<ruby>日<rt>ひ</rt></ruby>は<ruby>何<rt>なに</rt></ruby>をしますか？",
+      english: "What do you do on your days off?",
+      vocab: ["休み (day off)", "家 (home)", "出かける (to go out)", "ゆっくり (leisurely)", "友達 (friend)"],
+      grammar: ["〜をします", "たいてい〜します", "〜たり〜たりします"]
+    },
+    {
+      japanese: "<ruby>好<rt>す</rt></ruby>きな<ruby>色<rt>いろ</rt></ruby>は<ruby>何<rt>なん</rt></ruby>ですか？",
+      english: "What is your favorite color?",
+      vocab: ["色 (color)", "青 (blue)", "赤 (red)", "白 (white)", "黒 (black)", "緑 (green)"],
+      grammar: ["〜が好きです", "〜色が好きです", "なぜなら〜からです"]
+    },
+    {
+      japanese: "<ruby>今日<rt>きょう</rt></ruby>のお<ruby>昼<rt>ひる</rt></ruby>ごはんは<ruby>何<rt>なん</rt></ruby>でしたか？",
+      english: "What did you have for lunch today?",
+      vocab: ["お昼ごはん (lunch)", "レストラン (restaurant)", "自分で作る (make yourself)", "食堂 (cafeteria)"],
+      grammar: ["〜を食べました", "〜で食べました", "〜は〜でした"]
+    },
+    {
+      japanese: "<ruby>今日<rt>きょう</rt></ruby>は<ruby>何<rt>なに</rt></ruby>をしましたか？",
+      english: "What did you do today?",
+      vocab: ["仕事 (work)", "学校 (school)", "勉強 (study)", "買い物 (shopping)", "散歩 (walk)"],
+      grammar: ["〜をしました", "〜に行きました", "〜ました"]
+    },
+    {
+      japanese: "<ruby>好<rt>す</rt></ruby>きな<ruby>動物<rt>どうぶつ</rt></ruby>は<ruby>何<rt>なん</rt></ruby>ですか？",
+      english: "What is your favorite animal?",
+      vocab: ["動物 (animal)", "犬 (dog)", "猫 (cat)", "パンダ (panda)", "かわいい (cute)", "かっこいい (cool)"],
+      grammar: ["〜が好きです", "〜は〜です", "なぜなら〜からです"]
+    },
+    {
+      japanese: "<ruby>毎日<rt>まいにち</rt></ruby>、<ruby>何時間<rt>なんじかん</rt></ruby>ぐらい<ruby>寝<rt>ね</rt></ruby>ますか？",
+      english: "How many hours do you sleep every day?",
+      vocab: ["寝る (to sleep)", "〜時間 (hours)", "早く (early)", "遅く (late)", "眠い (sleepy)"],
+      grammar: ["〜時間ぐらい寝ます", "いつも〜時ごろ寝ます", "〜で起きます"]
+    },
+    {
+      japanese: "<ruby>昨日<rt>きのう</rt></ruby>の<ruby>夜<rt>よる</rt></ruby>は<ruby>何<rt>なに</rt></ruby>をしましたか？",
+      english: "What did you do last night?",
+      vocab: ["昨日 (yesterday)", "夜 (night)", "テレビ (TV)", "お風呂 (bath)", "読む (to read)"],
+      grammar: ["〜をしました", "〜て、〜ました", "〜のあとで〜しました"]
+    },
+    {
+      japanese: "<ruby>好<rt>す</rt></ruby>きな<ruby>音楽<rt>おんがく</rt></ruby>は<ruby>何<rt>なん</rt></ruby>ですか？",
+      english: "What kind of music do you like?",
+      vocab: ["音楽 (music)", "聴く (to listen)", "歌手 (singer)", "曲 (song)", "ポップス (pop)"],
+      grammar: ["〜が好きです", "よく〜を聴きます", "〜より〜の方が好きです"]
+    },
+    {
+      japanese: "<ruby>今<rt>いま</rt></ruby><ruby>住<rt>す</rt></ruby>んでいる<ruby>場所<rt>ばしょ</rt></ruby>はどんなところですか？",
+      english: "What is the place you are living in now like?",
+      vocab: ["住む (to live)", "便利 (convenient)", "静か (quiet)", "近く (nearby)", "駅 (station)"],
+      grammar: ["〜に住んでいます", "〜は〜です", "〜が近いです"]
+    },
+    {
+      japanese: "<ruby>家族<rt>かぞく</rt></ruby>は<ruby>何人<rt>なんにん</rt></ruby>ですか？",
+      english: "How many people are in your family?",
+      vocab: ["家族 (family)", "両親 (parents)", "兄弟 (siblings)", "〜人 (counter for people)", "一人っ子 (only child)"],
+      grammar: ["〜人家族です", "〜がいます", "〜人兄弟です"]
+    }
+  ],
+  intermediate: [
+    {
+      japanese: "<ruby>最近<rt>さいきん</rt></ruby>、<ruby>一番<rt>いちばん</rt></ruby><ruby>楽<rt>たの</rt></ruby>しかったことは<ruby>何<rt>なん</rt></ruby>ですか？",
+      english: "What was the most enjoyable thing you've done recently?",
+      vocab: ["最近 (recently)", "楽しい (fun/enjoyable)", "一番 (most/best)", "経験 (experience)", "思い出 (memory)"],
+      grammar: ["〜が楽しかったです", "〜たとき、〜と感じました", "一番〜だったのは〜です"]
+    },
+    {
+      japanese: "<ruby>子<rt>こ</rt></ruby>どもの<ruby>頃<rt>ころ</rt></ruby>、<ruby>何<rt>なに</rt></ruby>になりたかったですか？",
+      english: "What did you want to be when you were a child?",
+      vocab: ["子どもの頃 (when I was a child)", "夢 (dream)", "将来 (future)", "なりたい (want to become)", "あこがれ (admiration)"],
+      grammar: ["〜になりたかったです", "〜ができると思っていました", "今は〜ですが、子どもの頃は〜でした"]
+    },
+    {
+      japanese: "<ruby>日本語<rt>にほんご</rt></ruby>を<ruby>勉強<rt>べんきょう</rt></ruby>している<ruby>理由<rt>りゆう</rt></ruby>を<ruby>教<rt>おし</rt></ruby>えてください。",
+      english: "Please tell me why you are studying Japanese.",
+      vocab: ["理由 (reason)", "きっかけ (trigger)", "興味 (interest)", "目標 (goal)", "楽しい (enjoyable)"],
+      grammar: ["〜から勉強しています", "〜がきっかけで〜するようになりました", "〜したいと思っています"]
+    },
+    {
+      japanese: "<ruby>旅行<rt>りょこう</rt></ruby>で<ruby>一番<rt>いちばん</rt></ruby><ruby>印象<rt>いんしょう</rt></ruby>に<ruby>残<rt>のこ</rt></ruby>っている<ruby>場所<rt>ばしょ</rt></ruby>はどこですか？",
+      english: "What place from your travels left the biggest impression on you?",
+      vocab: ["旅行 (travel)", "印象 (impression)", "景色 (scenery)", "文化 (culture)", "忘れられない (unforgettable)"],
+      grammar: ["一番印象に残っているのは〜です", "〜に行ったとき、〜でした", "〜がとても〜かったです"]
+    },
+    {
+      japanese: "<ruby>最近<rt>さいきん</rt></ruby><ruby>見<rt>み</rt></ruby>た<ruby>映画<rt>えいが</rt></ruby>や<ruby>動画<rt>どうが</rt></ruby>で、<ruby>面白<rt>おもしろ</rt></ruby>かったものはありますか？",
+      english: "Have you seen any interesting movies or videos recently?",
+      vocab: ["映画 (movie)", "動画 (video)", "面白い (interesting)", "感動する (to be moved)", "おすすめ (recommendation)"],
+      grammar: ["〜を見ました", "〜というのが面白かったです", "〜がおすすめです"]
+    },
+    {
+      japanese: "もし<ruby>一日<rt>いちにち</rt></ruby>だけ<ruby>違<rt>ちが</rt></ruby>う<ruby>仕事<rt>しごと</rt></ruby>ができるとしたら、<ruby>何<rt>なに</rt></ruby>をしたいですか？",
+      english: "If you could do a different job for just one day, what would you do?",
+      vocab: ["仕事 (job/work)", "もし (if)", "一日 (one day)", "やってみたい (want to try)", "理由 (reason)"],
+      grammar: ["もし〜できるなら、〜したいです", "〜してみたいです", "なぜなら〜からです"]
+    },
+    {
+      japanese: "あなたの<ruby>国<rt>くに</rt></ruby>と<ruby>日本<rt>にほん</rt></ruby>で、<ruby>驚<rt>おどろ</rt></ruby>いた<ruby>違<rt>ちが</rt></ruby>いはありますか？",
+      english: "Is there any surprising difference between your country and Japan?",
+      vocab: ["違い (difference)", "驚く (to be surprised)", "文化 (culture)", "習慣 (custom)", "似ている (similar)"],
+      grammar: ["〜は〜と違います", "〜のは驚きました", "私の国では〜ですが、日本では〜です"]
+    },
+    {
+      japanese: "<ruby>最近<rt>さいきん</rt></ruby>、<ruby>新<rt>あたら</rt></ruby>しく<ruby>始<rt>はじ</rt></ruby>めたことはありますか？",
+      english: "Have you started anything new recently?",
+      vocab: ["始める (to start)", "新しい (new)", "挑戦 (challenge)", "続ける (to continue)", "習慣 (habit)"],
+      grammar: ["〜を始めました", "〜するようになりました", "〜てみようと思っています"]
+    },
+    {
+      japanese: "<ruby>好<rt>す</rt></ruby>きな<ruby>本<rt>ほん</rt></ruby>や<ruby>漫画<rt>まんが</rt></ruby>はありますか？",
+      english: "Do you have a favorite book or manga?",
+      vocab: ["本 (book)", "漫画 (manga)", "作者 (author)", "ストーリー (story)", "感動する (to be moved)"],
+      grammar: ["〜が好きです", "〜というのを読みました", "〜のところが一番好きです"]
+    },
+    {
+      japanese: "<ruby>将来<rt>しょうらい</rt></ruby>、<ruby>行<rt>い</rt></ruby>ってみたい<ruby>国<rt>くに</rt></ruby>はどこですか？",
+      english: "Which country would you like to visit in the future?",
+      vocab: ["将来 (future)", "国 (country)", "旅行 (travel)", "文化 (culture)", "食べ物 (food)"],
+      grammar: ["〜に行ってみたいです", "〜が興味深いと思います", "〜したいと思っています"]
+    },
+    {
+      japanese: "<ruby>一番<rt>いちばん</rt></ruby><ruby>大切<rt>たいせつ</rt></ruby>にしている<ruby>習慣<rt>しゅうかん</rt></ruby>は<ruby>何<rt>なん</rt></ruby>ですか？",
+      english: "What is the habit you value most?",
+      vocab: ["習慣 (habit)", "大切 (important)", "毎日 (every day)", "続ける (to continue)", "健康 (health)"],
+      grammar: ["〜を大切にしています", "毎日〜するようにしています", "〜ことが習慣です"]
+    },
+    {
+      japanese: "<ruby>料理<rt>りょうり</rt></ruby>はしますか？<ruby>得意<rt>とくい</rt></ruby>な<ruby>料理<rt>りょうり</rt></ruby>はありますか？",
+      english: "Do you cook? Is there a dish you're good at making?",
+      vocab: ["料理 (cooking)", "得意 (good at)", "作る (to make)", "レシピ (recipe)", "材料 (ingredients)"],
+      grammar: ["〜を作ります", "得意なのは〜です", "〜するのが好きです"]
+    },
+    {
+      japanese: "<ruby>最近<rt>さいきん</rt></ruby>、ハマっていることはありますか？",
+      english: "Is there anything you've been really into lately?",
+      vocab: ["ハマる (to be hooked on)", "最近 (recently)", "夢中 (absorbed)", "楽しい (fun)", "おすすめ (recommendation)"],
+      grammar: ["最近〜にハマっています", "〜が面白くて、〜しています", "〜してみてください"]
+    },
+    {
+      japanese: "<ruby>友達<rt>ともだち</rt></ruby>と<ruby>何<rt>なに</rt></ruby>をして<ruby>過<rt>す</rt></ruby>ごすことが<ruby>多<rt>おお</rt></ruby>いですか？",
+      english: "What do you usually do when you spend time with friends?",
+      vocab: ["友達 (friend)", "過ごす (to spend time)", "食事 (meal)", "遊ぶ (to hang out)", "話す (to talk)"],
+      grammar: ["〜することが多いです", "よく〜します", "〜たり〜たりします"]
+    },
+    {
+      japanese: "<ruby>日本語<rt>にほんご</rt></ruby>を<ruby>話<rt>はな</rt></ruby>すとき、<ruby>難<rt>むずか</rt></ruby>しいと<ruby>感<rt>かん</rt></ruby>じることは<ruby>何<rt>なん</rt></ruby>ですか？",
+      english: "What do you find difficult when speaking Japanese?",
+      vocab: ["難しい (difficult)", "敬語 (honorific language)", "発音 (pronunciation)", "助詞 (particles)", "なかなか (not easily)"],
+      grammar: ["〜が難しいです", "〜するのが苦手です", "〜ようになりたいです"]
+    },
+    {
+      japanese: "<ruby>子<rt>こ</rt></ruby>どもの<ruby>頃<rt>ころ</rt></ruby>、よく<ruby>何<rt>なに</rt></ruby>をして<ruby>遊<rt>あそ</rt></ruby>びましたか？",
+      english: "What did you like to do when you were a child?",
+      vocab: ["子どもの頃 (childhood)", "遊ぶ (to play)", "外 (outside)", "友達 (friends)", "懐かしい (nostalgic)"],
+      grammar: ["よく〜しました", "〜て遊んでいました", "〜のが好きでした"]
+    },
+    {
+      japanese: "あなたの<ruby>街<rt>まち</rt></ruby>のおすすめスポットを<ruby>教<rt>おし</rt></ruby>えてください。",
+      english: "Please tell me about a recommended spot in your town.",
+      vocab: ["おすすめ (recommendation)", "スポット (place)", "有名 (famous)", "ぜひ (by all means)"],
+      grammar: ["〜がおすすめです", "〜に行ってみてください", "〜という場所があります"]
+    },
+    {
+      japanese: "<ruby>最近<rt>さいきん</rt></ruby>、<ruby>誰<rt>だれ</rt></ruby>かに<ruby>感謝<rt>かんしゃ</rt></ruby>したことはありますか？",
+      english: "Is there anyone you've felt grateful to recently?",
+      vocab: ["感謝 (gratitude)", "ありがたい (grateful)", "助ける (to help)", "支える (to support)", "おかげで (thanks to)"],
+      grammar: ["〜に感謝しています", "〜おかげで〜できました", "〜てくれて、ありがとうと思いました"]
+    },
+    {
+      japanese: "<ruby>今<rt>いま</rt></ruby>まで<ruby>食<rt>た</rt></ruby>べた<ruby>中<rt>なか</rt></ruby>で、<ruby>一番<rt>いちばん</rt></ruby>おいしかった<ruby>食<rt>た</rt></ruby>べ<ruby>物<rt>もの</rt></ruby>は<ruby>何<rt>なん</rt></ruby>ですか？",
+      english: "What is the most delicious food you have ever eaten?",
+      vocab: ["今まで (up until now)", "一番 (most/best)", "おいしい (delicious)", "忘れられない (unforgettable)"],
+      grammar: ["一番おいしかったのは〜です", "〜を食べたとき、〜でした", "〜は〜で有名です"]
+    },
+    {
+      japanese: "<ruby>自分<rt>じぶん</rt></ruby>の<ruby>国<rt>くに</rt></ruby>の<ruby>文化<rt>ぶんか</rt></ruby>で、<ruby>好<rt>す</rt></ruby>きなところはどこですか？",
+      english: "What do you like about the culture of your country?",
+      vocab: ["文化 (culture)", "伝統 (tradition)", "誇り (pride)", "独特 (unique)", "大切にする (to cherish)"],
+      grammar: ["〜が好きです", "〜のところが気に入っています", "〜は〜だと思います"]
+    }
+  ],
+  advanced: [
+    {
+      japanese: "<ruby>人生<rt>じんせい</rt></ruby>で<ruby>一番<rt>いちばん</rt></ruby><ruby>大<rt>おお</rt></ruby>きな<ruby>転換点<rt>てんかんてん</rt></ruby>はいつでしたか？",
+      english: "When was the biggest turning point in your life?",
+      vocab: ["転換点 (turning point)", "決断 (decision)", "変化 (change)", "きっかけ (trigger)", "振り返ると (looking back)"],
+      grammar: ["〜が転換点でした", "〜たことで、〜が変わりました", "振り返ると、〜だったと思います"]
+    },
+    {
+      japanese: "「<ruby>成功<rt>せいこう</rt></ruby>」とはどういう<ruby>意味<rt>いみ</rt></ruby>だと<ruby>思<rt>おも</rt></ruby>いますか？",
+      english: "What do you think the word 'success' means?",
+      vocab: ["成功 (success)", "定義 (definition)", "価値観 (values)", "達成感 (sense of achievement)", "幸福 (happiness)"],
+      grammar: ["〜だと思います", "成功とは〜ではないでしょうか", "人によって〜が違うと思います"]
+    },
+    {
+      japanese: "<ruby>異文化<rt>いぶんか</rt></ruby>を<ruby>理解<rt>りかい</rt></ruby>するために、<ruby>大切<rt>たいせつ</rt></ruby>なことは<ruby>何<rt>なん</rt></ruby>だと<ruby>思<rt>おも</rt></ruby>いますか？",
+      english: "What do you think is important for understanding different cultures?",
+      vocab: ["異文化 (different culture)", "理解 (understanding)", "視点 (perspective)", "偏見 (bias)", "尊重 (respect)"],
+      grammar: ["〜が大切だと思います", "〜ことで〜ができると思います", "〜するよりも、〜の方が重要です"]
+    },
+    {
+      japanese: "<ruby>言語<rt>げんご</rt></ruby>を<ruby>学<rt>まな</rt></ruby>ぶことで、<ruby>自分<rt>じぶん</rt></ruby>はどう<ruby>変<rt>か</rt></ruby>わりましたか？",
+      english: "How have you changed through learning a language?",
+      vocab: ["言語 (language)", "視野が広がる (broaden perspective)", "思考 (thinking)", "自信 (confidence)", "気づき (realization)"],
+      grammar: ["〜するようになりました", "〜ことに気づきました", "〜を通して、〜が変わりました"]
+    },
+    {
+      japanese: "あなたが<ruby>大切<rt>たいせつ</rt></ruby>にしている<ruby>価値観<rt>かちかん</rt></ruby>を<ruby>教<rt>おし</rt></ruby>えてください。",
+      english: "Please tell me about the values that are most important to you.",
+      vocab: ["価値観 (values)", "大切にする (to cherish)", "誠実 (sincerity)", "思いやり (compassion)", "自由 (freedom)"],
+      grammar: ["〜を大切にしています", "〜だと思っているので、〜します", "〜ことが自分にとって重要です"]
+    },
+    {
+      japanese: "<ruby>幸<rt>しあわ</rt></ruby>せとは<ruby>何<rt>なん</rt></ruby>だと<ruby>思<rt>おも</rt></ruby>いますか？",
+      english: "What do you think happiness is?",
+      vocab: ["幸せ (happiness)", "満足 (satisfaction)", "つながり (connection)", "目標 (goal)", "瞬間 (moment)"],
+      grammar: ["幸せとは〜だと思います", "〜しているとき、幸せを感じます", "人それぞれ違うと思いますが〜"]
+    },
+    {
+      japanese: "<ruby>日本文化<rt>にほんぶんか</rt></ruby>の<ruby>中<rt>なか</rt></ruby>で、<ruby>興味深<rt>きょうみぶか</rt></ruby>いと<ruby>思<rt>おも</rt></ruby>うことは<ruby>何<rt>なん</rt></ruby>ですか？",
+      english: "What do you find interesting about Japanese culture?",
+      vocab: ["文化 (culture)", "興味深い (interesting)", "独特 (unique)", "習慣 (custom)", "哲学 (philosophy)"],
+      grammar: ["〜に興味を持っています", "〜のところが面白いと思います", "特に〜が印象的です"]
+    },
+    {
+      japanese: "<ruby>仕事<rt>しごと</rt></ruby>とプライベートのバランスについて、どう<ruby>考<rt>かんが</rt></ruby>えていますか？",
+      english: "What are your thoughts on work-life balance?",
+      vocab: ["バランス (balance)", "優先順位 (priority)", "充実 (fulfillment)", "燃え尽きる (to burn out)", "境界線 (boundary)"],
+      grammar: ["〜が大切だと思います", "〜すぎると〜になると思います", "理想は〜ですが、実際は〜です"]
+    },
+    {
+      japanese: "SNSは<ruby>人間関係<rt>にんげんかんけい</rt></ruby>にどんな<ruby>影響<rt>えいきょう</rt></ruby>を<ruby>与<rt>あた</rt></ruby>えていると<ruby>思<rt>おも</rt></ruby>いますか？",
+      english: "What kind of impact do you think social media has on human relationships?",
+      vocab: ["影響 (influence/impact)", "つながり (connection)", "孤独感 (loneliness)", "比較 (comparison)", "距離感 (distance)"],
+      grammar: ["〜に影響を与えていると思います", "一方では〜、他方では〜", "使い方によって〜が変わると思います"]
+    },
+    {
+      japanese: "「<ruby>継続<rt>けいぞく</rt></ruby>は<ruby>力<rt>ちから</rt></ruby>なり」という<ruby>言葉<rt>ことば</rt></ruby>について、どう<ruby>思<rt>おも</rt></ruby>いますか？",
+      english: "What do you think about the saying 'persistence is power'?",
+      vocab: ["継続 (continuation)", "努力 (effort)", "成果 (result)", "忍耐 (patience)", "積み重ね (accumulation)"],
+      grammar: ["〜だと思います", "確かに〜ですが、〜も大切です", "この言葉は〜を表していると思います"]
+    },
+    {
+      japanese: "もし<ruby>過去<rt>かこ</rt></ruby>に<ruby>戻<rt>もど</rt></ruby>れるとしたら、<ruby>自分<rt>じぶん</rt></ruby>に<ruby>何<rt>なに</rt></ruby>か<ruby>伝<rt>つた</rt></ruby>えたいですか？",
+      english: "If you could go back to the past, is there anything you'd want to tell yourself?",
+      vocab: ["過去 (past)", "後悔 (regret)", "経験 (experience)", "失敗 (failure)", "成長 (growth)"],
+      grammar: ["もし〜できるなら、〜したいです", "〜に伝えたいのは〜です", "あのとき〜していたら〜だったかもしれません"]
+    },
+    {
+      japanese: "<ruby>言葉<rt>ことば</rt></ruby>では<ruby>表現<rt>ひょうげん</rt></ruby>しにくい<ruby>感情<rt>かんじょう</rt></ruby>はありますか？",
+      english: "Are there emotions that are difficult to express in words?",
+      vocab: ["感情 (emotion)", "表現する (to express)", "言葉 (words)", "ニュアンス (nuance)", "伝わる (to be conveyed)"],
+      grammar: ["〜は言葉で言えません", "うまく表現できないのですが、〜という感じです", "〜という言葉では足りないと感じます"]
+    },
+    {
+      japanese: "「<ruby>普通<rt>ふつう</rt></ruby>」とはどういう<ruby>意味<rt>いみ</rt></ruby>だと<ruby>思<rt>おも</rt></ruby>いますか？",
+      english: "What do you think the word 'normal' means?",
+      vocab: ["普通 (normal)", "基準 (standard)", "社会 (society)", "個人 (individual)", "多様性 (diversity)"],
+      grammar: ["普通とは〜だと思います", "人によって〜が違うと思います", "〜という考え方もあるのではないでしょうか"]
+    },
+    {
+      japanese: "グローバル<ruby>化<rt>か</rt></ruby>は<ruby>自分<rt>じぶん</rt></ruby>の<ruby>生活<rt>せいかつ</rt></ruby>にどんな<ruby>影響<rt>えいきょう</rt></ruby>を<ruby>与<rt>あた</rt></ruby>えていますか？",
+      english: "What kind of impact has globalization had on your daily life?",
+      vocab: ["グローバル化 (globalization)", "影響 (influence)", "多様性 (diversity)", "機会 (opportunity)", "文化交流 (cultural exchange)"],
+      grammar: ["〜に影響を与えています", "〜のおかげで〜ができるようになりました", "一方で〜という面もあります"]
+    },
+    {
+      japanese: "<ruby>子<rt>こ</rt></ruby>どもの<ruby>教育<rt>きょういく</rt></ruby>で、<ruby>一番<rt>いちばん</rt></ruby><ruby>大切<rt>たいせつ</rt></ruby>なことは<ruby>何<rt>なん</rt></ruby>だと<ruby>思<rt>おも</rt></ruby>いますか？",
+      english: "What do you think is the most important thing in children's education?",
+      vocab: ["教育 (education)", "好奇心 (curiosity)", "自己肯定感 (self-esteem)", "失敗から学ぶ (learn from failure)", "環境 (environment)"],
+      grammar: ["〜が一番大切だと思います", "〜よりも〜の方が重要だと感じます", "なぜなら〜からです"]
+    },
+    {
+      japanese: "<ruby>人<rt>ひと</rt></ruby>と<ruby>意見<rt>いけん</rt></ruby>が<ruby>違<rt>ちが</rt></ruby>うとき、どのように<ruby>対処<rt>たいしょ</rt></ruby>しますか？",
+      english: "How do you handle situations when your opinion differs from others?",
+      vocab: ["意見 (opinion)", "対処する (to handle)", "尊重 (respect)", "話し合い (discussion)", "妥協 (compromise)"],
+      grammar: ["〜するようにしています", "まず〜、それから〜", "相手の立場で考えると〜です"]
+    },
+    {
+      japanese: "<ruby>自分<rt>じぶん</rt></ruby>が<ruby>変<rt>か</rt></ruby>えたいと<ruby>思<rt>おも</rt></ruby>っている<ruby>習慣<rt>しゅうかん</rt></ruby>はありますか？",
+      english: "Is there a habit you want to change about yourself?",
+      vocab: ["習慣 (habit)", "改善 (improvement)", "気づく (to notice)", "なかなか (not easily)", "意識する (to be conscious of)"],
+      grammar: ["〜を変えたいと思っています", "〜しようとしていますが、〜です", "〜することが課題です"]
+    },
+    {
+      japanese: "<ruby>人生<rt>じんせい</rt></ruby>で<ruby>一番<rt>いちばん</rt></ruby><ruby>大切<rt>たいせつ</rt></ruby>なものは<ruby>何<rt>なん</rt></ruby>だと<ruby>思<rt>おも</rt></ruby>いますか？",
+      english: "What do you think is the most important thing in life?",
+      vocab: ["大切 (important)", "人間関係 (human relationships)", "健康 (health)", "自由 (freedom)", "意味 (meaning)"],
+      grammar: ["〜が一番大切だと思います", "〜があってこそ〜だと思います", "人によって違うと思いますが〜"]
+    },
+    {
+      japanese: "<ruby>今<rt>いま</rt></ruby>の<ruby>自分<rt>じぶん</rt></ruby>に<ruby>満足<rt>まんぞく</rt></ruby>していますか？",
+      english: "Are you satisfied with who you are now?",
+      vocab: ["満足 (satisfaction)", "成長 (growth)", "課題 (challenge)", "受け入れる (to accept)", "目指す (to aim for)"],
+      grammar: ["〜は満足していますが、〜はまだです", "〜という点では〜だと思います", "完全にではないですが〜"]
+    },
+    {
+      japanese: "<ruby>言語<rt>げんご</rt></ruby>と<ruby>思考<rt>しこう</rt></ruby>の<ruby>関係<rt>かんけい</rt></ruby>について、どう<ruby>思<rt>おも</rt></ruby>いますか？",
+      english: "What do you think about the relationship between language and thinking?",
+      vocab: ["言語 (language)", "思考 (thinking)", "影響 (influence)", "概念 (concept)", "翻訳できない (untranslatable)"],
+      grammar: ["〜は〜に影響すると思います", "〜することで〜が変わると感じています", "〜という考え方があります"]
+    }
+  ]
+};
+
+let currentLevel = 'beginner';
+let usedIndices = [];
+
+function setLevel(level, btn) {
+  currentLevel = level;
+  usedIndices = [];
+  document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  showTopic();
+}
+
+function getRandomTopic() {
+  const pool = topics[currentLevel];
+  if (usedIndices.length >= pool.length) usedIndices = [];
+  let idx;
+  do { idx = Math.floor(Math.random() * pool.length); }
+  while (usedIndices.includes(idx));
+  usedIndices.push(idx);
+  return pool[idx];
+}
+
+function showTopic() {
+  const topic = getRandomTopic();
+  document.getElementById('topic-text').innerHTML = topic.japanese;
+  document.getElementById('english-text').textContent = topic.english;
+
+  document.getElementById('vocab-tags').innerHTML =
+    topic.vocab.map(v => `<span class="tag">${v}</span>`).join('');
+  document.getElementById('grammar-tags').innerHTML =
+    topic.grammar.map(g => `<span class="tag grammar">${g}</span>`).join('');
+
+  closeAll();
+
+  const levelLabel = { beginner: '初級', intermediate: '中級', advanced: '上級' };
+  const pool = topics[currentLevel];
+  document.getElementById('topic-count').textContent =
+    `${levelLabel[currentLevel]} / 全${pool.length}問`;
+}
+
+function toggleAccordion(type) {
+  const btn = document.getElementById(`${type}-btn`);
+  const content = document.getElementById(`${type}-content`);
+  const isOpen = btn.classList.contains('open');
+  closeAll();
+  if (!isOpen) {
+    btn.classList.add('open');
+    content.classList.add('open');
+  }
+}
+
+function closeAll() {
+  ['eng', 'hint'].forEach(type => {
+    document.getElementById(`${type}-btn`).classList.remove('open');
+    document.getElementById(`${type}-content`).classList.remove('open');
+  });
+}
+
+function next() { showTopic(); }
+function skip() { showTopic(); }
+
+showTopic();
+</script>
+</body>
+</html>
