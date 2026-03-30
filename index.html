@@ -98,7 +98,46 @@
     .btn-next { background: #4A90D9; color: white; font-weight: bold; font-size: 1.1rem; }
     .btn-next:hover { background: #2a70b9; }
 
-    .topic-count { margin-top: 16px; font-size: 0.8rem; color: #bbb; }
+    .topic-count { margin-top: 8px; font-size: 0.8rem; color: #bbb; }
+
+    /* カードヘッダー */
+    .card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .fav-btn { background: none; border: none; font-size: 1.8rem; cursor: pointer; padding: 4px; line-height: 1; transition: transform 0.2s; }
+    .fav-btn:hover { transform: scale(1.2); }
+
+    /* 読み上げ */
+    .speak-row { display: flex; justify-content: flex-end; margin-top: -20px; margin-bottom: 20px; }
+    .speak-btn { background: none; border: 1.5px solid #d0e4f7; color: #4A90D9; padding: 6px 14px; border-radius: 999px; font-size: 0.85rem; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+    .speak-btn:hover { background: #e8f0fb; }
+    .speak-btn.speaking { background: #e8f0fb; border-color: #4A90D9; }
+
+    /* タイマー */
+    .timer-section { display: flex; align-items: center; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+    .timer-display { font-size: 1.5rem; font-weight: bold; color: #555; min-width: 64px; text-align: center; }
+    .timer-display.running { color: #e05c5c; }
+    .timer-display.done { color: #27ae60; }
+    .timer-btn { padding: 8px 18px; border-radius: 999px; border: 2px solid #ddd; background: white; font-size: 0.9rem; cursor: pointer; font-family: inherit; transition: all 0.2s; color: #666; }
+    .timer-btn:hover { border-color: #4A90D9; color: #4A90D9; }
+    .timer-btn.stop { border-color: #e05c5c; color: #e05c5c; }
+
+    /* 履歴・お気に入りパネル */
+    .bottom-toggles { display: flex; gap: 20px; margin-top: 8px; }
+    .panel-toggle { background: none; border: none; font-size: 0.85rem; cursor: pointer; padding: 4px; font-family: inherit; color: #aaa; transition: color 0.2s; }
+    .panel-toggle:hover { color: #777; }
+    .fav-toggle { color: #d4a800 !important; }
+    .fav-toggle:hover { color: #b08900 !important; }
+    .slide-panel { width: 100%; max-width: 680px; background: white; border-radius: 16px; max-height: 0; overflow: hidden; transition: max-height 0.35s ease, padding 0.35s; box-shadow: 0 4px 24px rgba(0,0,0,0.06); }
+    .slide-panel.open { max-height: 400px; padding: 20px 24px; overflow-y: auto; }
+    .panel-title { font-size: 0.8rem; color: #aaa; letter-spacing: 0.08em; margin-bottom: 12px; font-weight: bold; }
+    .history-item, .fav-item { padding: 10px 0; border-bottom: 1px solid #f0f0f0; font-size: 0.9rem; color: #444; display: flex; align-items: center; gap: 8px; }
+    .history-item:last-child, .fav-item:last-child { border-bottom: none; }
+    .history-num { color: #ccc; font-size: 0.8rem; min-width: 18px; }
+    .level-tag { font-size: 0.72rem; background: #e8f0fb; color: #4A90D9; padding: 2px 8px; border-radius: 999px; white-space: nowrap; flex-shrink: 0; }
+    .fav-item { justify-content: space-between; }
+    .fav-item-left { display: flex; align-items: center; gap: 8px; flex: 1; }
+    .fav-del { background: none; border: none; color: #ddd; cursor: pointer; font-size: 1rem; padding: 4px; flex-shrink: 0; transition: color 0.2s; }
+    .fav-del:hover { color: #e05c5c; }
+    .empty-msg { color: #ccc; font-size: 0.9rem; text-align: center; padding: 16px 0; }
   </style>
 </head>
 <body>
@@ -112,8 +151,14 @@
   </div>
 
   <div class="card">
-    <div class="topic-label">TODAY'S TOPIC</div>
+    <div class="card-top">
+      <div class="topic-label">TODAY'S TOPIC</div>
+      <button class="fav-btn" id="fav-btn" onclick="toggleFavorite()" title="お気に入りに追加">☆</button>
+    </div>
     <div class="topic-text" id="topic-text">ボタンを<ruby>押<rt>お</rt></ruby>してネタを<ruby>出<rt>だ</rt></ruby>してください。</div>
+    <div class="speak-row">
+      <button class="speak-btn" id="speak-btn" onclick="speak()">🔊 読み上げ</button>
+    </div>
 
     <div class="accordion">
       <button class="accordion-btn" id="eng-btn" onclick="toggleAccordion('eng')">
@@ -147,7 +192,19 @@
     <button class="btn btn-skip" onclick="skip()">スキップ</button>
     <button class="btn btn-next" onclick="next()">次のネタ 🎲</button>
   </div>
+  <div class="timer-section">
+    <div class="timer-display" id="timer-display">--:--</div>
+    <button class="timer-btn" onclick="startTimer(3)">3分</button>
+    <button class="timer-btn" onclick="startTimer(5)">5分</button>
+    <button class="timer-btn stop" id="timer-stop" onclick="stopTimer()" style="display:none">■ 停止</button>
+  </div>
   <div class="topic-count" id="topic-count"></div>
+  <div class="bottom-toggles">
+    <button class="panel-toggle" onclick="togglePanel('history-panel')">📋 履歴（<span id="history-count">0</span>件）</button>
+    <button class="panel-toggle fav-toggle" onclick="togglePanel('fav-panel')">⭐ お気に入り（<span id="fav-count">0</span>件）</button>
+  </div>
+  <div class="slide-panel" id="history-panel"></div>
+  <div class="slide-panel" id="fav-panel"></div>
 
 <script>
 const topics = {
@@ -521,6 +578,10 @@ const topics = {
 
 let currentLevel = 'beginner';
 let usedIndices = [];
+let currentTopicData = null;
+let sessionHistory = [];
+let favorites = JSON.parse(localStorage.getItem('kaiwa_favs') || '[]');
+let timerInterval = null;
 
 function setLevel(level, btn) {
   currentLevel = level;
@@ -542,6 +603,7 @@ function getRandomTopic() {
 
 function showTopic() {
   const topic = getRandomTopic();
+  currentTopicData = topic;
   document.getElementById('topic-text').innerHTML = topic.japanese;
   document.getElementById('english-text').textContent = topic.english;
 
@@ -556,6 +618,21 @@ function showTopic() {
   const pool = topics[currentLevel];
   document.getElementById('topic-count').textContent =
     `${levelLabel[currentLevel]} / 全${pool.length}問`;
+
+  // 履歴に追加
+  sessionHistory.push({ japanese: topic.japanese, level: currentLevel });
+  document.getElementById('history-count').textContent = sessionHistory.length;
+  if (document.getElementById('history-panel').classList.contains('open')) renderHistory();
+
+  // お気に入りボタン更新
+  updateFavBtn();
+
+  // 読み上げ中なら停止
+  if (window.speechSynthesis && window.speechSynthesis.speaking) {
+    window.speechSynthesis.cancel();
+    document.getElementById('speak-btn').textContent = '🔊 読み上げ';
+    document.getElementById('speak-btn').classList.remove('speaking');
+  }
 }
 
 function toggleAccordion(type) {
@@ -578,6 +655,149 @@ function closeAll() {
 
 function next() { showTopic(); }
 function skip() { showTopic(); }
+
+// ---- お気に入り ----
+function updateFavBtn() {
+  if (!currentTopicData) return;
+  const isFav = favorites.some(f => f.japanese === currentTopicData.japanese);
+  const btn = document.getElementById('fav-btn');
+  btn.textContent = isFav ? '⭐' : '☆';
+  btn.title = isFav ? 'お気に入りから削除' : 'お気に入りに追加';
+}
+
+function toggleFavorite() {
+  if (!currentTopicData) return;
+  const idx = favorites.findIndex(f => f.japanese === currentTopicData.japanese);
+  if (idx >= 0) {
+    favorites.splice(idx, 1);
+  } else {
+    favorites.push({ japanese: currentTopicData.japanese, english: currentTopicData.english, level: currentLevel });
+  }
+  localStorage.setItem('kaiwa_favs', JSON.stringify(favorites));
+  document.getElementById('fav-count').textContent = favorites.length;
+  updateFavBtn();
+  if (document.getElementById('fav-panel').classList.contains('open')) renderFavPanel();
+}
+
+function removeFav(idx) {
+  favorites.splice(idx, 1);
+  localStorage.setItem('kaiwa_favs', JSON.stringify(favorites));
+  document.getElementById('fav-count').textContent = favorites.length;
+  updateFavBtn();
+  renderFavPanel();
+}
+
+// ---- 音声読み上げ ----
+function speak() {
+  if (!currentTopicData) return;
+  const btn = document.getElementById('speak-btn');
+  if (window.speechSynthesis.speaking) {
+    window.speechSynthesis.cancel();
+    btn.textContent = '🔊 読み上げ';
+    btn.classList.remove('speaking');
+    return;
+  }
+  const tmp = document.createElement('div');
+  tmp.innerHTML = currentTopicData.japanese;
+  const text = tmp.textContent;
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = 'ja-JP';
+  utter.rate = 0.85;
+  utter.onstart = () => { btn.textContent = '⏹ 停止'; btn.classList.add('speaking'); };
+  utter.onend = () => { btn.textContent = '🔊 読み上げ'; btn.classList.remove('speaking'); };
+  window.speechSynthesis.speak(utter);
+}
+
+// ---- タイマー ----
+function startTimer(minutes) {
+  if (timerInterval) clearInterval(timerInterval);
+  let seconds = minutes * 60;
+  const display = document.getElementById('timer-display');
+  const stopBtn = document.getElementById('timer-stop');
+  display.className = 'timer-display running';
+  stopBtn.style.display = 'inline-block';
+  function tick() {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    display.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    if (seconds <= 0) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      display.textContent = '終了！';
+      display.className = 'timer-display done';
+      stopBtn.style.display = 'none';
+      return;
+    }
+    seconds--;
+  }
+  tick();
+  timerInterval = setInterval(tick, 1000);
+}
+
+function stopTimer() {
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = null;
+  document.getElementById('timer-display').textContent = '--:--';
+  document.getElementById('timer-display').className = 'timer-display';
+  document.getElementById('timer-stop').style.display = 'none';
+}
+
+// ---- 履歴・パネル ----
+function togglePanel(id) {
+  const panel = document.getElementById(id);
+  const isOpen = panel.classList.contains('open');
+  // 両方閉じる
+  document.getElementById('history-panel').classList.remove('open');
+  document.getElementById('fav-panel').classList.remove('open');
+  if (!isOpen) {
+    panel.classList.add('open');
+    if (id === 'history-panel') renderHistory();
+    if (id === 'fav-panel') renderFavPanel();
+  }
+}
+
+function renderHistory() {
+  const panel = document.getElementById('history-panel');
+  const levelLabel = { beginner: '初級', intermediate: '中級', advanced: '上級' };
+  if (sessionHistory.length === 0) {
+    panel.innerHTML = '<div class="panel-title">📋 今日使ったネタ</div><div class="empty-msg">まだネタを使っていません</div>';
+    return;
+  }
+  panel.innerHTML = '<div class="panel-title">📋 今日使ったネタ</div>' +
+    [...sessionHistory].reverse().map((item, i) => {
+      const tmp = document.createElement('div');
+      tmp.innerHTML = item.japanese;
+      return `<div class="history-item">
+        <span class="history-num">${sessionHistory.length - i}</span>
+        <span class="level-tag">${levelLabel[item.level]}</span>
+        <span>${tmp.textContent}</span>
+      </div>`;
+    }).join('');
+}
+
+function renderFavPanel() {
+  const panel = document.getElementById('fav-panel');
+  const levelLabel = { beginner: '初級', intermediate: '中級', advanced: '上級' };
+  if (favorites.length === 0) {
+    panel.innerHTML = '<div class="panel-title">⭐ お気に入り</div><div class="empty-msg">☆ を押してネタを保存できます</div>';
+    return;
+  }
+  panel.innerHTML = '<div class="panel-title">⭐ お気に入り</div>' +
+    favorites.map((item, i) => {
+      const tmp = document.createElement('div');
+      tmp.innerHTML = item.japanese;
+      return `<div class="fav-item">
+        <div class="fav-item-left">
+          <span class="level-tag">${levelLabel[item.level] || ''}</span>
+          <span>${tmp.textContent}</span>
+        </div>
+        <button class="fav-del" onclick="removeFav(${i})" title="削除">✕</button>
+      </div>`;
+    }).join('');
+}
+
+// 起動時にお気に入り件数を反映
+document.getElementById('fav-count').textContent = favorites.length;
 
 showTopic();
 </script>
