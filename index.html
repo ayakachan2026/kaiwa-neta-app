@@ -105,11 +105,6 @@
     .fav-btn { background: none; border: none; font-size: 1.8rem; cursor: pointer; padding: 4px; line-height: 1; transition: transform 0.2s; }
     .fav-btn:hover { transform: scale(1.2); }
 
-    /* 読み上げ */
-    .speak-row { display: flex; justify-content: flex-end; margin-top: -20px; margin-bottom: 20px; }
-    .speak-btn { background: none; border: 1.5px solid #d0e4f7; color: #4A90D9; padding: 6px 14px; border-radius: 999px; font-size: 0.85rem; cursor: pointer; font-family: inherit; transition: all 0.2s; }
-    .speak-btn:hover { background: #e8f0fb; }
-    .speak-btn.speaking { background: #e8f0fb; border-color: #4A90D9; }
 
     /* タイマー */
     .timer-section { display: flex; align-items: center; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
@@ -156,9 +151,6 @@
       <button class="fav-btn" id="fav-btn" onclick="toggleFavorite()" title="お気に入りに追加">☆</button>
     </div>
     <div class="topic-text" id="topic-text">ボタンを<ruby>押<rt>お</rt></ruby>してネタを<ruby>出<rt>だ</rt></ruby>してください。</div>
-    <div class="speak-row">
-      <button class="speak-btn" id="speak-btn" onclick="speak()">🔊 読み上げ</button>
-    </div>
 
     <div class="accordion">
       <button class="accordion-btn" id="eng-btn" onclick="toggleAccordion('eng')">
@@ -627,12 +619,6 @@ function showTopic() {
   // お気に入りボタン更新
   updateFavBtn();
 
-  // 読み上げ中なら停止
-  if (window.speechSynthesis && window.speechSynthesis.speaking) {
-    window.speechSynthesis.cancel();
-    document.getElementById('speak-btn').textContent = '🔊 読み上げ';
-    document.getElementById('speak-btn').classList.remove('speaking');
-  }
 }
 
 function toggleAccordion(type) {
@@ -687,26 +673,6 @@ function removeFav(idx) {
   renderFavPanel();
 }
 
-// ---- 音声読み上げ ----
-function speak() {
-  if (!currentTopicData) return;
-  const btn = document.getElementById('speak-btn');
-  if (window.speechSynthesis.speaking) {
-    window.speechSynthesis.cancel();
-    btn.textContent = '🔊 読み上げ';
-    btn.classList.remove('speaking');
-    return;
-  }
-  const tmp = document.createElement('div');
-  tmp.innerHTML = currentTopicData.japanese;
-  const text = tmp.textContent;
-  const utter = new SpeechSynthesisUtterance(text);
-  utter.lang = 'ja-JP';
-  utter.rate = 0.85;
-  utter.onstart = () => { btn.textContent = '⏹ 停止'; btn.classList.add('speaking'); };
-  utter.onend = () => { btn.textContent = '🔊 読み上げ'; btn.classList.remove('speaking'); };
-  window.speechSynthesis.speak(utter);
-}
 
 // ---- タイマー ----
 function startTimer(minutes) {
