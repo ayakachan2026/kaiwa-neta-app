@@ -35,6 +35,18 @@
     .level-btn:hover { border-color: #4A90D9; color: #4A90D9; }
     .level-btn.active { background: #4A90D9; border-color: #4A90D9; color: white; font-weight: bold; }
 
+    .category-selector {
+      display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap;
+      width: 100%; max-width: 680px; justify-content: center;
+    }
+    .cat-btn {
+      padding: 6px 16px; border: 2px solid #ddd; border-radius: 999px;
+      background: white; font-size: 0.82rem; cursor: pointer; color: #888;
+      transition: all 0.2s; font-family: inherit; white-space: nowrap;
+    }
+    .cat-btn:hover { border-color: #4A90D9; color: #4A90D9; }
+    .cat-btn.active { background: #f0f6ff; border-color: #4A90D9; color: #4A90D9; font-weight: bold; }
+
     .card {
       background: white;
       border-radius: 20px;
@@ -197,6 +209,8 @@
     <button class="level-btn" onclick="setLevel('intermediate', this)">中級</button>
     <button class="level-btn" onclick="setLevel('advanced', this)">上級</button>
   </div>
+
+  <div class="category-selector" id="cat-selector"></div>
 
   <div class="card">
     <div class="card-top">
@@ -637,11 +651,162 @@ const topics = {
       grammar: ["もし〜たら、〜したいです", "まず〜して、それから〜したいです", "〜に使いたいです"],
       followup: ["全部使いますか？貯金しますか？", "誰かにあげたいですか？", "今の生活は変えたいですか？"]
     }
+  ],
+  advanced: [
+    {
+      japanese: "「<ruby>努力<rt>どりょく</rt></ruby>」と「<ruby>才能<rt>さいのう</rt></ruby>」、どちらが<ruby>大切<rt>たいせつ</rt></ruby>だと<ruby>思<rt>おも</rt></ruby>いますか？",
+      english: "Which do you think is more important — effort or talent?",
+      vocab: ["努力 (effort)", "才能 (talent)", "成功 (success)", "可能性 (potential)", "伸びる (to grow)"],
+      grammar: ["〜の方が大切だと思います", "どちらかというと〜です", "〜があれば〜できると思います"],
+      followup: ["あなたはどちらだと思いますか？", "努力で才能を超えた経験はありますか？", "子どもにはどちらを教えたいですか？"]
+    },
+    {
+      japanese: "テクノロジーは<ruby>人間<rt>にんげん</rt></ruby>を<ruby>幸福<rt>こうふく</rt></ruby>にしていると<ruby>思<rt>おも</rt></ruby>いますか？",
+      english: "Do you think technology is making people happier?",
+      vocab: ["テクノロジー (technology)", "幸福 (happiness)", "便利 (convenient)", "依存 (dependence)", "影響 (influence)"],
+      grammar: ["〜していると思います", "〜一方で〜でもあります", "〜という側面もあります"],
+      followup: ["どんな技術が特に生活を変えましたか？", "テクノロジーの危険性はどこにありますか？", "人間にしかできないことは何だと思いますか？"]
+    },
+    {
+      japanese: "「<ruby>失敗<rt>しっぱい</rt></ruby>」から<ruby>学<rt>まな</rt></ruby>んだことを<ruby>教<rt>おし</rt></ruby>えてください。",
+      english: "Tell me something you learned from a failure.",
+      vocab: ["失敗 (failure)", "学ぶ (to learn)", "経験 (experience)", "後悔 (regret)", "成長 (growth)"],
+      grammar: ["〜から学びました", "その経験があって〜になりました", "今思えば〜だったと思います"],
+      followup: ["その経験はいつのことですか？", "同じ失敗をしないためにどうしましたか？", "失敗を恐れる方ですか？"]
+    },
+    {
+      japanese: "あなたにとって「<ruby>成功<rt>せいこう</rt></ruby>」とはどういう<ruby>意味<rt>いみ</rt></ruby>ですか？",
+      english: "What does 'success' mean to you?",
+      vocab: ["成功 (success)", "幸せ (happiness)", "達成感 (sense of accomplishment)", "目標 (goal)", "価値観 (values)"],
+      grammar: ["〜だと考えています", "私にとって〜とは〜です", "〜よりも〜の方が大切だと思います"],
+      followup: ["今の自分は成功していると思いますか？", "社会的な成功と個人的な成功は違いますか？", "成功の定義は変わりましたか？"]
+    },
+    {
+      japanese: "「<ruby>伝統<rt>でんとう</rt></ruby>」と「<ruby>革新<rt>かくしん</rt></ruby>」、どちらを<ruby>大切<rt>たいせつ</rt></ruby>にすべきだと<ruby>思<rt>おも</rt></ruby>いますか？",
+      english: "Which do you think should be valued more — tradition or innovation?",
+      vocab: ["伝統 (tradition)", "革新 (innovation)", "変化 (change)", "継承 (inheritance)", "価値 (value)"],
+      grammar: ["〜を守ることも大切だと思います", "〜しながらも〜することができます", "両方のバランスが〜です"],
+      followup: ["あなたの文化で大切にしている伝統はありますか？", "変えるべきだと思う習慣はありますか？", "日本の伝統で印象的なものは何ですか？"]
+    },
+    {
+      japanese: "<ruby>働<rt>はたら</rt></ruby>くことの<ruby>意味<rt>いみ</rt></ruby>は<ruby>何<rt>なん</rt></ruby>だと<ruby>思<rt>おも</rt></ruby>いますか？",
+      english: "What do you think is the meaning of working?",
+      vocab: ["働く (to work)", "生きがい (purpose)", "報酬 (reward)", "社会貢献 (social contribution)", "やりがい (fulfillment)"],
+      grammar: ["〜のために働いています", "〜だけでなく〜も大切です", "〜という意味があると思います"],
+      followup: ["理想の仕事とはどんなものですか？", "お金のためだけに働けますか？", "仕事と人生、どちらが中心ですか？"]
+    },
+    {
+      japanese: "SNSが<ruby>人々<rt>ひとびと</rt></ruby>の<ruby>生活<rt>せいかつ</rt></ruby>に<ruby>与<rt>あた</rt></ruby>える<ruby>影響<rt>えいきょう</rt></ruby>についてどう<ruby>思<rt>おも</rt></ruby>いますか？",
+      english: "What do you think about the impact of social media on people's lives?",
+      vocab: ["SNS (social media)", "影響 (impact)", "つながり (connection)", "依存 (dependence)", "孤独 (loneliness)"],
+      grammar: ["〜に影響を与えていると思います", "〜という問題がある一方で〜もあります", "〜を使いすぎると〜になります"],
+      followup: ["SNSのポジティブな面は何ですか？", "使用時間を意識していますか？", "SNSがなくなったらどうなると思いますか？"]
+    },
+    {
+      japanese: "「<ruby>孤独<rt>こどく</rt></ruby>」を<ruby>感<rt>かん</rt></ruby>じることはありますか？どう<ruby>向<rt>む</rt></ruby>き<ruby>合<rt>あ</rt></ruby>っていますか？",
+      english: "Do you ever feel lonely? How do you deal with it?",
+      vocab: ["孤独 (loneliness)", "孤立 (isolation)", "一人の時間 (alone time)", "向き合う (to face/deal with)", "内省 (self-reflection)"],
+      grammar: ["〜と感じることがあります", "〜ことで気持ちが楽になります", "孤独と孤立は〜と思います"],
+      followup: ["一人の時間は好きですか？", "孤独を感じる状況はどんなときですか？", "孤独は悪いことだと思いますか？"]
+    },
+    {
+      japanese: "<ruby>言語<rt>げんご</rt></ruby>を<ruby>学<rt>まな</rt></ruby>ぶと、<ruby>世界<rt>せかい</rt></ruby>の<ruby>見<rt>み</rt></ruby>え<ruby>方<rt>かた</rt></ruby>はどう<ruby>変<rt>か</rt></ruby>わりますか？",
+      english: "How does learning a language change the way you see the world?",
+      vocab: ["言語 (language)", "視点 (perspective)", "思考 (thinking)", "文化 (culture)", "アイデンティティ (identity)"],
+      grammar: ["〜ようになりました", "〜てみて初めて〜がわかりました", "言語と文化は〜と思います"],
+      followup: ["どの言語が世界観を一番変えましたか？", "母語と外国語で考え方は違いますか？", "言語が消えると何が失われると思いますか？"]
+    },
+    {
+      japanese: "「お<ruby>金<rt>かね</rt></ruby>」と「<ruby>時間<rt>じかん</rt></ruby>」、どちらが<ruby>大切<rt>たいせつ</rt></ruby>ですか？",
+      english: "Which is more important to you — money or time?",
+      vocab: ["お金 (money)", "時間 (time)", "豊かさ (richness)", "自由 (freedom)", "バランス (balance)"],
+      grammar: ["〜の方が大切だと思います", "〜があれば〜ができます", "どちらも大切ですが〜の方が〜です"],
+      followup: ["時間を買うためにお金を使いますか？", "お金が十分あっても働きたいですか？", "理想の時間の使い方は何ですか？"]
+    },
+    {
+      japanese: "<ruby>環境問題<rt>かんきょうもんだい</rt></ruby>についてどう<ruby>思<rt>おも</rt></ruby>いますか？<ruby>個人<rt>こじん</rt></ruby>にできることは<ruby>何<rt>なん</rt></ruby>ですか？",
+      english: "What do you think about environmental issues? What can individuals do?",
+      vocab: ["環境問題 (environmental issues)", "気候変動 (climate change)", "再生可能エネルギー (renewable energy)", "節約 (conservation)", "責任 (responsibility)"],
+      grammar: ["〜に取り組むことが大切だと思います", "個人レベルでは〜できます", "〜しないと〜になると思います"],
+      followup: ["日常でエコな行動をしていますか？", "個人の努力と政策、どちらが重要だと思いますか？", "未来の世代のために何ができますか？"]
+    },
+    {
+      japanese: "「<ruby>仕事<rt>しごと</rt></ruby>」と「<ruby>家族<rt>かぞく</rt></ruby>」のバランスについてどう<ruby>思<rt>おも</rt></ruby>いますか？",
+      english: "What do you think about work-life balance?",
+      vocab: ["仕事 (work)", "家族 (family)", "バランス (balance)", "優先 (priority)", "充実 (fulfillment)"],
+      grammar: ["〜を優先したいと思っています", "〜と〜のバランスをとることが〜です", "理想は〜ですが現実は〜です"],
+      followup: ["今のバランスに満足していますか？", "残業は当たり前だと思いますか？", "仕事のために家族を犠牲にした経験はありますか？"]
+    },
+    {
+      japanese: "<ruby>日本<rt>にほん</rt></ruby>と<ruby>自分<rt>じぶん</rt></ruby>の<ruby>国<rt>くに</rt></ruby>の<ruby>教育<rt>きょういく</rt></ruby>の<ruby>違<rt>ちが</rt></ruby>いをどう<ruby>見<rt>み</rt></ruby>ていますか？",
+      english: "How do you see the differences between education in Japan and in your country?",
+      vocab: ["教育 (education)", "学校 (school)", "受験 (exam)", "自由 (freedom)", "創造性 (creativity)"],
+      grammar: ["〜と比べると〜です", "日本の教育の特徴は〜だと思います", "〜という点では〜が優れていると思います"],
+      followup: ["どちらの教育の方が好きですか？", "子どもにはどんな教育を受けさせたいですか？", "学校では何が一番重要だと思いますか？"]
+    },
+    {
+      japanese: "これまでの<ruby>人生<rt>じんせい</rt></ruby>で、もっとも<ruby>影響<rt>えいきょう</rt></ruby>を<ruby>受<rt>う</rt></ruby>けた<ruby>人物<rt>じんぶつ</rt></ruby>は<ruby>誰<rt>だれ</rt></ruby>ですか？",
+      english: "Who has had the greatest influence on your life so far?",
+      vocab: ["影響 (influence)", "尊敬 (respect)", "教え (teaching)", "出会い (encounter)", "変える (to change)"],
+      grammar: ["〜に大きな影響を受けました", "〜がいなければ〜はなかったと思います", "〜から〜ということを学びました"],
+      followup: ["その人から何を学びましたか？", "直接会ったことがある人ですか？", "あなたも誰かに影響を与えたいですか？"]
+    },
+    {
+      japanese: "「<ruby>幸<rt>しあわ</rt></ruby>せ」とは<ruby>何<rt>なん</rt></ruby>だと<ruby>思<rt>おも</rt></ruby>いますか？",
+      english: "What do you think happiness is?",
+      vocab: ["幸せ (happiness)", "満足 (satisfaction)", "豊かさ (richness)", "つながり (connection)", "瞬間 (moment)"],
+      grammar: ["〜だと思います", "幸せとは〜ではないかと思います", "〜があるとき幸せを感じます"],
+      followup: ["今、幸せですか？", "お金と幸せの関係をどう思いますか？", "幸せの定義は変わりましたか？"]
+    },
+    {
+      japanese: "<ruby>人工知能<rt>じんこうちのう</rt></ruby>（AI）の<ruby>発展<rt>はってん</rt></ruby>についてどう<ruby>感<rt>かん</rt></ruby>じますか？",
+      english: "How do you feel about the development of artificial intelligence (AI)?",
+      vocab: ["人工知能 (artificial intelligence)", "発展 (development)", "自動化 (automation)", "仕事 (work)", "可能性 (potential)"],
+      grammar: ["〜に期待している反面〜が心配です", "〜によって〜が変わると思います", "〜は人間には〜できないと思います"],
+      followup: ["AIが得意なことと苦手なことは何ですか？", "AIに代替されると思う仕事は何ですか？", "AI時代に人間が持つべき能力は何だと思いますか？"]
+    },
+    {
+      japanese: "「<ruby>許<rt>ゆる</rt></ruby>す」ことについて、あなたはどう<ruby>考<rt>かんが</rt></ruby>えますか？",
+      english: "What are your thoughts on forgiveness?",
+      vocab: ["許す (to forgive)", "怒り (anger)", "関係 (relationship)", "手放す (to let go)", "癒し (healing)"],
+      grammar: ["〜を許すことで〜になれると思います", "〜しても〜は難しいこともあります", "許すことと忘れることは〜と思います"],
+      followup: ["許せないことがありますか？", "自分を許すことと人を許すこと、どちらが難しいですか？", "許すことは強さだと思いますか？"]
+    },
+    {
+      japanese: "グローバル<ruby>化<rt>か</rt></ruby>は<ruby>文化<rt>ぶんか</rt></ruby>の<ruby>多様性<rt>たようせい</rt></ruby>を<ruby>守<rt>まも</rt></ruby>れると<ruby>思<rt>おも</rt></ruby>いますか？",
+      english: "Do you think globalization can preserve cultural diversity?",
+      vocab: ["グローバル化 (globalization)", "文化 (culture)", "多様性 (diversity)", "均質化 (homogenization)", "アイデンティティ (identity)"],
+      grammar: ["〜できると思います", "〜一方で〜という懸念もあります", "〜を守るためには〜が必要だと思います"],
+      followup: ["グローバル化で失われていると感じる文化はありますか？", "あなたの文化のアイデンティティは何ですか？", "異文化が混ざることはよいことだと思いますか？"]
+    },
+    {
+      japanese: "<ruby>理想<rt>りそう</rt></ruby>のキャリアとはどのようなものですか？",
+      english: "What does your ideal career look like?",
+      vocab: ["キャリア (career)", "理想 (ideal)", "専門性 (expertise)", "成長 (growth)", "やりがい (fulfillment)"],
+      grammar: ["〜たいと思っています", "理想は〜ですが〜も大切だと思います", "〜を通じて〜したいと考えています"],
+      followup: ["今の仕事はその理想に近いですか？", "お金のため？やりがいのため？", "5年後どんな仕事をしていたいですか？"]
+    },
+    {
+      japanese: "<ruby>日本語<rt>にほんご</rt></ruby>を<ruby>学<rt>まな</rt></ruby>ぶ<ruby>中<rt>なか</rt></ruby>で、<ruby>自分<rt>じぶん</rt></ruby>について<ruby>何<rt>なに</rt></ruby>か<ruby>気<rt>き</rt></ruby>づいたことはありますか？",
+      english: "While learning Japanese, have you noticed anything new about yourself?",
+      vocab: ["気づく (to notice)", "言語 (language)", "価値観 (values)", "アイデンティティ (identity)", "視点 (perspective)"],
+      grammar: ["〜ことに気づきました", "〜てみて〜がわかりました", "日本語を学ぶことで〜になりました"],
+      followup: ["母語と日本語では考え方が違いますか？", "日本語を話すとき、自分が変わる気がしますか？", "言語は性格に影響すると思いますか？"]
+    }
   ]
 };
 
+const topicCategories = {
+  beginner:     ['food','food','daily','hobby','daily','daily','hobby','food','daily','hobby','hobby','hobby','food','daily','daily','daily','daily','hobby','travel','family'],
+  intermediate: ['hobby','thoughts','hobby','travel','hobby','work','culture','hobby','hobby','travel','thoughts','food','hobby','hobby','hobby','thoughts','travel','thoughts','thoughts','thoughts'],
+  advanced:     ['thoughts','culture','thoughts','thoughts','culture','work','culture','thoughts','thoughts','thoughts','culture','work','culture','thoughts','thoughts','culture','thoughts','culture','work','thoughts']
+};
+const categoryLabels = { all: 'すべて', food: '食べ物', daily: '日常', hobby: '趣味', travel: '旅行', family: '家族', thoughts: '考え方', work: '仕事', culture: '文化' };
+const allCatOrder = ['all','food','daily','hobby','travel','family','thoughts','work','culture'];
+
 let currentLevel = 'beginner';
-let usedIndices = [];
+let currentCategory = 'all';
+let usedTopics = new Set();
 let currentTopicData = null;
 let sessionHistory = [];
 let favorites = JSON.parse(localStorage.getItem('kaiwa_favs') || '[]');
@@ -653,20 +818,45 @@ function setLevel(level, btn) {
     return;
   }
   currentLevel = level;
-  usedIndices = [];
+  currentCategory = 'all';
+  usedTopics.clear();
   document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
+  updateCategoryButtons();
   showTopic();
 }
 
-function getRandomTopic() {
+function getFilteredPool() {
   const pool = topics[currentLevel];
-  if (usedIndices.length >= pool.length) usedIndices = [];
-  let idx;
-  do { idx = Math.floor(Math.random() * pool.length); }
-  while (usedIndices.includes(idx));
-  usedIndices.push(idx);
-  return pool[idx];
+  if (currentCategory === 'all') return pool;
+  const cats = topicCategories[currentLevel];
+  const filtered = pool.filter((_, i) => cats[i] === currentCategory);
+  return filtered.length > 0 ? filtered : pool;
+}
+
+function getRandomTopic() {
+  const pool = getFilteredPool();
+  let available = pool.filter(t => !usedTopics.has(t.japanese));
+  if (available.length === 0) { usedTopics.clear(); available = [...pool]; }
+  const topic = available[Math.floor(Math.random() * available.length)];
+  usedTopics.add(topic.japanese);
+  return topic;
+}
+
+function setCategory(cat) {
+  currentCategory = cat;
+  usedTopics.clear();
+  updateCategoryButtons();
+  showTopic();
+}
+
+function updateCategoryButtons() {
+  const cats = topicCategories[currentLevel];
+  const usedCats = new Set(cats);
+  const available = allCatOrder.filter(c => c === 'all' || usedCats.has(c));
+  document.getElementById('cat-selector').innerHTML = available.map(cat =>
+    `<button class="cat-btn${currentCategory === cat ? ' active' : ''}" onclick="setCategory('${cat}')">${categoryLabels[cat]}</button>`
+  ).join('');
 }
 
 function showTopic() {
@@ -692,9 +882,12 @@ function showTopic() {
   closeAll();
 
   const levelLabel = { beginner: '初級', intermediate: '中級', advanced: '上級' };
-  const pool = topics[currentLevel];
-  document.getElementById('topic-count').textContent =
-    `${levelLabel[currentLevel]} / 全${pool.length}問`;
+  const filteredPool = getFilteredPool();
+  const totalCount = topics[currentLevel].length;
+  const countText = currentCategory === 'all'
+    ? `${levelLabel[currentLevel]} / 全${totalCount}問`
+    : `${levelLabel[currentLevel]} / ${categoryLabels[currentCategory]} ${filteredPool.length}問`;
+  document.getElementById('topic-count').textContent = countText;
 
   sessionHistory.push({ japanese: topic.japanese, level: currentLevel });
   document.getElementById('history-count').textContent = sessionHistory.length;
@@ -866,7 +1059,7 @@ function renderFavPanel() {
 
 // 起動時にお気に入り件数を反映
 document.getElementById('fav-count').textContent = favorites.length;
-
+updateCategoryButtons();
 showTopic();
 </script>
 </body>
