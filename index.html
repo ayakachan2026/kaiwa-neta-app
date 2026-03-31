@@ -190,6 +190,12 @@
     }
     .modal-usage rt { font-size: 0.55em; color: #888; }
     .modal-usage-en { font-size: 0.85rem; color: #999; margin-top: 4px; line-height: 1.5; }
+    .modal-structure {
+      font-size: 1rem; font-family: monospace;
+      color: #3a6ea8; background: #eef3fb;
+      border-radius: 10px; padding: 10px 16px;
+      margin-bottom: 20px; letter-spacing: 0.02em;
+    }
     .modal-examples { display: flex; flex-direction: column; gap: 8px; }
     .modal-example {
       font-size: 1.05rem; color: #333;
@@ -279,6 +285,8 @@
     <div class="modal-box">
       <button class="modal-close" onclick="closeGrammarModal()">✕</button>
       <div class="modal-pattern" id="modal-pattern"></div>
+      <div class="modal-section-label" id="modal-structure-label" style="display:none"></div>
+      <div class="modal-structure" id="modal-structure" style="display:none"></div>
       <div class="modal-section-label">📖 使い方</div>
       <div class="modal-usage" id="modal-usage"></div>
       <div class="modal-section-label">💬 例文</div>
@@ -294,9 +302,9 @@ const topics = {
       english: "What did you have for breakfast today?",
       vocab: ["朝ごはん (breakfast)", "食べる (to eat)", "おいしい (delicious)", "〜が好き (like ~)"],
       grammar: [
-        { pattern: "〜を食べました", usage: "<ruby>過去<rt>かこ</rt></ruby>に<ruby>食<rt>た</rt></ruby>べたものを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used when saying what you ate in the past", examples: ["パンを<ruby>食<rt>た</rt></ruby>べました。", "たまごを<ruby>食<rt>た</rt></ruby>べました。", "ごはんを<ruby>食<rt>た</rt></ruby>べました。"], examples_en: ["I ate bread.", "I ate eggs.", "I ate rice."] },
-        { pattern: "〜が好きです", usage: "<ruby>好<rt>す</rt></ruby>きなものを<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say what you like", examples: ["コーヒーが<ruby>好<rt>す</rt></ruby>きです。", "パンが<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like coffee.", "I like bread."] },
-        { pattern: "毎朝〜します", usage: "<ruby>毎朝<rt>まいあさ</rt></ruby>する<ruby>習慣<rt>しゅうかん</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what you do every morning (habit)", examples: ["<ruby>毎朝<rt>まいあさ</rt></ruby>コーヒーを<ruby>飲<rt>の</rt></ruby>みます。", "<ruby>毎朝<rt>まいあさ</rt></ruby>シャワーを<ruby>浴<rt>あ</rt></ruby>びます。"], examples_en: ["I drink coffee every morning.", "I take a shower every morning."] }
+        { pattern: "〜を食べました", structure: "noun + を + 食べました", usage: "<ruby>過去<rt>かこ</rt></ruby>に<ruby>食<rt>た</rt></ruby>べたものを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used when saying what you ate in the past", examples: ["パンを<ruby>食<rt>た</rt></ruby>べました。", "たまごを<ruby>食<rt>た</rt></ruby>べました。", "ごはんを<ruby>食<rt>た</rt></ruby>べました。"], examples_en: ["I ate bread.", "I ate eggs.", "I ate rice."] },
+        { pattern: "〜が好きです", structure: "noun + が + 好きです", usage: "<ruby>好<rt>す</rt></ruby>きなものを<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say what you like", examples: ["コーヒーが<ruby>好<rt>す</rt></ruby>きです。", "パンが<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like coffee.", "I like bread."] },
+        { pattern: "毎朝〜します", structure: "毎朝 + verb (present)", usage: "<ruby>毎朝<rt>まいあさ</rt></ruby>する<ruby>習慣<rt>しゅうかん</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what you do every morning (habit)", examples: ["<ruby>毎朝<rt>まいあさ</rt></ruby>コーヒーを<ruby>飲<rt>の</rt></ruby>みます。", "<ruby>毎朝<rt>まいあさ</rt></ruby>シャワーを<ruby>浴<rt>あ</rt></ruby>びます。"], examples_en: ["I drink coffee every morning.", "I take a shower every morning."] }
       ],
       followup: ["毎朝食べますか？", "一番好きな朝ごはんは何ですか？", "朝ごはんを自分で作りますか？"]
     },
@@ -305,9 +313,9 @@ const topics = {
       english: "What is your favorite food?",
       vocab: ["好き (favorite/like)", "食べ物 (food)", "甘い (sweet)", "辛い (spicy)", "おいしい (delicious)"],
       grammar: [
-        { pattern: "〜が好きです", usage: "<ruby>好<rt>す</rt></ruby>きなものを<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say what you like", examples: ["すしが<ruby>好<rt>す</rt></ruby>きです。", "ラーメンが<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like sushi.", "I like ramen."] },
-        { pattern: "〜は〜です", usage: "ものの<ruby>特徴<rt>とくちょう</rt></ruby>や<ruby>説明<rt>せつめい</rt></ruby>をするとき", usage_en: "Used to describe characteristics or explain what something is", examples: ["りんごは<ruby>甘<rt>あま</rt></ruby>いです。", "この<ruby>料理<rt>りょうり</rt></ruby>はおいしいです。"], examples_en: ["Apples are sweet.", "This dish is delicious."] },
-        { pattern: "一番好きなのは〜です", usage: "<ruby>一番<rt>いちばん</rt></ruby><ruby>好<rt>す</rt></ruby>きなものを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say your absolute favorite", examples: ["<ruby>一番<rt>いちばん</rt></ruby><ruby>好<rt>す</rt></ruby>きなのはラーメンです。", "<ruby>一番<rt>いちばん</rt></ruby><ruby>好<rt>す</rt></ruby>きなのはチョコレートです。"], examples_en: ["My favorite is ramen.", "My favorite is chocolate."] }
+        { pattern: "〜が好きです", structure: "noun + が + 好きです", usage: "<ruby>好<rt>す</rt></ruby>きなものを<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say what you like", examples: ["すしが<ruby>好<rt>す</rt></ruby>きです。", "ラーメンが<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like sushi.", "I like ramen."] },
+        { pattern: "〜は〜です", structure: "noun + は + noun/adjective + です", usage: "ものの<ruby>特徴<rt>とくちょう</rt></ruby>や<ruby>説明<rt>せつめい</rt></ruby>をするとき", usage_en: "Used to describe characteristics or explain what something is", examples: ["りんごは<ruby>甘<rt>あま</rt></ruby>いです。", "この<ruby>料理<rt>りょうり</rt></ruby>はおいしいです。"], examples_en: ["Apples are sweet.", "This dish is delicious."] },
+        { pattern: "一番好きなのは〜です", structure: "一番好きなのは + noun + です", usage: "<ruby>一番<rt>いちばん</rt></ruby><ruby>好<rt>す</rt></ruby>きなものを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say your absolute favorite", examples: ["<ruby>一番<rt>いちばん</rt></ruby><ruby>好<rt>す</rt></ruby>きなのはラーメンです。", "<ruby>一番<rt>いちばん</rt></ruby><ruby>好<rt>す</rt></ruby>きなのはチョコレートです。"], examples_en: ["My favorite is ramen.", "My favorite is chocolate."] }
       ],
       followup: ["よく食べますか？", "自分で作れますか？", "子どもの頃から好きでしたか？"]
     },
@@ -316,9 +324,9 @@ const topics = {
       english: "How is the weather today?",
       vocab: ["天気 (weather)", "晴れ (sunny)", "雨 (rain)", "曇り (cloudy)", "寒い (cold)", "暑い (hot)"],
       grammar: [
-        { pattern: "今日は〜です", usage: "<ruby>今日<rt>きょう</rt></ruby>の<ruby>状態<rt>じょうたい</rt></ruby>・<ruby>天気<rt>てんき</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to describe today's condition or weather", examples: ["<ruby>今日<rt>きょう</rt></ruby>は<ruby>晴<rt>は</rt></ruby>れです。", "<ruby>今日<rt>きょう</rt></ruby>は<ruby>寒<rt>さむ</rt></ruby>いです。"], examples_en: ["It's sunny today.", "It's cold today."] },
-        { pattern: "〜ですね", usage: "<ruby>相手<rt>あいて</rt></ruby>に<ruby>共感<rt>きょうかん</rt></ruby>・<ruby>確認<rt>かくにん</rt></ruby>するとき", usage_en: "Used to agree with or seek confirmation from the other person", examples: ["いい<ruby>天気<rt>てんき</rt></ruby>ですね。", "<ruby>今日<rt>きょう</rt></ruby>は<ruby>暑<rt>あつ</rt></ruby>いですね。"], examples_en: ["Nice weather, isn't it?", "It's hot today, isn't it?"] },
-        { pattern: "〜と思います", usage: "<ruby>自分<rt>じぶん</rt></ruby>の<ruby>意見<rt>いけん</rt></ruby>や<ruby>予想<rt>よそう</rt></ruby>を<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to express your opinion or prediction", examples: ["<ruby>明日<rt>あした</rt></ruby>は<ruby>雨<rt>あめ</rt></ruby>だと<ruby>思<rt>おも</rt></ruby>います。", "<ruby>今日<rt>きょう</rt></ruby>は<ruby>暑<rt>あつ</rt></ruby>いと<ruby>思<rt>おも</rt></ruby>います。"], examples_en: ["I think it will rain tomorrow.", "I think it's hot today."] }
+        { pattern: "今日は〜です", structure: "noun/adjective + です", usage: "<ruby>今日<rt>きょう</rt></ruby>の<ruby>状態<rt>じょうたい</rt></ruby>・<ruby>天気<rt>てんき</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to describe today's condition or weather", examples: ["<ruby>今日<rt>きょう</rt></ruby>は<ruby>晴<rt>は</rt></ruby>れです。", "<ruby>今日<rt>きょう</rt></ruby>は<ruby>寒<rt>さむ</rt></ruby>いです。"], examples_en: ["It's sunny today.", "It's cold today."] },
+        { pattern: "〜ですね", structure: "sentence + ですね", usage: "<ruby>相手<rt>あいて</rt></ruby>に<ruby>共感<rt>きょうかん</rt></ruby>・<ruby>確認<rt>かくにん</rt></ruby>するとき", usage_en: "Used to agree with or seek confirmation from the other person", examples: ["いい<ruby>天気<rt>てんき</rt></ruby>ですね。", "<ruby>今日<rt>きょう</rt></ruby>は<ruby>暑<rt>あつ</rt></ruby>いですね。"], examples_en: ["Nice weather, isn't it?", "It's hot today, isn't it?"] },
+        { pattern: "〜と思います", structure: "short form + と思います", usage: "<ruby>自分<rt>じぶん</rt></ruby>の<ruby>意見<rt>いけん</rt></ruby>や<ruby>予想<rt>よそう</rt></ruby>を<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to express your opinion or prediction", examples: ["<ruby>明日<rt>あした</rt></ruby>は<ruby>雨<rt>あめ</rt></ruby>だと<ruby>思<rt>おも</rt></ruby>います。", "<ruby>今日<rt>きょう</rt></ruby>は<ruby>暑<rt>あつ</rt></ruby>いと<ruby>思<rt>おも</rt></ruby>います。"], examples_en: ["I think it will rain tomorrow.", "I think it's hot today."] }
       ],
       followup: ["好きな天気はどれですか？", "雨の日は何をしますか？", "あなたの国の天気はどうですか？"]
     },
@@ -327,9 +335,9 @@ const topics = {
       english: "What did you do on the weekend?",
       vocab: ["週末 (weekend)", "映画 (movie)", "買い物 (shopping)", "友達 (friend)", "家 (home)"],
       grammar: [
-        { pattern: "〜をしました", usage: "<ruby>過去<rt>かこ</rt></ruby>にしたことを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what you did in the past", examples: ["<ruby>買<rt>か</rt></ruby>い<ruby>物<rt>もの</rt></ruby>をしました。", "<ruby>映画<rt>えいが</rt></ruby>を<ruby>見<rt>み</rt></ruby>ました。"], examples_en: ["I went shopping.", "I watched a movie."] },
-        { pattern: "〜に行きました", usage: "<ruby>過去<rt>かこ</rt></ruby>に<ruby>行<rt>い</rt></ruby>った<ruby>場所<rt>ばしょ</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say a place you went to in the past", examples: ["<ruby>公園<rt>こうえん</rt></ruby>に<ruby>行<rt>い</rt></ruby>きました。", "スーパーに<ruby>行<rt>い</rt></ruby>きました。"], examples_en: ["I went to the park.", "I went to the supermarket."] },
-        { pattern: "〜で〜しました", usage: "どこで<ruby>何<rt>なに</rt></ruby>をしたかを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say where you did something", examples: ["<ruby>家<rt>いえ</rt></ruby>で<ruby>映画<rt>えいが</rt></ruby>を<ruby>見<rt>み</rt></ruby>ました。", "<ruby>図書館<rt>としょかん</rt></ruby>で<ruby>勉強<rt>べんきょう</rt></ruby>しました。"], examples_en: ["I watched a movie at home.", "I studied at the library."] }
+        { pattern: "〜をしました", structure: "noun + を + しました", usage: "<ruby>過去<rt>かこ</rt></ruby>にしたことを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what you did in the past", examples: ["<ruby>買<rt>か</rt></ruby>い<ruby>物<rt>もの</rt></ruby>をしました。", "<ruby>映画<rt>えいが</rt></ruby>を<ruby>見<rt>み</rt></ruby>ました。"], examples_en: ["I went shopping.", "I watched a movie."] },
+        { pattern: "〜に行きました", structure: "place + に + 行きました", usage: "<ruby>過去<rt>かこ</rt></ruby>に<ruby>行<rt>い</rt></ruby>った<ruby>場所<rt>ばしょ</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say a place you went to in the past", examples: ["<ruby>公園<rt>こうえん</rt></ruby>に<ruby>行<rt>い</rt></ruby>きました。", "スーパーに<ruby>行<rt>い</rt></ruby>きました。"], examples_en: ["I went to the park.", "I went to the supermarket."] },
+        { pattern: "〜で〜しました", structure: "place + で + verb (past)", usage: "どこで<ruby>何<rt>なに</rt></ruby>をしたかを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say where you did something", examples: ["<ruby>家<rt>いえ</rt></ruby>で<ruby>映画<rt>えいが</rt></ruby>を<ruby>見<rt>み</rt></ruby>ました。", "<ruby>図書館<rt>としょかん</rt></ruby>で<ruby>勉強<rt>べんきょう</rt></ruby>しました。"], examples_en: ["I watched a movie at home.", "I studied at the library."] }
       ],
       followup: ["誰と行きましたか？", "楽しかったですか？", "また行きたいですか？"]
     },
@@ -338,9 +346,9 @@ const topics = {
       english: "What is your favorite season?",
       vocab: ["春 (spring)", "夏 (summer)", "秋 (autumn)", "冬 (winter)", "好き (like)"],
       grammar: [
-        { pattern: "〜が好きです", usage: "<ruby>好<rt>す</rt></ruby>きなものを<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say what you like", examples: ["<ruby>春<rt>はる</rt></ruby>が<ruby>好<rt>す</rt></ruby>きです。", "<ruby>冬<rt>ふゆ</rt></ruby>が<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like spring.", "I like winter."] },
-        { pattern: "〜は〜からです", usage: "<ruby>理由<rt>りゆう</rt></ruby>を<ruby>説明<rt>せつめい</rt></ruby>するとき（〜が<ruby>好<rt>す</rt></ruby>きなのは〜からです）", usage_en: "Used to explain the reason (The reason I like 〜 is because 〜)", examples: ["<ruby>春<rt>はる</rt></ruby>が<ruby>好<rt>す</rt></ruby>きなのは<ruby>桜<rt>さくら</rt></ruby>がきれいだからです。", "<ruby>夏<rt>なつ</rt></ruby>が<ruby>好<rt>す</rt></ruby>きなのは<ruby>海<rt>うみ</rt></ruby>に<ruby>行<rt>い</rt></ruby>けるからです。"], examples_en: ["I like spring because the cherry blossoms are beautiful.", "I like summer because I can go to the beach."] },
-        { pattern: "〜のとき、〜します", usage: "ある<ruby>季節<rt>きせつ</rt></ruby>・<ruby>時期<rt>じき</rt></ruby>にすることを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what you do during a certain season or time", examples: ["<ruby>冬<rt>ふゆ</rt></ruby>のとき、スキーをします。", "<ruby>夏<rt>なつ</rt></ruby>のとき、<ruby>海<rt>うみ</rt></ruby>に<ruby>行<rt>い</rt></ruby>きます。"], examples_en: ["In winter, I go skiing.", "In summer, I go to the beach."] }
+        { pattern: "〜が好きです", structure: "noun + が + 好きです", usage: "<ruby>好<rt>す</rt></ruby>きなものを<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say what you like", examples: ["<ruby>春<rt>はる</rt></ruby>が<ruby>好<rt>す</rt></ruby>きです。", "<ruby>冬<rt>ふゆ</rt></ruby>が<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like spring.", "I like winter."] },
+        { pattern: "〜は〜からです", structure: "noun + は + [reason] + からです", usage: "<ruby>理由<rt>りゆう</rt></ruby>を<ruby>説明<rt>せつめい</rt></ruby>するとき（〜が<ruby>好<rt>す</rt></ruby>きなのは〜からです）", usage_en: "Used to explain the reason (The reason I like 〜 is because 〜)", examples: ["<ruby>春<rt>はる</rt></ruby>が<ruby>好<rt>す</rt></ruby>きなのは<ruby>桜<rt>さくら</rt></ruby>がきれいだからです。", "<ruby>夏<rt>なつ</rt></ruby>が<ruby>好<rt>す</rt></ruby>きなのは<ruby>海<rt>うみ</rt></ruby>に<ruby>行<rt>い</rt></ruby>けるからです。"], examples_en: ["I like spring because the cherry blossoms are beautiful.", "I like summer because I can go to the beach."] },
+        { pattern: "〜のとき、〜します", structure: "noun + のとき、verb (present)", usage: "ある<ruby>季節<rt>きせつ</rt></ruby>・<ruby>時期<rt>じき</rt></ruby>にすることを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what you do during a certain season or time", examples: ["<ruby>冬<rt>ふゆ</rt></ruby>のとき、スキーをします。", "<ruby>夏<rt>なつ</rt></ruby>のとき、<ruby>海<rt>うみ</rt></ruby>に<ruby>行<rt>い</rt></ruby>きます。"], examples_en: ["In winter, I go skiing.", "In summer, I go to the beach."] }
       ],
       followup: ["その季節に何をしますか？", "一番嫌いな季節はいつですか？", "あなたの国にも四季がありますか？"]
     },
@@ -349,9 +357,9 @@ const topics = {
       english: "Do you have a pet?",
       vocab: ["ペット (pet)", "犬 (dog)", "猫 (cat)", "飼う (to keep/raise)", "かわいい (cute)"],
       grammar: [
-        { pattern: "〜がいます", usage: "<ruby>人<rt>ひと</rt></ruby>や<ruby>動物<rt>どうぶつ</rt></ruby>がいることを<ruby>言<rt>い</rt></ruby>うとき（<ruby>存在<rt>そんざい</rt></ruby>）", usage_en: "Used to say that a person or animal is present / exists", examples: ["<ruby>犬<rt>いぬ</rt></ruby>がいます。", "<ruby>猫<rt>ねこ</rt></ruby>が<ruby>二匹<rt>にひき</rt></ruby>います。"], examples_en: ["I have a dog.", "I have two cats."] },
-        { pattern: "〜を飼っています", usage: "ペットを<ruby>飼<rt>か</rt></ruby>っていることを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say you keep a pet", examples: ["<ruby>犬<rt>いぬ</rt></ruby>を<ruby>飼<rt>か</rt></ruby>っています。", "<ruby>金魚<rt>きんぎょ</rt></ruby>を<ruby>飼<rt>か</rt></ruby>っています。"], examples_en: ["I keep a dog.", "I keep goldfish."] },
-        { pattern: "〜はいません", usage: "<ruby>人<rt>ひと</rt></ruby>や<ruby>動物<rt>どうぶつ</rt></ruby>がいないことを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say a person or animal is not present", examples: ["ペットはいません。", "<ruby>猫<rt>ねこ</rt></ruby>はいません。"], examples_en: ["I don't have any pets.", "I don't have a cat."] }
+        { pattern: "〜がいます", structure: "noun + が + います", usage: "<ruby>人<rt>ひと</rt></ruby>や<ruby>動物<rt>どうぶつ</rt></ruby>がいることを<ruby>言<rt>い</rt></ruby>うとき（<ruby>存在<rt>そんざい</rt></ruby>）", usage_en: "Used to say that a person or animal is present / exists", examples: ["<ruby>犬<rt>いぬ</rt></ruby>がいます。", "<ruby>猫<rt>ねこ</rt></ruby>が<ruby>二匹<rt>にひき</rt></ruby>います。"], examples_en: ["I have a dog.", "I have two cats."] },
+        { pattern: "〜を飼っています", structure: "noun + を + 飼っています", usage: "ペットを<ruby>飼<rt>か</rt></ruby>っていることを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say you keep a pet", examples: ["<ruby>犬<rt>いぬ</rt></ruby>を<ruby>飼<rt>か</rt></ruby>っています。", "<ruby>金魚<rt>きんぎょ</rt></ruby>を<ruby>飼<rt>か</rt></ruby>っています。"], examples_en: ["I keep a dog.", "I keep goldfish."] },
+        { pattern: "〜はいません", structure: "noun + は + いません", usage: "<ruby>人<rt>ひと</rt></ruby>や<ruby>動物<rt>どうぶつ</rt></ruby>がいないことを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say a person or animal is not present", examples: ["ペットはいません。", "<ruby>猫<rt>ねこ</rt></ruby>はいません。"], examples_en: ["I don't have any pets.", "I don't have a cat."] }
       ],
       followup: ["名前は何ですか？", "どんな性格ですか？", "ペットを飼いたいですか？"]
     },
@@ -360,9 +368,9 @@ const topics = {
       english: "What are your hobbies?",
       vocab: ["趣味 (hobby)", "音楽 (music)", "読書 (reading)", "料理 (cooking)", "スポーツ (sports)"],
       grammar: [
-        { pattern: "趣味は〜です", usage: "<ruby>趣味<rt>しゅみ</rt></ruby>を<ruby>紹介<rt>しょうかい</rt></ruby>するとき", usage_en: "Used to introduce your hobby", examples: ["<ruby>趣味<rt>しゅみ</rt></ruby>は<ruby>読書<rt>どくしょ</rt></ruby>です。", "<ruby>趣味<rt>しゅみ</rt></ruby>は<ruby>料理<rt>りょうり</rt></ruby>です。"], examples_en: ["My hobby is reading.", "My hobby is cooking."] },
-        { pattern: "〜が好きです", usage: "<ruby>好<rt>す</rt></ruby>きなことを<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say what you like doing", examples: ["<ruby>音楽<rt>おんがく</rt></ruby>が<ruby>好<rt>す</rt></ruby>きです。", "<ruby>映画<rt>えいが</rt></ruby>が<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like music.", "I like movies."] },
-        { pattern: "よく〜します", usage: "<ruby>頻繁<rt>ひんぱん</rt></ruby>にすることを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say something you do frequently", examples: ["よく<ruby>映画<rt>えいが</rt></ruby>を<ruby>見<rt>み</rt></ruby>ます。", "よく<ruby>散歩<rt>さんぽ</rt></ruby>します。"], examples_en: ["I often watch movies.", "I often go for walks."] }
+        { pattern: "趣味は〜です", structure: "趣味は + noun + です", usage: "<ruby>趣味<rt>しゅみ</rt></ruby>を<ruby>紹介<rt>しょうかい</rt></ruby>するとき", usage_en: "Used to introduce your hobby", examples: ["<ruby>趣味<rt>しゅみ</rt></ruby>は<ruby>読書<rt>どくしょ</rt></ruby>です。", "<ruby>趣味<rt>しゅみ</rt></ruby>は<ruby>料理<rt>りょうり</rt></ruby>です。"], examples_en: ["My hobby is reading.", "My hobby is cooking."] },
+        { pattern: "〜が好きです", structure: "noun + が + 好きです", usage: "<ruby>好<rt>す</rt></ruby>きなことを<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say what you like doing", examples: ["<ruby>音楽<rt>おんがく</rt></ruby>が<ruby>好<rt>す</rt></ruby>きです。", "<ruby>映画<rt>えいが</rt></ruby>が<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like music.", "I like movies."] },
+        { pattern: "よく〜します", structure: "よく + verb (present)", usage: "<ruby>頻繁<rt>ひんぱん</rt></ruby>にすることを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say something you do frequently", examples: ["よく<ruby>映画<rt>えいが</rt></ruby>を<ruby>見<rt>み</rt></ruby>ます。", "よく<ruby>散歩<rt>さんぽ</rt></ruby>します。"], examples_en: ["I often watch movies.", "I often go for walks."] }
       ],
       followup: ["いつ始めましたか？", "どのくらいの頻度でしますか？", "友達と一緒にしますか？"]
     },
@@ -371,9 +379,9 @@ const topics = {
       english: "What is your favorite drink?",
       vocab: ["飲み物 (drink)", "コーヒー (coffee)", "お茶 (tea)", "水 (water)", "ジュース (juice)"],
       grammar: [
-        { pattern: "〜が好きです", usage: "<ruby>好<rt>す</rt></ruby>きなものを<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say what you like", examples: ["コーヒーが<ruby>好<rt>す</rt></ruby>きです。", "お<ruby>茶<rt>ちゃ</rt></ruby>が<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like coffee.", "I like tea."] },
-        { pattern: "毎日〜を飲みます", usage: "<ruby>毎日<rt>まいにち</rt></ruby><ruby>飲<rt>の</rt></ruby>むものを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what you drink every day", examples: ["<ruby>毎日<rt>まいにち</rt></ruby>コーヒーを<ruby>飲<rt>の</rt></ruby>みます。", "<ruby>毎日<rt>まいにち</rt></ruby><ruby>水<rt>みず</rt></ruby>を<ruby>飲<rt>の</rt></ruby>みます。"], examples_en: ["I drink coffee every day.", "I drink water every day."] },
-        { pattern: "〜より〜の方が好きです", usage: "２つを<ruby>比<rt>くら</rt></ruby>べて<ruby>好<rt>す</rt></ruby>きな<ruby>方<rt>ほう</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to compare two things and say which you prefer", examples: ["コーヒーよりお<ruby>茶<rt>ちゃ</rt></ruby>の<ruby>方<rt>ほう</rt></ruby>が<ruby>好<rt>す</rt></ruby>きです。", "ジュースより<ruby>水<rt>みず</rt></ruby>の<ruby>方<rt>ほう</rt></ruby>が<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like tea better than coffee.", "I like water better than juice."] }
+        { pattern: "〜が好きです", structure: "noun + が + 好きです", usage: "<ruby>好<rt>す</rt></ruby>きなものを<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say what you like", examples: ["コーヒーが<ruby>好<rt>す</rt></ruby>きです。", "お<ruby>茶<rt>ちゃ</rt></ruby>が<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like coffee.", "I like tea."] },
+        { pattern: "毎日〜を飲みます", structure: "毎日 + noun + を + 飲みます", usage: "<ruby>毎日<rt>まいにち</rt></ruby><ruby>飲<rt>の</rt></ruby>むものを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what you drink every day", examples: ["<ruby>毎日<rt>まいにち</rt></ruby>コーヒーを<ruby>飲<rt>の</rt></ruby>みます。", "<ruby>毎日<rt>まいにち</rt></ruby><ruby>水<rt>みず</rt></ruby>を<ruby>飲<rt>の</rt></ruby>みます。"], examples_en: ["I drink coffee every day.", "I drink water every day."] },
+        { pattern: "〜より〜の方が好きです", structure: "noun A + より + noun B + の方が好きです", usage: "２つを<ruby>比<rt>くら</rt></ruby>べて<ruby>好<rt>す</rt></ruby>きな<ruby>方<rt>ほう</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to compare two things and say which you prefer", examples: ["コーヒーよりお<ruby>茶<rt>ちゃ</rt></ruby>の<ruby>方<rt>ほう</rt></ruby>が<ruby>好<rt>す</rt></ruby>きです。", "ジュースより<ruby>水<rt>みず</rt></ruby>の<ruby>方<rt>ほう</rt></ruby>が<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like tea better than coffee.", "I like water better than juice."] }
       ],
       followup: ["一日に何杯飲みますか？", "コーヒーと紅茶、どちらが好きですか？", "朝と夜で飲むものは違いますか？"]
     },
@@ -382,9 +390,9 @@ const topics = {
       english: "What time did you wake up today?",
       vocab: ["起きる (to wake up)", "〜時 (o'clock)", "早い (early)", "遅い (late)", "眠い (sleepy)"],
       grammar: [
-        { pattern: "〜時に起きました", usage: "<ruby>起<rt>お</rt></ruby>きた<ruby>時間<rt>じかん</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what time you woke up", examples: ["7<ruby>時<rt>じ</rt></ruby>に<ruby>起<rt>お</rt></ruby>きました。", "6<ruby>時<rt>じ</rt></ruby><ruby>半<rt>はん</rt></ruby>に<ruby>起<rt>お</rt></ruby>きました。"], examples_en: ["I woke up at 7 o'clock.", "I woke up at 6:30."] },
-        { pattern: "いつも〜時ごろ起きます", usage: "いつもの<ruby>起床<rt>きしょう</rt></ruby><ruby>時間<rt>じかん</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say the time you usually wake up", examples: ["いつも7<ruby>時<rt>じ</rt></ruby>ごろ<ruby>起<rt>お</rt></ruby>きます。", "いつも6<ruby>時<rt>じ</rt></ruby>ごろ<ruby>起<rt>お</rt></ruby>きます。"], examples_en: ["I usually wake up around 7 o'clock.", "I usually wake up around 6 o'clock."] },
-        { pattern: "今日は〜かったです", usage: "<ruby>今日<rt>きょう</rt></ruby>の<ruby>感想<rt>かんそう</rt></ruby>（<ruby>形容詞<rt>けいようし</rt></ruby>の<ruby>過去<rt>かこ</rt></ruby>）を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to express how today felt (past tense adjective)", examples: ["<ruby>今日<rt>きょう</rt></ruby>は<ruby>早<rt>はや</rt></ruby>かったです。", "<ruby>今日<rt>きょう</rt></ruby>は<ruby>眠<rt>ねむ</rt></ruby>かったです。"], examples_en: ["Today I woke up early.", "I was sleepy today."] }
+        { pattern: "〜時に起きました", structure: "time + に + 起きました", usage: "<ruby>起<rt>お</rt></ruby>きた<ruby>時間<rt>じかん</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what time you woke up", examples: ["7<ruby>時<rt>じ</rt></ruby>に<ruby>起<rt>お</rt></ruby>きました。", "6<ruby>時<rt>じ</rt></ruby><ruby>半<rt>はん</rt></ruby>に<ruby>起<rt>お</rt></ruby>きました。"], examples_en: ["I woke up at 7 o'clock.", "I woke up at 6:30."] },
+        { pattern: "いつも〜時ごろ起きます", structure: "いつも + time + ごろ + 起きます", usage: "いつもの<ruby>起床<rt>きしょう</rt></ruby><ruby>時間<rt>じかん</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say the time you usually wake up", examples: ["いつも7<ruby>時<rt>じ</rt></ruby>ごろ<ruby>起<rt>お</rt></ruby>きます。", "いつも6<ruby>時<rt>じ</rt></ruby>ごろ<ruby>起<rt>お</rt></ruby>きます。"], examples_en: ["I usually wake up around 7 o'clock.", "I usually wake up around 6 o'clock."] },
+        { pattern: "今日は〜かったです", structure: "今日は + い-adj stem + かったです", usage: "<ruby>今日<rt>きょう</rt></ruby>の<ruby>感想<rt>かんそう</rt></ruby>（<ruby>形容詞<rt>けいようし</rt></ruby>の<ruby>過去<rt>かこ</rt></ruby>）を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to express how today felt (past tense adjective)", examples: ["<ruby>今日<rt>きょう</rt></ruby>は<ruby>早<rt>はや</rt></ruby>かったです。", "<ruby>今日<rt>きょう</rt></ruby>は<ruby>眠<rt>ねむ</rt></ruby>かったです。"], examples_en: ["Today I woke up early.", "I was sleepy today."] }
       ],
       followup: ["何時に寝ましたか？", "朝は得意ですか？", "目覚ましを使いますか？"]
     },
@@ -393,9 +401,9 @@ const topics = {
       english: "Do you have a favorite sport?",
       vocab: ["スポーツ (sport)", "サッカー (soccer)", "テニス (tennis)", "見る (to watch)", "する (to do/play)"],
       grammar: [
-        { pattern: "〜が好きです", usage: "<ruby>好<rt>す</rt></ruby>きなものを<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say what you like", examples: ["サッカーが<ruby>好<rt>す</rt></ruby>きです。", "テニスが<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like soccer.", "I like tennis."] },
-        { pattern: "〜をします", usage: "する（プレーする）スポーツを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what sport you play", examples: ["テニスをします。", "<ruby>水泳<rt>すいえい</rt></ruby>をします。"], examples_en: ["I play tennis.", "I swim."] },
-        { pattern: "〜を見るのが好きです", usage: "<ruby>見<rt>み</rt></ruby>ることが<ruby>好<rt>す</rt></ruby>きなものを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say you enjoy watching something", examples: ["サッカーを<ruby>見<rt>み</rt></ruby>るのが<ruby>好<rt>す</rt></ruby>きです。", "<ruby>野球<rt>やきゅう</rt></ruby>を<ruby>見<rt>み</rt></ruby>るのが<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like watching soccer.", "I like watching baseball."] }
+        { pattern: "〜が好きです", structure: "noun + が + 好きです", usage: "<ruby>好<rt>す</rt></ruby>きなものを<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say what you like", examples: ["サッカーが<ruby>好<rt>す</rt></ruby>きです。", "テニスが<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like soccer.", "I like tennis."] },
+        { pattern: "〜をします", structure: "noun + を + します", usage: "する（プレーする）スポーツを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what sport you play", examples: ["テニスをします。", "<ruby>水泳<rt>すいえい</rt></ruby>をします。"], examples_en: ["I play tennis.", "I swim."] },
+        { pattern: "〜を見るのが好きです", structure: "noun + を見るのが + 好きです", usage: "<ruby>見<rt>み</rt></ruby>ることが<ruby>好<rt>す</rt></ruby>きなものを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say you enjoy watching something", examples: ["サッカーを<ruby>見<rt>み</rt></ruby>るのが<ruby>好<rt>す</rt></ruby>きです。", "<ruby>野球<rt>やきゅう</rt></ruby>を<ruby>見<rt>み</rt></ruby>るのが<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like watching soccer.", "I like watching baseball."] }
       ],
       followup: ["する派ですか？見る派ですか？", "子どもの頃もしていましたか？", "好きな選手やチームはありますか？"]
     },
@@ -404,9 +412,9 @@ const topics = {
       english: "What do you do on your days off?",
       vocab: ["休み (day off)", "家 (home)", "出かける (to go out)", "ゆっくり (leisurely)", "友達 (friend)"],
       grammar: [
-        { pattern: "〜をします", usage: "することを<ruby>言<rt>い</rt></ruby>うとき（<ruby>現在<rt>げんざい</rt></ruby>・<ruby>習慣<rt>しゅうかん</rt></ruby>）", usage_en: "Used to say what you do (present tense / habit)", examples: ["<ruby>料理<rt>りょうり</rt></ruby>をします。", "<ruby>散歩<rt>さんぽ</rt></ruby>をします。"], examples_en: ["I cook.", "I go for a walk."] },
-        { pattern: "たいてい〜します", usage: "いつもだいたいすることを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what you usually do", examples: ["たいてい<ruby>家<rt>いえ</rt></ruby>にいます。", "たいてい<ruby>友達<rt>ともだち</rt></ruby>に<ruby>会<rt>あ</rt></ruby>います。"], examples_en: ["I usually stay home.", "I usually meet friends."] },
-        { pattern: "〜たり〜たりします", usage: "いくつかのことを<ruby>並<rt>なら</rt></ruby>べて<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to list several things you do", examples: ["<ruby>映画<rt>えいが</rt></ruby>を<ruby>見<rt>み</rt></ruby>たり、<ruby>音楽<rt>おんがく</rt></ruby>を<ruby>聴<rt>き</rt></ruby>いたりします。", "<ruby>料理<rt>りょうり</rt></ruby>をしたり、<ruby>散歩<rt>さんぽ</rt></ruby>をしたりします。"], examples_en: ["I watch movies, listen to music, and so on.", "I cook, go for walks, and so on."] }
+        { pattern: "〜をします", structure: "noun + を + します", usage: "することを<ruby>言<rt>い</rt></ruby>うとき（<ruby>現在<rt>げんざい</rt></ruby>・<ruby>習慣<rt>しゅうかん</rt></ruby>）", usage_en: "Used to say what you do (present tense / habit)", examples: ["<ruby>料理<rt>りょうり</rt></ruby>をします。", "<ruby>散歩<rt>さんぽ</rt></ruby>をします。"], examples_en: ["I cook.", "I go for a walk."] },
+        { pattern: "たいてい〜します", structure: "たいてい + verb (present)", usage: "いつもだいたいすることを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what you usually do", examples: ["たいてい<ruby>家<rt>いえ</rt></ruby>にいます。", "たいてい<ruby>友達<rt>ともだち</rt></ruby>に<ruby>会<rt>あ</rt></ruby>います。"], examples_en: ["I usually stay home.", "I usually meet friends."] },
+        { pattern: "〜たり〜たりします", structure: "verb (た-form) + り、verb (た-form) + りします", usage: "いくつかのことを<ruby>並<rt>なら</rt></ruby>べて<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to list several things you do", examples: ["<ruby>映画<rt>えいが</rt></ruby>を<ruby>見<rt>み</rt></ruby>たり、<ruby>音楽<rt>おんがく</rt></ruby>を<ruby>聴<rt>き</rt></ruby>いたりします。", "<ruby>料理<rt>りょうり</rt></ruby>をしたり、<ruby>散歩<rt>さんぽ</rt></ruby>をしたりします。"], examples_en: ["I watch movies, listen to music, and so on.", "I cook, go for walks, and so on."] }
       ],
       followup: ["一人でいますか？誰かと？", "家の近くに好きな場所はありますか？", "理想の休日はどんな感じですか？"]
     },
@@ -415,9 +423,9 @@ const topics = {
       english: "What is your favorite color?",
       vocab: ["色 (color)", "青 (blue)", "赤 (red)", "白 (white)", "黒 (black)", "緑 (green)"],
       grammar: [
-        { pattern: "〜が好きです", usage: "<ruby>好<rt>す</rt></ruby>きなものを<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say what you like", examples: ["<ruby>青<rt>あお</rt></ruby>が<ruby>好<rt>す</rt></ruby>きです。", "<ruby>白<rt>しろ</rt></ruby>が<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like blue.", "I like white."] },
-        { pattern: "〜色が好きです", usage: "<ruby>好<rt>す</rt></ruby>きな<ruby>色<rt>いろ</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき（より<ruby>具体的<rt>ぐたいてき</rt></ruby>に）", usage_en: "Used to say your favorite color (more specific)", examples: ["<ruby>青色<rt>あおいろ</rt></ruby>が<ruby>好<rt>す</rt></ruby>きです。", "<ruby>緑色<rt>みどりいろ</rt></ruby>が<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like the color blue.", "I like the color green."] },
-        { pattern: "なぜなら〜からです", usage: "<ruby>理由<rt>りゆう</rt></ruby>を<ruby>詳<rt>くわ</rt></ruby>しく<ruby>説明<rt>せつめい</rt></ruby>するとき", usage_en: "Used to explain the reason in detail", examples: ["なぜなら<ruby>落<rt>お</rt></ruby>ち<ruby>着<rt>つ</rt></ruby>くからです。", "なぜなら<ruby>明<rt>あか</rt></ruby>るい<ruby>気持<rt>きも</rt></ruby>ちになるからです。"], examples_en: ["Because it's calming.", "Because it makes me feel cheerful."] }
+        { pattern: "〜が好きです", structure: "noun + が + 好きです", usage: "<ruby>好<rt>す</rt></ruby>きなものを<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say what you like", examples: ["<ruby>青<rt>あお</rt></ruby>が<ruby>好<rt>す</rt></ruby>きです。", "<ruby>白<rt>しろ</rt></ruby>が<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like blue.", "I like white."] },
+        { pattern: "〜色が好きです", structure: "color noun + 色が + 好きです", usage: "<ruby>好<rt>す</rt></ruby>きな<ruby>色<rt>いろ</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき（より<ruby>具体的<rt>ぐたいてき</rt></ruby>に）", usage_en: "Used to say your favorite color (more specific)", examples: ["<ruby>青色<rt>あおいろ</rt></ruby>が<ruby>好<rt>す</rt></ruby>きです。", "<ruby>緑色<rt>みどりいろ</rt></ruby>が<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like the color blue.", "I like the color green."] },
+        { pattern: "なぜなら〜からです", structure: "なぜなら + [reason] + からです", usage: "<ruby>理由<rt>りゆう</rt></ruby>を<ruby>詳<rt>くわ</rt></ruby>しく<ruby>説明<rt>せつめい</rt></ruby>するとき", usage_en: "Used to explain the reason in detail", examples: ["なぜなら<ruby>落<rt>お</rt></ruby>ち<ruby>着<rt>つ</rt></ruby>くからです。", "なぜなら<ruby>明<rt>あか</rt></ruby>るい<ruby>気持<rt>きも</rt></ruby>ちになるからです。"], examples_en: ["Because it's calming.", "Because it makes me feel cheerful."] }
       ],
       followup: ["服もその色が多いですか？", "部屋にその色はありますか？", "嫌いな色はありますか？"]
     },
@@ -426,9 +434,9 @@ const topics = {
       english: "What did you have for lunch today?",
       vocab: ["お昼ごはん (lunch)", "レストラン (restaurant)", "自分で作る (make yourself)", "食堂 (cafeteria)"],
       grammar: [
-        { pattern: "〜を食べました", usage: "<ruby>過去<rt>かこ</rt></ruby>に<ruby>食<rt>た</rt></ruby>べたものを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what you ate in the past", examples: ["ラーメンを<ruby>食<rt>た</rt></ruby>べました。", "おにぎりを<ruby>食<rt>た</rt></ruby>べました。"], examples_en: ["I ate ramen.", "I ate onigiri."] },
-        { pattern: "〜で食べました", usage: "どこで<ruby>食<rt>た</rt></ruby>べたかを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say where you ate", examples: ["レストランで<ruby>食<rt>た</rt></ruby>べました。", "<ruby>家<rt>いえ</rt></ruby>で<ruby>食<rt>た</rt></ruby>べました。"], examples_en: ["I ate at a restaurant.", "I ate at home."] },
-        { pattern: "〜は〜でした", usage: "<ruby>過去<rt>かこ</rt></ruby>の<ruby>状態<rt>じょうたい</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき（〜は〜だった）", usage_en: "Used to describe a past state (what something was)", examples: ["<ruby>今日<rt>きょう</rt></ruby>のお<ruby>昼<rt>ひる</rt></ruby>はラーメンでした。", "<ruby>昨日<rt>きのう</rt></ruby>の<ruby>夜<rt>よる</rt></ruby>は<ruby>和食<rt>わしょく</rt></ruby>でした。"], examples_en: ["Today's lunch was ramen.", "Last night's meal was Japanese food."] }
+        { pattern: "〜を食べました", structure: "noun + を + 食べました", usage: "<ruby>過去<rt>かこ</rt></ruby>に<ruby>食<rt>た</rt></ruby>べたものを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what you ate in the past", examples: ["ラーメンを<ruby>食<rt>た</rt></ruby>べました。", "おにぎりを<ruby>食<rt>た</rt></ruby>べました。"], examples_en: ["I ate ramen.", "I ate onigiri."] },
+        { pattern: "〜で食べました", structure: "place + で + 食べました", usage: "どこで<ruby>食<rt>た</rt></ruby>べたかを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say where you ate", examples: ["レストランで<ruby>食<rt>た</rt></ruby>べました。", "<ruby>家<rt>いえ</rt></ruby>で<ruby>食<rt>た</rt></ruby>べました。"], examples_en: ["I ate at a restaurant.", "I ate at home."] },
+        { pattern: "〜は〜でした", structure: "noun + は + noun + でした", usage: "<ruby>過去<rt>かこ</rt></ruby>の<ruby>状態<rt>じょうたい</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき（〜は〜だった）", usage_en: "Used to describe a past state (what something was)", examples: ["<ruby>今日<rt>きょう</rt></ruby>のお<ruby>昼<rt>ひる</rt></ruby>はラーメンでした。", "<ruby>昨日<rt>きのう</rt></ruby>の<ruby>夜<rt>よる</rt></ruby>は<ruby>和食<rt>わしょく</rt></ruby>でした。"], examples_en: ["Today's lunch was ramen.", "Last night's meal was Japanese food."] }
       ],
       followup: ["毎日同じものを食べますか？", "外で食べますか？家で食べますか？", "お昼は誰かと食べますか？"]
     },
@@ -437,9 +445,9 @@ const topics = {
       english: "What did you do today?",
       vocab: ["仕事 (work)", "学校 (school)", "勉強 (study)", "買い物 (shopping)", "散歩 (walk)"],
       grammar: [
-        { pattern: "〜をしました", usage: "<ruby>過去<rt>かこ</rt></ruby>にしたことを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what you did in the past", examples: ["<ruby>仕事<rt>しごと</rt></ruby>をしました。", "<ruby>買<rt>か</rt></ruby>い<ruby>物<rt>もの</rt></ruby>をしました。"], examples_en: ["I worked.", "I went shopping."] },
-        { pattern: "〜に行きました", usage: "<ruby>過去<rt>かこ</rt></ruby>に<ruby>行<rt>い</rt></ruby>った<ruby>場所<rt>ばしょ</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say a place you went to in the past", examples: ["<ruby>学校<rt>がっこう</rt></ruby>に<ruby>行<rt>い</rt></ruby>きました。", "<ruby>図書館<rt>としょかん</rt></ruby>に<ruby>行<rt>い</rt></ruby>きました。"], examples_en: ["I went to school.", "I went to the library."] },
-        { pattern: "〜ました", usage: "<ruby>動詞<rt>どうし</rt></ruby>の<ruby>過去形<rt>かこけい</rt></ruby>（〜した）を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used for the past tense of verbs (did 〜)", examples: ["<ruby>勉強<rt>べんきょう</rt></ruby>しました。", "<ruby>散歩<rt>さんぽ</rt></ruby>しました。"], examples_en: ["I studied.", "I took a walk."] }
+        { pattern: "〜をしました", structure: "noun + を + しました", usage: "<ruby>過去<rt>かこ</rt></ruby>にしたことを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what you did in the past", examples: ["<ruby>仕事<rt>しごと</rt></ruby>をしました。", "<ruby>買<rt>か</rt></ruby>い<ruby>物<rt>もの</rt></ruby>をしました。"], examples_en: ["I worked.", "I went shopping."] },
+        { pattern: "〜に行きました", structure: "place + に + 行きました", usage: "<ruby>過去<rt>かこ</rt></ruby>に<ruby>行<rt>い</rt></ruby>った<ruby>場所<rt>ばしょ</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say a place you went to in the past", examples: ["<ruby>学校<rt>がっこう</rt></ruby>に<ruby>行<rt>い</rt></ruby>きました。", "<ruby>図書館<rt>としょかん</rt></ruby>に<ruby>行<rt>い</rt></ruby>きました。"], examples_en: ["I went to school.", "I went to the library."] },
+        { pattern: "〜ました", structure: "verb stem + ました", usage: "<ruby>動詞<rt>どうし</rt></ruby>の<ruby>過去形<rt>かこけい</rt></ruby>（〜した）を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used for the past tense of verbs (did 〜)", examples: ["<ruby>勉強<rt>べんきょう</rt></ruby>しました。", "<ruby>散歩<rt>さんぽ</rt></ruby>しました。"], examples_en: ["I studied.", "I took a walk."] }
       ],
       followup: ["今日は忙しかったですか？", "一番楽しかったことは何ですか？", "疲れましたか？"]
     },
@@ -448,9 +456,9 @@ const topics = {
       english: "What is your favorite animal?",
       vocab: ["動物 (animal)", "犬 (dog)", "猫 (cat)", "パンダ (panda)", "かわいい (cute)", "かっこいい (cool)"],
       grammar: [
-        { pattern: "〜が好きです", usage: "<ruby>好<rt>す</rt></ruby>きなものを<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say what you like", examples: ["<ruby>犬<rt>いぬ</rt></ruby>が<ruby>好<rt>す</rt></ruby>きです。", "パンダが<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like dogs.", "I like pandas."] },
-        { pattern: "〜は〜です", usage: "<ruby>動物<rt>どうぶつ</rt></ruby>の<ruby>特徴<rt>とくちょう</rt></ruby>・<ruby>様子<rt>ようす</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to describe an animal's characteristics", examples: ["<ruby>犬<rt>いぬ</rt></ruby>はかわいいです。", "ライオンはかっこいいです。"], examples_en: ["Dogs are cute.", "Lions are cool."] },
-        { pattern: "なぜなら〜からです", usage: "<ruby>理由<rt>りゆう</rt></ruby>を<ruby>詳<rt>くわ</rt></ruby>しく<ruby>説明<rt>せつめい</rt></ruby>するとき", usage_en: "Used to explain the reason in detail", examples: ["なぜなら<ruby>賢<rt>かしこ</rt></ruby>いからです。", "なぜならかわいいからです。"], examples_en: ["Because they are smart.", "Because they are cute."] }
+        { pattern: "〜が好きです", structure: "noun + が + 好きです", usage: "<ruby>好<rt>す</rt></ruby>きなものを<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say what you like", examples: ["<ruby>犬<rt>いぬ</rt></ruby>が<ruby>好<rt>す</rt></ruby>きです。", "パンダが<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like dogs.", "I like pandas."] },
+        { pattern: "〜は〜です", structure: "noun + は + noun/adjective + です", usage: "<ruby>動物<rt>どうぶつ</rt></ruby>の<ruby>特徴<rt>とくちょう</rt></ruby>・<ruby>様子<rt>ようす</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to describe an animal's characteristics", examples: ["<ruby>犬<rt>いぬ</rt></ruby>はかわいいです。", "ライオンはかっこいいです。"], examples_en: ["Dogs are cute.", "Lions are cool."] },
+        { pattern: "なぜなら〜からです", structure: "なぜなら + [reason] + からです", usage: "<ruby>理由<rt>りゆう</rt></ruby>を<ruby>詳<rt>くわ</rt></ruby>しく<ruby>説明<rt>せつめい</rt></ruby>するとき", usage_en: "Used to explain the reason in detail", examples: ["なぜなら<ruby>賢<rt>かしこ</rt></ruby>いからです。", "なぜならかわいいからです。"], examples_en: ["Because they are smart.", "Because they are cute."] }
       ],
       followup: ["会ったことがありますか？", "ペットにしたいですか？", "動物園は好きですか？"]
     },
@@ -459,9 +467,9 @@ const topics = {
       english: "How many hours do you sleep every day?",
       vocab: ["寝る (to sleep)", "〜時間 (hours)", "早く (early)", "遅く (late)", "眠い (sleepy)"],
       grammar: [
-        { pattern: "〜時間ぐらい寝ます", usage: "だいたいの<ruby>睡眠<rt>すいみん</rt></ruby><ruby>時間<rt>じかん</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say roughly how many hours you sleep", examples: ["7<ruby>時間<rt>じかん</rt></ruby>ぐらい<ruby>寝<rt>ね</rt></ruby>ます。", "6<ruby>時間<rt>じかん</rt></ruby>ぐらい<ruby>寝<rt>ね</rt></ruby>ます。"], examples_en: ["I sleep about 7 hours.", "I sleep about 6 hours."] },
-        { pattern: "いつも〜時ごろ寝ます", usage: "いつも<ruby>寝<rt>ね</rt></ruby>る<ruby>時間<rt>じかん</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say the time you usually go to sleep", examples: ["いつも11<ruby>時<rt>じ</rt></ruby>ごろ<ruby>寝<rt>ね</rt></ruby>ます。", "いつも12<ruby>時<rt>じ</rt></ruby>ごろ<ruby>寝<rt>ね</rt></ruby>ます。"], examples_en: ["I usually go to sleep around 11 o'clock.", "I usually go to sleep around midnight."] },
-        { pattern: "〜で起きます", usage: "<ruby>何<rt>なに</rt></ruby>かをきっかけに<ruby>起<rt>お</rt></ruby>きることを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what wakes you up", examples: ["<ruby>目覚<rt>めざ</rt></ruby>ましで<ruby>起<rt>お</rt></ruby>きます。", "<ruby>自然<rt>しぜん</rt></ruby>に<ruby>起<rt>お</rt></ruby>きます。"], examples_en: ["I wake up with an alarm.", "I wake up naturally."] }
+        { pattern: "〜時間ぐらい寝ます", structure: "number + 時間ぐらい + 寝ます", usage: "だいたいの<ruby>睡眠<rt>すいみん</rt></ruby><ruby>時間<rt>じかん</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say roughly how many hours you sleep", examples: ["7<ruby>時間<rt>じかん</rt></ruby>ぐらい<ruby>寝<rt>ね</rt></ruby>ます。", "6<ruby>時間<rt>じかん</rt></ruby>ぐらい<ruby>寝<rt>ね</rt></ruby>ます。"], examples_en: ["I sleep about 7 hours.", "I sleep about 6 hours."] },
+        { pattern: "いつも〜時ごろ寝ます", structure: "いつも + time + ごろ + 寝ます", usage: "いつも<ruby>寝<rt>ね</rt></ruby>る<ruby>時間<rt>じかん</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say the time you usually go to sleep", examples: ["いつも11<ruby>時<rt>じ</rt></ruby>ごろ<ruby>寝<rt>ね</rt></ruby>ます。", "いつも12<ruby>時<rt>じ</rt></ruby>ごろ<ruby>寝<rt>ね</rt></ruby>ます。"], examples_en: ["I usually go to sleep around 11 o'clock.", "I usually go to sleep around midnight."] },
+        { pattern: "〜で起きます", structure: "noun + で + 起きます", usage: "<ruby>何<rt>なに</rt></ruby>かをきっかけに<ruby>起<rt>お</rt></ruby>きることを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what wakes you up", examples: ["<ruby>目覚<rt>めざ</rt></ruby>ましで<ruby>起<rt>お</rt></ruby>きます。", "<ruby>自然<rt>しぜん</rt></ruby>に<ruby>起<rt>お</rt></ruby>きます。"], examples_en: ["I wake up with an alarm.", "I wake up naturally."] }
       ],
       followup: ["十分だと思いますか？", "よく眠れますか？", "昼寝はしますか？"]
     },
@@ -470,9 +478,9 @@ const topics = {
       english: "What did you do last night?",
       vocab: ["昨日 (yesterday)", "夜 (night)", "テレビ (TV)", "お風呂 (bath)", "読む (to read)"],
       grammar: [
-        { pattern: "〜をしました", usage: "<ruby>過去<rt>かこ</rt></ruby>にしたことを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what you did in the past", examples: ["テレビを<ruby>見<rt>み</rt></ruby>ました。", "<ruby>本<rt>ほん</rt></ruby>を<ruby>読<rt>よ</rt></ruby>みました。"], examples_en: ["I watched TV.", "I read a book."] },
-        { pattern: "〜て、〜ました", usage: "<ruby>続<rt>つづ</rt></ruby>けてしたことを<ruby>言<rt>い</rt></ruby>うとき（〜して、<ruby>次<rt>つぎ</rt></ruby>に〜した）", usage_en: "Used to say things done one after another (did 〜, then did 〜)", examples: ["お<ruby>風呂<rt>ふろ</rt></ruby>に<ruby>入<rt>はい</rt></ruby>って、<ruby>寝<rt>ね</rt></ruby>ました。", "ごはんを<ruby>食<rt>た</rt></ruby>べて、テレビを<ruby>見<rt>み</rt></ruby>ました。"], examples_en: ["I took a bath and then went to sleep.", "I ate dinner and then watched TV."] },
-        { pattern: "〜のあとで〜しました", usage: "〜した<ruby>後<rt>あと</rt></ruby>に<ruby>何<rt>なに</rt></ruby>をしたかを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what you did after something", examples: ["お<ruby>風呂<rt>ふろ</rt></ruby>のあとで<ruby>本<rt>ほん</rt></ruby>を<ruby>読<rt>よ</rt></ruby>みました。", "<ruby>仕事<rt>しごと</rt></ruby>のあとで<ruby>友達<rt>ともだち</rt></ruby>に<ruby>会<rt>あ</rt></ruby>いました。"], examples_en: ["After taking a bath, I read a book.", "After work, I met a friend."] }
+        { pattern: "〜をしました", structure: "noun + を + しました", usage: "<ruby>過去<rt>かこ</rt></ruby>にしたことを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what you did in the past", examples: ["テレビを<ruby>見<rt>み</rt></ruby>ました。", "<ruby>本<rt>ほん</rt></ruby>を<ruby>読<rt>よ</rt></ruby>みました。"], examples_en: ["I watched TV.", "I read a book."] },
+        { pattern: "〜て、〜ました", structure: "verb (て-form) + 、verb (past)", usage: "<ruby>続<rt>つづ</rt></ruby>けてしたことを<ruby>言<rt>い</rt></ruby>うとき（〜して、<ruby>次<rt>つぎ</rt></ruby>に〜した）", usage_en: "Used to say things done one after another (did 〜, then did 〜)", examples: ["お<ruby>風呂<rt>ふろ</rt></ruby>に<ruby>入<rt>はい</rt></ruby>って、<ruby>寝<rt>ね</rt></ruby>ました。", "ごはんを<ruby>食<rt>た</rt></ruby>べて、テレビを<ruby>見<rt>み</rt></ruby>ました。"], examples_en: ["I took a bath and then went to sleep.", "I ate dinner and then watched TV."] },
+        { pattern: "〜のあとで〜しました", structure: "noun + のあとで + verb (past)", usage: "〜した<ruby>後<rt>あと</rt></ruby>に<ruby>何<rt>なに</rt></ruby>をしたかを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what you did after something", examples: ["お<ruby>風呂<rt>ふろ</rt></ruby>のあとで<ruby>本<rt>ほん</rt></ruby>を<ruby>読<rt>よ</rt></ruby>みました。", "<ruby>仕事<rt>しごと</rt></ruby>のあとで<ruby>友達<rt>ともだち</rt></ruby>に<ruby>会<rt>あ</rt></ruby>いました。"], examples_en: ["After taking a bath, I read a book.", "After work, I met a friend."] }
       ],
       followup: ["よく夜に何をしますか？", "夜ごはんは何を食べましたか？", "何時ごろ寝ましたか？"]
     },
@@ -481,9 +489,9 @@ const topics = {
       english: "What kind of music do you like?",
       vocab: ["音楽 (music)", "聴く (to listen)", "歌手 (singer)", "曲 (song)", "ポップス (pop)"],
       grammar: [
-        { pattern: "〜が好きです", usage: "<ruby>好<rt>す</rt></ruby>きなものを<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say what you like", examples: ["ポップスが<ruby>好<rt>す</rt></ruby>きです。", "ジャズが<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like pop music.", "I like jazz."] },
-        { pattern: "よく〜を聴きます", usage: "よく<ruby>聴<rt>き</rt></ruby>く<ruby>音楽<rt>おんがく</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what music you often listen to", examples: ["よくポップスを<ruby>聴<rt>き</rt></ruby>きます。", "よくジャズを<ruby>聴<rt>き</rt></ruby>きます。"], examples_en: ["I often listen to pop music.", "I often listen to jazz."] },
-        { pattern: "〜より〜の方が好きです", usage: "２つを<ruby>比<rt>くら</rt></ruby>べて<ruby>好<rt>す</rt></ruby>きな<ruby>方<rt>ほう</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to compare two things and say which you prefer", examples: ["ロックよりポップスの<ruby>方<rt>ほう</rt></ruby>が<ruby>好<rt>す</rt></ruby>きです。", "ジャズよりクラシックの<ruby>方<rt>ほう</rt></ruby>が<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like pop better than rock.", "I like classical better than jazz."] }
+        { pattern: "〜が好きです", structure: "noun + が + 好きです", usage: "<ruby>好<rt>す</rt></ruby>きなものを<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say what you like", examples: ["ポップスが<ruby>好<rt>す</rt></ruby>きです。", "ジャズが<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like pop music.", "I like jazz."] },
+        { pattern: "よく〜を聴きます", structure: "よく + noun + を + 聴きます", usage: "よく<ruby>聴<rt>き</rt></ruby>く<ruby>音楽<rt>おんがく</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what music you often listen to", examples: ["よくポップスを<ruby>聴<rt>き</rt></ruby>きます。", "よくジャズを<ruby>聴<rt>き</rt></ruby>きます。"], examples_en: ["I often listen to pop music.", "I often listen to jazz."] },
+        { pattern: "〜より〜の方が好きです", structure: "noun A + より + noun B + の方が好きです", usage: "２つを<ruby>比<rt>くら</rt></ruby>べて<ruby>好<rt>す</rt></ruby>きな<ruby>方<rt>ほう</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to compare two things and say which you prefer", examples: ["ロックよりポップスの<ruby>方<rt>ほう</rt></ruby>が<ruby>好<rt>す</rt></ruby>きです。", "ジャズよりクラシックの<ruby>方<rt>ほう</rt></ruby>が<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like pop better than rock.", "I like classical better than jazz."] }
       ],
       followup: ["よく聴きますか？", "コンサートに行ったことがありますか？", "音楽を演奏しますか？"]
     },
@@ -492,9 +500,9 @@ const topics = {
       english: "What is the place you are living in now like?",
       vocab: ["住む (to live)", "便利 (convenient)", "静か (quiet)", "近く (nearby)", "駅 (station)"],
       grammar: [
-        { pattern: "〜に住んでいます", usage: "<ruby>住<rt>す</rt></ruby>んでいる<ruby>場所<rt>ばしょ</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say where you live", examples: ["<ruby>東京<rt>とうきょう</rt></ruby>に<ruby>住<rt>す</rt></ruby>んでいます。", "<ruby>大阪<rt>おおさか</rt></ruby>に<ruby>住<rt>す</rt></ruby>んでいます。"], examples_en: ["I live in Tokyo.", "I live in Osaka."] },
-        { pattern: "〜は〜です", usage: "<ruby>場所<rt>ばしょ</rt></ruby>の<ruby>特徴<rt>とくちょう</rt></ruby>を<ruby>説明<rt>せつめい</rt></ruby>するとき", usage_en: "Used to describe the characteristics of a place", examples: ["ここは<ruby>静<rt>しず</rt></ruby>かです。", "ここは<ruby>便利<rt>べんり</rt></ruby>です。"], examples_en: ["Here it is quiet.", "Here it is convenient."] },
-        { pattern: "〜が近いです", usage: "<ruby>近<rt>ちか</rt></ruby>くにあるものを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what is nearby", examples: ["<ruby>駅<rt>えき</rt></ruby>が<ruby>近<rt>ちか</rt></ruby>いです。", "スーパーが<ruby>近<rt>ちか</rt></ruby>いです。"], examples_en: ["The station is close.", "The supermarket is close."] }
+        { pattern: "〜に住んでいます", structure: "place + に + 住んでいます", usage: "<ruby>住<rt>す</rt></ruby>んでいる<ruby>場所<rt>ばしょ</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say where you live", examples: ["<ruby>東京<rt>とうきょう</rt></ruby>に<ruby>住<rt>す</rt></ruby>んでいます。", "<ruby>大阪<rt>おおさか</rt></ruby>に<ruby>住<rt>す</rt></ruby>んでいます。"], examples_en: ["I live in Tokyo.", "I live in Osaka."] },
+        { pattern: "〜は〜です", structure: "noun + は + noun/adjective + です", usage: "<ruby>場所<rt>ばしょ</rt></ruby>の<ruby>特徴<rt>とくちょう</rt></ruby>を<ruby>説明<rt>せつめい</rt></ruby>するとき", usage_en: "Used to describe the characteristics of a place", examples: ["ここは<ruby>静<rt>しず</rt></ruby>かです。", "ここは<ruby>便利<rt>べんり</rt></ruby>です。"], examples_en: ["Here it is quiet.", "Here it is convenient."] },
+        { pattern: "〜が近いです", structure: "noun + が + 近いです", usage: "<ruby>近<rt>ちか</rt></ruby>くにあるものを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what is nearby", examples: ["<ruby>駅<rt>えき</rt></ruby>が<ruby>近<rt>ちか</rt></ruby>いです。", "スーパーが<ruby>近<rt>ちか</rt></ruby>いです。"], examples_en: ["The station is close.", "The supermarket is close."] }
       ],
       followup: ["どのくらい住んでいますか？", "近くに好きなお店はありますか？", "今の場所は気に入っていますか？"]
     },
@@ -503,9 +511,9 @@ const topics = {
       english: "How many people are in your family?",
       vocab: ["家族 (family)", "両親 (parents)", "兄弟 (siblings)", "〜人 (counter for people)", "一人っ子 (only child)"],
       grammar: [
-        { pattern: "〜人家族です", usage: "<ruby>家族<rt>かぞく</rt></ruby>の<ruby>人数<rt>にんずう</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say how many people are in your family", examples: ["4<ruby>人<rt>にん</rt></ruby><ruby>家族<rt>かぞく</rt></ruby>です。", "3<ruby>人<rt>にん</rt></ruby><ruby>家族<rt>かぞく</rt></ruby>です。"], examples_en: ["We are a family of four.", "We are a family of three."] },
-        { pattern: "〜がいます", usage: "<ruby>家族<rt>かぞく</rt></ruby>の<ruby>誰<rt>だれ</rt></ruby>かがいることを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say who is in your family", examples: ["<ruby>兄<rt>あに</rt></ruby>がいます。", "<ruby>妹<rt>いもうと</rt></ruby>が<ruby>二人<rt>ふたり</rt></ruby>います。"], examples_en: ["I have an older brother.", "I have two younger sisters."] },
-        { pattern: "〜人兄弟です", usage: "<ruby>兄弟<rt>きょうだい</rt></ruby>の<ruby>人数<rt>にんずう</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき（<ruby>一人<rt>ひとり</rt></ruby>っ<ruby>子<rt>こ</rt></ruby>も<ruby>含<rt>ふく</rt></ruby>む）", usage_en: "Used to say how many siblings you have (including only child)", examples: ["<ruby>二人<rt>ふたり</rt></ruby><ruby>兄弟<rt>きょうだい</rt></ruby>です。", "<ruby>三人<rt>さんにん</rt></ruby><ruby>兄弟<rt>きょうだい</rt></ruby>です。"], examples_en: ["I have one sibling.", "I have two siblings."] }
+        { pattern: "〜人家族です", structure: "number + 人家族です", usage: "<ruby>家族<rt>かぞく</rt></ruby>の<ruby>人数<rt>にんずう</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say how many people are in your family", examples: ["4<ruby>人<rt>にん</rt></ruby><ruby>家族<rt>かぞく</rt></ruby>です。", "3<ruby>人<rt>にん</rt></ruby><ruby>家族<rt>かぞく</rt></ruby>です。"], examples_en: ["We are a family of four.", "We are a family of three."] },
+        { pattern: "〜がいます", structure: "noun + が + います", usage: "<ruby>家族<rt>かぞく</rt></ruby>の<ruby>誰<rt>だれ</rt></ruby>かがいることを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say who is in your family", examples: ["<ruby>兄<rt>あに</rt></ruby>がいます。", "<ruby>妹<rt>いもうと</rt></ruby>が<ruby>二人<rt>ふたり</rt></ruby>います。"], examples_en: ["I have an older brother.", "I have two younger sisters."] },
+        { pattern: "〜人兄弟です", structure: "number + 人兄弟です", usage: "<ruby>兄弟<rt>きょうだい</rt></ruby>の<ruby>人数<rt>にんずう</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき（<ruby>一人<rt>ひとり</rt></ruby>っ<ruby>子<rt>こ</rt></ruby>も<ruby>含<rt>ふく</rt></ruby>む）", usage_en: "Used to say how many siblings you have (including only child)", examples: ["<ruby>二人<rt>ふたり</rt></ruby><ruby>兄弟<rt>きょうだい</rt></ruby>です。", "<ruby>三人<rt>さんにん</rt></ruby><ruby>兄弟<rt>きょうだい</rt></ruby>です。"], examples_en: ["I have one sibling.", "I have two siblings."] }
       ],
       followup: ["よく家族と話しますか？", "家族で旅行したことがありますか？", "家族の中で誰に一番似ていますか？"]
     },
@@ -514,9 +522,9 @@ const topics = {
       english: "Have you seen any movies recently?",
       vocab: ["映画 (movie)", "最近 (recently)", "見る (to watch)", "おもしろい (interesting)", "感動する (to be moved)"],
       grammar: [
-        { pattern: "〜を見ました", usage: "<ruby>過去<rt>かこ</rt></ruby>に<ruby>見<rt>み</rt></ruby>たものを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what you watched in the past", examples: ["<ruby>映画<rt>えいが</rt></ruby>を<ruby>見<rt>み</rt></ruby>ました。", "ドラマを<ruby>見<rt>み</rt></ruby>ました。"], examples_en: ["I watched a movie.", "I watched a drama."] },
-        { pattern: "〜という映画です", usage: "タイトルを<ruby>紹介<rt>しょうかい</rt></ruby>するとき", usage_en: "Used to introduce a movie title", examples: ["「となりのトトロ」という<ruby>映画<rt>えいが</rt></ruby>です。"], examples_en: ["It's a movie called 'My Neighbor Totoro'."] },
-        { pattern: "〜かったです", usage: "<ruby>感想<rt>かんそう</rt></ruby>を<ruby>過去形<rt>かこけい</rt></ruby>で<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to express a feeling in the past tense", examples: ["おもしろかったです。", "かなしかったです。"], examples_en: ["It was interesting.", "It was sad."] }
+        { pattern: "〜を見ました", structure: "noun + を + 見ました", usage: "<ruby>過去<rt>かこ</rt></ruby>に<ruby>見<rt>み</rt></ruby>たものを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what you watched in the past", examples: ["<ruby>映画<rt>えいが</rt></ruby>を<ruby>見<rt>み</rt></ruby>ました。", "ドラマを<ruby>見<rt>み</rt></ruby>ました。"], examples_en: ["I watched a movie.", "I watched a drama."] },
+        { pattern: "〜という映画です", structure: "title + という映画です", usage: "タイトルを<ruby>紹介<rt>しょうかい</rt></ruby>するとき", usage_en: "Used to introduce a movie title", examples: ["「となりのトトロ」という<ruby>映画<rt>えいが</rt></ruby>です。"], examples_en: ["It's a movie called 'My Neighbor Totoro'."] },
+        { pattern: "〜かったです", structure: "い-adj stem + かったです", usage: "<ruby>感想<rt>かんそう</rt></ruby>を<ruby>過去形<rt>かこけい</rt></ruby>で<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to express a feeling in the past tense", examples: ["おもしろかったです。", "かなしかったです。"], examples_en: ["It was interesting.", "It was sad."] }
       ],
       followup: ["どんなジャンルの映画が好きですか？", "一番好きな映画は何ですか？", "映画館とおうち、どちらで見ますか？"]
     },
@@ -525,9 +533,9 @@ const topics = {
       english: "What is your favorite sport?",
       vocab: ["スポーツ (sport)", "する (to play)", "見る (to watch)", "チーム (team)", "試合 (game/match)"],
       grammar: [
-        { pattern: "〜が好きです", usage: "<ruby>好<rt>す</rt></ruby>きなものを<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say what you like", examples: ["サッカーが<ruby>好<rt>す</rt></ruby>きです。", "<ruby>野球<rt>やきゅう</rt></ruby>が<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like soccer.", "I like baseball."] },
-        { pattern: "〜をします", usage: "スポーツをすることを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say you play a sport", examples: ["テニスをします。", "サッカーをします。"], examples_en: ["I play tennis.", "I play soccer."] },
-        { pattern: "〜を見るのが好きです", usage: "<ruby>観戦<rt>かんせん</rt></ruby>が<ruby>好<rt>す</rt></ruby>きなことを<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say you enjoy watching sports", examples: ["サッカーを<ruby>見<rt>み</rt></ruby>るのが<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like watching soccer."] }
+        { pattern: "〜が好きです", structure: "noun + が + 好きです", usage: "<ruby>好<rt>す</rt></ruby>きなものを<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say what you like", examples: ["サッカーが<ruby>好<rt>す</rt></ruby>きです。", "<ruby>野球<rt>やきゅう</rt></ruby>が<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like soccer.", "I like baseball."] },
+        { pattern: "〜をします", structure: "noun + を + します", usage: "スポーツをすることを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say you play a sport", examples: ["テニスをします。", "サッカーをします。"], examples_en: ["I play tennis.", "I play soccer."] },
+        { pattern: "〜を見るのが好きです", structure: "noun + を見るのが + 好きです", usage: "<ruby>観戦<rt>かんせん</rt></ruby>が<ruby>好<rt>す</rt></ruby>きなことを<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say you enjoy watching sports", examples: ["サッカーを<ruby>見<rt>み</rt></ruby>るのが<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like watching soccer."] }
       ],
       followup: ["よく見ますか？やりますか？", "好きな選手やチームはありますか？", "子どもの頃はどんなスポーツをしていましたか？"]
     },
@@ -536,9 +544,9 @@ const topics = {
       english: "What do you usually do on your days off?",
       vocab: ["休みの日 (day off)", "たいてい (usually)", "のんびりする (to relax)", "出かける (to go out)", "家にいる (to stay home)"],
       grammar: [
-        { pattern: "たいてい〜します", usage: "いつも<ruby>決<rt>き</rt></ruby>まってすることを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what you usually do", examples: ["たいてい<ruby>映画<rt>えいが</rt></ruby>を<ruby>見<rt>み</rt></ruby>ます。", "たいてい<ruby>家<rt>いえ</rt></ruby>にいます。"], examples_en: ["I usually watch movies.", "I usually stay home."] },
-        { pattern: "〜たり〜たりします", usage: "いくつかのことを<ruby>並<rt>なら</rt></ruby>べて<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to list several activities", examples: ["<ruby>買<rt>か</rt></ruby>い<ruby>物<rt>もの</rt></ruby>をしたり、<ruby>映画<rt>えいが</rt></ruby>を<ruby>見<rt>み</rt></ruby>たりします。"], examples_en: ["I do things like shopping and watching movies."] },
-        { pattern: "のんびり〜します", usage: "ゆっくり<ruby>過<rt>す</rt></ruby>ごすことを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say you relax or take it easy", examples: ["<ruby>家<rt>いえ</rt></ruby>でのんびりします。"], examples_en: ["I take it easy at home."] }
+        { pattern: "たいてい〜します", structure: "たいてい + verb (present)", usage: "いつも<ruby>決<rt>き</rt></ruby>まってすることを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what you usually do", examples: ["たいてい<ruby>映画<rt>えいが</rt></ruby>を<ruby>見<rt>み</rt></ruby>ます。", "たいてい<ruby>家<rt>いえ</rt></ruby>にいます。"], examples_en: ["I usually watch movies.", "I usually stay home."] },
+        { pattern: "〜たり〜たりします", structure: "verb (た-form) + り、verb (た-form) + りします", usage: "いくつかのことを<ruby>並<rt>なら</rt></ruby>べて<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to list several activities", examples: ["<ruby>買<rt>か</rt></ruby>い<ruby>物<rt>もの</rt></ruby>をしたり、<ruby>映画<rt>えいが</rt></ruby>を<ruby>見<rt>み</rt></ruby>たりします。"], examples_en: ["I do things like shopping and watching movies."] },
+        { pattern: "のんびり〜します", structure: "のんびり + verb (present)", usage: "ゆっくり<ruby>過<rt>す</rt></ruby>ごすことを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say you relax or take it easy", examples: ["<ruby>家<rt>いえ</rt></ruby>でのんびりします。"], examples_en: ["I take it easy at home."] }
       ],
       followup: ["友達と過ごしますか？一人ですか？", "外出しますか？家にいますか？", "一番好きな休日の過ごし方は何ですか？"]
     },
@@ -547,9 +555,9 @@ const topics = {
       english: "What is your favorite snack or sweet?",
       vocab: ["お菓子 (snack)", "甘い (sweet)", "チョコレート (chocolate)", "ケーキ (cake)", "和菓子 (Japanese sweets)"],
       grammar: [
-        { pattern: "〜が大好きです", usage: "<ruby>特<rt>とく</rt></ruby>に<ruby>好<rt>す</rt></ruby>きなものを<ruby>強調<rt>きょうちょう</rt></ruby>するとき", usage_en: "Used to say you really love something", examples: ["チョコレートが<ruby>大好<rt>だいす</rt></ruby>きです。", "アイスが<ruby>大好<rt>だいす</rt></ruby>きです。"], examples_en: ["I absolutely love chocolate.", "I absolutely love ice cream."] },
-        { pattern: "〜を食べるのが好きです", usage: "〜することが<ruby>好<rt>す</rt></ruby>きだと<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say you like doing something", examples: ["ケーキを<ruby>食<rt>た</rt></ruby>べるのが<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like eating cake."] },
-        { pattern: "〜より〜の方が好きです", usage: "２つを<ruby>比<rt>くら</rt></ruby>べて<ruby>好<rt>す</rt></ruby>きな<ruby>方<rt>ほう</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to compare two things and say which you prefer", examples: ["ケーキよりチョコレートの<ruby>方<rt>ほう</rt></ruby>が<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like chocolate more than cake."] }
+        { pattern: "〜が大好きです", structure: "noun + が + 大好きです", usage: "<ruby>特<rt>とく</rt></ruby>に<ruby>好<rt>す</rt></ruby>きなものを<ruby>強調<rt>きょうちょう</rt></ruby>するとき", usage_en: "Used to say you really love something", examples: ["チョコレートが<ruby>大好<rt>だいす</rt></ruby>きです。", "アイスが<ruby>大好<rt>だいす</rt></ruby>きです。"], examples_en: ["I absolutely love chocolate.", "I absolutely love ice cream."] },
+        { pattern: "〜を食べるのが好きです", structure: "noun + を食べるのが + 好きです", usage: "〜することが<ruby>好<rt>す</rt></ruby>きだと<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say you like doing something", examples: ["ケーキを<ruby>食<rt>た</rt></ruby>べるのが<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like eating cake."] },
+        { pattern: "〜より〜の方が好きです", structure: "noun A + より + noun B + の方が好きです", usage: "２つを<ruby>比<rt>くら</rt></ruby>べて<ruby>好<rt>す</rt></ruby>きな<ruby>方<rt>ほう</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to compare two things and say which you prefer", examples: ["ケーキよりチョコレートの<ruby>方<rt>ほう</rt></ruby>が<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like chocolate more than cake."] }
       ],
       followup: ["よく食べますか？", "甘いものと辛いもの、どちらが好きですか？", "自分で作ることはありますか？"]
     },
@@ -558,9 +566,9 @@ const topics = {
       english: "Is there any food you're not good with?",
       vocab: ["苦手 (not good with)", "嫌い (hate)", "食べられない (can't eat)", "アレルギー (allergy)", "においがきつい (strong smell)"],
       grammar: [
-        { pattern: "〜が苦手です", usage: "<ruby>苦手<rt>にがて</rt></ruby>なものを<ruby>控<rt>ひか</rt></ruby>えめに<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to politely say you're not good with something", examples: ["<ruby>納豆<rt>なっとう</rt></ruby>が<ruby>苦手<rt>にがて</rt></ruby>です。", "<ruby>辛<rt>から</rt></ruby>い<ruby>食<rt>た</rt></ruby>べ<ruby>物<rt>もの</rt></ruby>が<ruby>苦手<rt>にがて</rt></ruby>です。"], examples_en: ["I'm not good with natto.", "I'm not good with spicy food."] },
-        { pattern: "〜は食べられません", usage: "<ruby>食<rt>た</rt></ruby>べられないことを<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say you cannot eat something", examples: ["えびは<ruby>食<rt>た</rt></ruby>べられません。"], examples_en: ["I can't eat shrimp."] },
-        { pattern: "昔は〜でしたが、今は〜です", usage: "<ruby>過去<rt>かこ</rt></ruby>と<ruby>現在<rt>げんざい</rt></ruby>の<ruby>変化<rt>へんか</rt></ruby>を<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to express how something changed", examples: ["<ruby>昔<rt>むかし</rt></ruby>は<ruby>嫌<rt>きら</rt></ruby>いでしたが、<ruby>今<rt>いま</rt></ruby>は<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I used to dislike it, but now I like it."] }
+        { pattern: "〜が苦手です", structure: "noun + が + 苦手です", usage: "<ruby>苦手<rt>にがて</rt></ruby>なものを<ruby>控<rt>ひか</rt></ruby>えめに<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to politely say you're not good with something", examples: ["<ruby>納豆<rt>なっとう</rt></ruby>が<ruby>苦手<rt>にがて</rt></ruby>です。", "<ruby>辛<rt>から</rt></ruby>い<ruby>食<rt>た</rt></ruby>べ<ruby>物<rt>もの</rt></ruby>が<ruby>苦手<rt>にがて</rt></ruby>です。"], examples_en: ["I'm not good with natto.", "I'm not good with spicy food."] },
+        { pattern: "〜は食べられません", structure: "noun + は + 食べられません", usage: "<ruby>食<rt>た</rt></ruby>べられないことを<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say you cannot eat something", examples: ["えびは<ruby>食<rt>た</rt></ruby>べられません。"], examples_en: ["I can't eat shrimp."] },
+        { pattern: "昔は〜でしたが、今は〜です", structure: "昔は + noun/adjective + でしたが、今は + noun/adjective + です", usage: "<ruby>過去<rt>かこ</rt></ruby>と<ruby>現在<rt>げんざい</rt></ruby>の<ruby>変化<rt>へんか</rt></ruby>を<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to express how something changed", examples: ["<ruby>昔<rt>むかし</rt></ruby>は<ruby>嫌<rt>きら</rt></ruby>いでしたが、<ruby>今<rt>いま</rt></ruby>は<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I used to dislike it, but now I like it."] }
       ],
       followup: ["子どもの頃から苦手でしたか？", "食べられるようになりたいですか？", "その食べ物の何が苦手ですか？"]
     },
@@ -569,9 +577,9 @@ const topics = {
       english: "Around what time do you usually go to sleep?",
       vocab: ["寝る (to sleep)", "〜時ごろ (around ~ o'clock)", "夜更かし (staying up late)", "早寝 (going to bed early)", "眠い (sleepy)"],
       grammar: [
-        { pattern: "〜時ごろ寝ます", usage: "だいたいの<ruby>就寝<rt>しゅうしん</rt></ruby><ruby>時間<rt>じかん</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say approximately what time you go to sleep", examples: ["11<ruby>時<rt>じ</rt></ruby>ごろ<ruby>寝<rt>ね</rt></ruby>ます。", "12<ruby>時<rt>じ</rt></ruby>ごろ<ruby>寝<rt>ね</rt></ruby>ます。"], examples_en: ["I go to sleep around 11.", "I go to sleep around midnight."] },
-        { pattern: "いつも〜ます", usage: "<ruby>習慣<rt>しゅうかん</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to express a habit", examples: ["いつも<ruby>遅<rt>おそ</rt></ruby>く<ruby>寝<rt>ね</rt></ruby>ます。", "いつも<ruby>早<rt>はや</rt></ruby>く<ruby>寝<rt>ね</rt></ruby>ます。"], examples_en: ["I always go to bed late.", "I always go to bed early."] },
-        { pattern: "〜ので、〜ます", usage: "<ruby>理由<rt>りゆう</rt></ruby>を<ruby>説明<rt>せつめい</rt></ruby>するとき", usage_en: "Used to explain the reason for something", examples: ["<ruby>仕事<rt>しごと</rt></ruby>があるので、<ruby>早<rt>はや</rt></ruby>く<ruby>寝<rt>ね</rt></ruby>ます。"], examples_en: ["I go to bed early because I have work."] }
+        { pattern: "〜時ごろ寝ます", structure: "time + ごろ + 寝ます", usage: "だいたいの<ruby>就寝<rt>しゅうしん</rt></ruby><ruby>時間<rt>じかん</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say approximately what time you go to sleep", examples: ["11<ruby>時<rt>じ</rt></ruby>ごろ<ruby>寝<rt>ね</rt></ruby>ます。", "12<ruby>時<rt>じ</rt></ruby>ごろ<ruby>寝<rt>ね</rt></ruby>ます。"], examples_en: ["I go to sleep around 11.", "I go to sleep around midnight."] },
+        { pattern: "いつも〜ます", structure: "いつも + verb (present)", usage: "<ruby>習慣<rt>しゅうかん</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to express a habit", examples: ["いつも<ruby>遅<rt>おそ</rt></ruby>く<ruby>寝<rt>ね</rt></ruby>ます。", "いつも<ruby>早<rt>はや</rt></ruby>く<ruby>寝<rt>ね</rt></ruby>ます。"], examples_en: ["I always go to bed late.", "I always go to bed early."] },
+        { pattern: "〜ので、〜ます", structure: "[reason] + ので、verb (present)", usage: "<ruby>理由<rt>りゆう</rt></ruby>を<ruby>説明<rt>せつめい</rt></ruby>するとき", usage_en: "Used to explain the reason for something", examples: ["<ruby>仕事<rt>しごと</rt></ruby>があるので、<ruby>早<rt>はや</rt></ruby>く<ruby>寝<rt>ね</rt></ruby>ます。"], examples_en: ["I go to bed early because I have work."] }
       ],
       followup: ["睡眠は十分に取れていますか？", "休日と平日で違いますか？", "寝る前に何かしますか？"]
     },
@@ -580,9 +588,9 @@ const topics = {
       english: "Do you listen to music often?",
       vocab: ["音楽 (music)", "聞く (to listen)", "ジャンル (genre)", "歌手 (singer)", "歌 (song)"],
       grammar: [
-        { pattern: "〜をよく聞きます", usage: "よく<ruby>聞<rt>き</rt></ruby>くものを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what you often listen to", examples: ["ポップスをよく<ruby>聞<rt>き</rt></ruby>きます。", "クラシックをよく<ruby>聞<rt>き</rt></ruby>きます。"], examples_en: ["I often listen to pop music.", "I often listen to classical music."] },
-        { pattern: "〜ながら〜します", usage: "〜しながら<ruby>別<rt>べつ</rt></ruby>のことをするとき", usage_en: "Used to say you do two things simultaneously", examples: ["<ruby>音楽<rt>おんがく</rt></ruby>を<ruby>聞<rt>き</rt></ruby>きながら<ruby>勉強<rt>べんきょう</rt></ruby>します。"], examples_en: ["I study while listening to music."] },
-        { pattern: "〜が好きなんですが、〜も好きです", usage: "<ruby>複数<rt>ふくすう</rt></ruby>の<ruby>好<rt>す</rt></ruby>みを<ruby>自然<rt>しぜん</rt></ruby>に<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to naturally express multiple preferences", examples: ["ロックが<ruby>好<rt>す</rt></ruby>きなんですが、ジャズも<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like rock, but I also like jazz."] }
+        { pattern: "〜をよく聞きます", structure: "noun + を + よく聞きます", usage: "よく<ruby>聞<rt>き</rt></ruby>くものを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what you often listen to", examples: ["ポップスをよく<ruby>聞<rt>き</rt></ruby>きます。", "クラシックをよく<ruby>聞<rt>き</rt></ruby>きます。"], examples_en: ["I often listen to pop music.", "I often listen to classical music."] },
+        { pattern: "〜ながら〜します", structure: "verb (ます-form stem) + ながら + verb (present)", usage: "〜しながら<ruby>別<rt>べつ</rt></ruby>のことをするとき", usage_en: "Used to say you do two things simultaneously", examples: ["<ruby>音楽<rt>おんがく</rt></ruby>を<ruby>聞<rt>き</rt></ruby>きながら<ruby>勉強<rt>べんきょう</rt></ruby>します。"], examples_en: ["I study while listening to music."] },
+        { pattern: "〜が好きなんですが、〜も好きです", structure: "noun A + が好きなんですが、noun B + も好きです", usage: "<ruby>複数<rt>ふくすう</rt></ruby>の<ruby>好<rt>す</rt></ruby>みを<ruby>自然<rt>しぜん</rt></ruby>に<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to naturally express multiple preferences", examples: ["ロックが<ruby>好<rt>す</rt></ruby>きなんですが、ジャズも<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like rock, but I also like jazz."] }
       ],
       followup: ["好きな歌手やバンドはいますか？", "音楽を聞くのはいつですか？", "楽器を弾きますか？"]
     },
@@ -591,9 +599,9 @@ const topics = {
       english: "What countries have you been to?",
       vocab: ["行く (to go)", "海外 (overseas)", "旅行 (travel)", "国 (country)", "経験 (experience)"],
       grammar: [
-        { pattern: "〜に行ったことがあります", usage: "<ruby>過去<rt>かこ</rt></ruby>の<ruby>経験<rt>けいけん</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say you have experience of going somewhere", examples: ["フランスに<ruby>行<rt>い</rt></ruby>ったことがあります。", "タイに<ruby>行<rt>い</rt></ruby>ったことがあります。"], examples_en: ["I have been to France.", "I have been to Thailand."] },
-        { pattern: "〜に行ったことがありません", usage: "<ruby>経験<rt>けいけん</rt></ruby>がないことを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say you have never been somewhere", examples: ["ブラジルに<ruby>行<rt>い</rt></ruby>ったことがありません。"], examples_en: ["I have never been to Brazil."] },
-        { pattern: "〜が一番よかったです", usage: "<ruby>一番<rt>いちばん</rt></ruby>よかったものを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what was the best", examples: ["イタリアが<ruby>一番<rt>いちばん</rt></ruby>よかったです。"], examples_en: ["Italy was the best."] }
+        { pattern: "〜に行ったことがあります", structure: "place + に + 行ったことがあります", usage: "<ruby>過去<rt>かこ</rt></ruby>の<ruby>経験<rt>けいけん</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say you have experience of going somewhere", examples: ["フランスに<ruby>行<rt>い</rt></ruby>ったことがあります。", "タイに<ruby>行<rt>い</rt></ruby>ったことがあります。"], examples_en: ["I have been to France.", "I have been to Thailand."] },
+        { pattern: "〜に行ったことがありません", structure: "place + に + 行ったことがありません", usage: "<ruby>経験<rt>けいけん</rt></ruby>がないことを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say you have never been somewhere", examples: ["ブラジルに<ruby>行<rt>い</rt></ruby>ったことがありません。"], examples_en: ["I have never been to Brazil."] },
+        { pattern: "〜が一番よかったです", structure: "noun + が + 一番よかったです", usage: "<ruby>一番<rt>いちばん</rt></ruby>よかったものを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what was the best", examples: ["イタリアが<ruby>一番<rt>いちばん</rt></ruby>よかったです。"], examples_en: ["Italy was the best."] }
       ],
       followup: ["どの国が一番好きでしたか？", "何が目的で旅行しましたか？", "また行きたい国はありますか？"]
     },
@@ -602,9 +610,9 @@ const topics = {
       english: "Where would you like to travel in the future?",
       vocab: ["将来 (future)", "旅行 (travel)", "夢 (dream)", "〜に行きたい (want to go to ~)", "楽しみ (looking forward to)"],
       grammar: [
-        { pattern: "〜に行きたいです", usage: "<ruby>行<rt>い</rt></ruby>きたい<ruby>場所<rt>ばしょ</rt></ruby>を<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say where you want to go", examples: ["イタリアに<ruby>行<rt>い</rt></ruby>きたいです。", "<ruby>北海道<rt>ほっかいどう</rt></ruby>に<ruby>行<rt>い</rt></ruby>きたいです。"], examples_en: ["I want to go to Italy.", "I want to go to Hokkaido."] },
-        { pattern: "〜たら、〜したいです", usage: "<ruby>仮定<rt>かてい</rt></ruby>の<ruby>計画<rt>けいかく</rt></ruby>を<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to express plans based on a condition", examples: ["<ruby>時間<rt>じかん</rt></ruby>があったら、ヨーロッパに<ruby>行<rt>い</rt></ruby>きたいです。"], examples_en: ["If I have time, I'd like to go to Europe."] },
-        { pattern: "〜がたくさんあります", usage: "<ruby>数<rt>かず</rt></ruby>や<ruby>量<rt>りょう</rt></ruby>が<ruby>多<rt>おお</rt></ruby>いことを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say there are many of something", examples: ["<ruby>行<rt>い</rt></ruby>きたい<ruby>場所<rt>ばしょ</rt></ruby>がたくさんあります。"], examples_en: ["There are many places I want to go."] }
+        { pattern: "〜に行きたいです", structure: "place + に + 行きたいです", usage: "<ruby>行<rt>い</rt></ruby>きたい<ruby>場所<rt>ばしょ</rt></ruby>を<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say where you want to go", examples: ["イタリアに<ruby>行<rt>い</rt></ruby>きたいです。", "<ruby>北海道<rt>ほっかいどう</rt></ruby>に<ruby>行<rt>い</rt></ruby>きたいです。"], examples_en: ["I want to go to Italy.", "I want to go to Hokkaido."] },
+        { pattern: "〜たら、〜したいです", structure: "verb (た-form) + ら、verb (たい-form)", usage: "<ruby>仮定<rt>かてい</rt></ruby>の<ruby>計画<rt>けいかく</rt></ruby>を<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to express plans based on a condition", examples: ["<ruby>時間<rt>じかん</rt></ruby>があったら、ヨーロッパに<ruby>行<rt>い</rt></ruby>きたいです。"], examples_en: ["If I have time, I'd like to go to Europe."] },
+        { pattern: "〜がたくさんあります", structure: "noun + が + たくさんあります", usage: "<ruby>数<rt>かず</rt></ruby>や<ruby>量<rt>りょう</rt></ruby>が<ruby>多<rt>おお</rt></ruby>いことを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say there are many of something", examples: ["<ruby>行<rt>い</rt></ruby>きたい<ruby>場所<rt>ばしょ</rt></ruby>がたくさんあります。"], examples_en: ["There are many places I want to go."] }
       ],
       followup: ["なぜその場所に行きたいのですか？", "誰と行きたいですか？", "旅行の計画はありますか？"]
     },
@@ -613,9 +621,9 @@ const topics = {
       english: "Do you have any brothers or sisters?",
       vocab: ["兄弟 (siblings)", "兄 (older brother)", "姉 (older sister)", "弟 (younger brother)", "一人っ子 (only child)"],
       grammar: [
-        { pattern: "〜がいます", usage: "<ruby>兄弟<rt>きょうだい</rt></ruby>がいることを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say you have a sibling", examples: ["<ruby>兄<rt>あに</rt></ruby>が<ruby>一人<rt>ひとり</rt></ruby>います。", "<ruby>妹<rt>いもうと</rt></ruby>がいます。"], examples_en: ["I have one older brother.", "I have a younger sister."] },
-        { pattern: "〜人兄弟です", usage: "<ruby>兄弟<rt>きょうだい</rt></ruby>の<ruby>人数<rt>にんずう</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say how many siblings you have", examples: ["<ruby>三人<rt>さんにん</rt></ruby><ruby>兄弟<rt>きょうだい</rt></ruby>です。", "<ruby>一人<rt>ひとり</rt></ruby>っ<ruby>子<rt>こ</rt></ruby>です。"], examples_en: ["I have two siblings.", "I am an only child."] },
-        { pattern: "〜の方が〜です", usage: "<ruby>比較<rt>ひかく</rt></ruby>するとき", usage_en: "Used when comparing", examples: ["<ruby>姉<rt>あね</rt></ruby>の<ruby>方<rt>ほう</rt></ruby>が<ruby>背<rt>せ</rt></ruby>が<ruby>高<rt>たか</rt></ruby>いです。"], examples_en: ["My older sister is taller."] }
+        { pattern: "〜がいます", structure: "noun + が + います", usage: "<ruby>兄弟<rt>きょうだい</rt></ruby>がいることを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say you have a sibling", examples: ["<ruby>兄<rt>あに</rt></ruby>が<ruby>一人<rt>ひとり</rt></ruby>います。", "<ruby>妹<rt>いもうと</rt></ruby>がいます。"], examples_en: ["I have one older brother.", "I have a younger sister."] },
+        { pattern: "〜人兄弟です", structure: "number + 人兄弟です", usage: "<ruby>兄弟<rt>きょうだい</rt></ruby>の<ruby>人数<rt>にんずう</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say how many siblings you have", examples: ["<ruby>三人<rt>さんにん</rt></ruby><ruby>兄弟<rt>きょうだい</rt></ruby>です。", "<ruby>一人<rt>ひとり</rt></ruby>っ<ruby>子<rt>こ</rt></ruby>です。"], examples_en: ["I have two siblings.", "I am an only child."] },
+        { pattern: "〜の方が〜です", structure: "noun + の方が + adjective + です", usage: "<ruby>比較<rt>ひかく</rt></ruby>するとき", usage_en: "Used when comparing", examples: ["<ruby>姉<rt>あね</rt></ruby>の<ruby>方<rt>ほう</rt></ruby>が<ruby>背<rt>せ</rt></ruby>が<ruby>高<rt>たか</rt></ruby>いです。"], examples_en: ["My older sister is taller."] }
       ],
       followup: ["仲がいいですか？", "兄弟の中で何番目ですか？", "子どもの頃、よく一緒に遊びましたか？"]
     },
@@ -624,9 +632,9 @@ const topics = {
       english: "Do you have a favorite anime or TV drama?",
       vocab: ["アニメ (anime)", "ドラマ (TV drama)", "主人公 (main character)", "ストーリー (story)", "おもしろい (interesting)"],
       grammar: [
-        { pattern: "〜にはまっています", usage: "<ruby>夢中<rt>むちゅう</rt></ruby>になっているものを<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say you are absorbed in something", examples: ["アニメにはまっています。", "このドラマにはまっています。"], examples_en: ["I'm hooked on anime.", "I'm hooked on this drama."] },
-        { pattern: "〜というアニメです", usage: "タイトルを<ruby>紹介<rt>しょうかい</rt></ruby>するとき", usage_en: "Used to introduce a title", examples: ["「<ruby>鬼滅<rt>きめつ</rt></ruby>の<ruby>刃<rt>やいば</rt></ruby>」というアニメです。"], examples_en: ["It's an anime called 'Demon Slayer'."] },
-        { pattern: "〜がおもしろいです", usage: "<ruby>感想<rt>かんそう</rt></ruby>を<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say something is interesting", examples: ["キャラクターがおもしろいです。"], examples_en: ["The characters are interesting."] }
+        { pattern: "〜にはまっています", structure: "noun + に + はまっています", usage: "<ruby>夢中<rt>むちゅう</rt></ruby>になっているものを<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say you are absorbed in something", examples: ["アニメにはまっています。", "このドラマにはまっています。"], examples_en: ["I'm hooked on anime.", "I'm hooked on this drama."] },
+        { pattern: "〜というアニメです", structure: "title + というアニメです", usage: "タイトルを<ruby>紹介<rt>しょうかい</rt></ruby>するとき", usage_en: "Used to introduce a title", examples: ["「<ruby>鬼滅<rt>きめつ</rt></ruby>の<ruby>刃<rt>やいば</rt></ruby>」というアニメです。"], examples_en: ["It's an anime called 'Demon Slayer'."] },
+        { pattern: "〜がおもしろいです", structure: "noun + が + おもしろいです", usage: "<ruby>感想<rt>かんそう</rt></ruby>を<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say something is interesting", examples: ["キャラクターがおもしろいです。"], examples_en: ["The characters are interesting."] }
       ],
       followup: ["どんなキャラクターが好きですか？", "友達に勧めたいですか？", "毎週見ますか？"]
     },
@@ -635,9 +643,9 @@ const topics = {
       english: "What is your favorite Japanese food?",
       vocab: ["日本料理 (Japanese cuisine)", "すし (sushi)", "ラーメン (ramen)", "たこやき (takoyaki)", "おにぎり (rice ball)"],
       grammar: [
-        { pattern: "〜が一番好きです", usage: "<ruby>一番<rt>いちばん</rt></ruby><ruby>好<rt>す</rt></ruby>きなものを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what you like the most", examples: ["ラーメンが<ruby>一番<rt>いちばん</rt></ruby><ruby>好<rt>す</rt></ruby>きです。", "おすしが<ruby>一番<rt>いちばん</rt></ruby><ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like ramen the most.", "I like sushi the most."] },
-        { pattern: "〜を食べたことがあります", usage: "<ruby>経験<rt>けいけん</rt></ruby>を<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say you have eaten something before", examples: ["<ruby>納豆<rt>なっとう</rt></ruby>を<ruby>食<rt>た</rt></ruby>べたことがあります。", "たこやきを<ruby>食<rt>た</rt></ruby>べたことがあります。"], examples_en: ["I have eaten natto before.", "I have eaten takoyaki."] },
-        { pattern: "〜は〜味がします", usage: "<ruby>味<rt>あじ</rt></ruby>の<ruby>説明<rt>せつめい</rt></ruby>をするとき", usage_en: "Used to describe how something tastes", examples: ["みそしるはうま<ruby>味<rt>み</rt></ruby>がします。"], examples_en: ["Miso soup has an umami flavor."] }
+        { pattern: "〜が一番好きです", structure: "noun + が + 一番好きです", usage: "<ruby>一番<rt>いちばん</rt></ruby><ruby>好<rt>す</rt></ruby>きなものを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what you like the most", examples: ["ラーメンが<ruby>一番<rt>いちばん</rt></ruby><ruby>好<rt>す</rt></ruby>きです。", "おすしが<ruby>一番<rt>いちばん</rt></ruby><ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like ramen the most.", "I like sushi the most."] },
+        { pattern: "〜を食べたことがあります", structure: "noun + を + 食べたことがあります", usage: "<ruby>経験<rt>けいけん</rt></ruby>を<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say you have eaten something before", examples: ["<ruby>納豆<rt>なっとう</rt></ruby>を<ruby>食<rt>た</rt></ruby>べたことがあります。", "たこやきを<ruby>食<rt>た</rt></ruby>べたことがあります。"], examples_en: ["I have eaten natto before.", "I have eaten takoyaki."] },
+        { pattern: "〜は〜味がします", structure: "noun + は + flavor + 味がします", usage: "<ruby>味<rt>あじ</rt></ruby>の<ruby>説明<rt>せつめい</rt></ruby>をするとき", usage_en: "Used to describe how something tastes", examples: ["みそしるはうま<ruby>味<rt>み</rt></ruby>がします。"], examples_en: ["Miso soup has an umami flavor."] }
       ],
       followup: ["よく食べますか？", "自分で作れますか？", "日本に来たらどれを食べたいですか？"]
     },
@@ -646,9 +654,9 @@ const topics = {
       english: "Do you eat breakfast every day?",
       vocab: ["朝ごはん (breakfast)", "毎日 (every day)", "食べる (to eat)", "時間 (time)", "〜ないことがある (sometimes don't)"],
       grammar: [
-        { pattern: "毎日〜ます", usage: "<ruby>毎日<rt>まいにち</rt></ruby>することを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what you do every day", examples: ["<ruby>毎日<rt>まいにち</rt></ruby><ruby>朝<rt>あさ</rt></ruby>ごはんを<ruby>食<rt>た</rt></ruby>べます。"], examples_en: ["I eat breakfast every day."] },
-        { pattern: "〜ないことがあります", usage: "ときどきしないことを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say you sometimes don't do something", examples: ["<ruby>朝<rt>あさ</rt></ruby>ごはんを<ruby>食<rt>た</rt></ruby>べないことがあります。"], examples_en: ["Sometimes I don't eat breakfast."] },
-        { pattern: "〜から、〜ません", usage: "<ruby>理由<rt>りゆう</rt></ruby>をつけて<ruby>否定<rt>ひてい</rt></ruby>するとき", usage_en: "Used to explain why you don't do something", examples: ["<ruby>時間<rt>じかん</rt></ruby>がないから、<ruby>朝<rt>あさ</rt></ruby>ごはんを<ruby>食<rt>た</rt></ruby>べません。"], examples_en: ["I don't eat breakfast because I don't have time."] }
+        { pattern: "毎日〜ます", structure: "毎日 + verb (present)", usage: "<ruby>毎日<rt>まいにち</rt></ruby>することを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what you do every day", examples: ["<ruby>毎日<rt>まいにち</rt></ruby><ruby>朝<rt>あさ</rt></ruby>ごはんを<ruby>食<rt>た</rt></ruby>べます。"], examples_en: ["I eat breakfast every day."] },
+        { pattern: "〜ないことがあります", structure: "verb (ない-form) + ことがあります", usage: "ときどきしないことを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say you sometimes don't do something", examples: ["<ruby>朝<rt>あさ</rt></ruby>ごはんを<ruby>食<rt>た</rt></ruby>べないことがあります。"], examples_en: ["Sometimes I don't eat breakfast."] },
+        { pattern: "〜から、〜ません", structure: "[reason] + から、verb (negative)", usage: "<ruby>理由<rt>りゆう</rt></ruby>をつけて<ruby>否定<rt>ひてい</rt></ruby>するとき", usage_en: "Used to explain why you don't do something", examples: ["<ruby>時間<rt>じかん</rt></ruby>がないから、<ruby>朝<rt>あさ</rt></ruby>ごはんを<ruby>食<rt>た</rt></ruby>べません。"], examples_en: ["I don't eat breakfast because I don't have time."] }
       ],
       followup: ["どんなものを食べますか？", "食べないと調子が悪いですか？", "朝ごはんで一番好きなメニューは？"]
     },
@@ -657,9 +665,9 @@ const topics = {
       english: "Do you play any musical instruments?",
       vocab: ["楽器 (instrument)", "弾く (to play string/keyboard)", "ピアノ (piano)", "ギター (guitar)", "習う (to take lessons)"],
       grammar: [
-        { pattern: "〜を弾きます", usage: "<ruby>楽器<rt>がっき</rt></ruby>を<ruby>弾<rt>ひ</rt></ruby>くときに<ruby>使<rt>つか</rt></ruby>う", usage_en: "Used for playing string or keyboard instruments", examples: ["ギターを<ruby>弾<rt>ひ</rt></ruby>きます。", "ピアノを<ruby>弾<rt>ひ</rt></ruby>きます。"], examples_en: ["I play guitar.", "I play piano."] },
-        { pattern: "〜を習っています", usage: "レッスンを<ruby>受<rt>う</rt></ruby>けていることを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say you are taking lessons", examples: ["ピアノを<ruby>習<rt>なら</rt></ruby>っています。"], examples_en: ["I am taking piano lessons."] },
-        { pattern: "子どもの頃〜していました", usage: "<ruby>子<rt>こ</rt></ruby>どもの<ruby>頃<rt>ころ</rt></ruby>の<ruby>習慣<rt>しゅうかん</rt></ruby>を<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to talk about childhood habits", examples: ["<ruby>子<rt>こ</rt></ruby>どもの<ruby>頃<rt>ころ</rt></ruby>ピアノをしていました。"], examples_en: ["I used to play piano as a child."] }
+        { pattern: "〜を弾きます", structure: "noun + を + 弾きます", usage: "<ruby>楽器<rt>がっき</rt></ruby>を<ruby>弾<rt>ひ</rt></ruby>くときに<ruby>使<rt>つか</rt></ruby>う", usage_en: "Used for playing string or keyboard instruments", examples: ["ギターを<ruby>弾<rt>ひ</rt></ruby>きます。", "ピアノを<ruby>弾<rt>ひ</rt></ruby>きます。"], examples_en: ["I play guitar.", "I play piano."] },
+        { pattern: "〜を習っています", structure: "noun + を + 習っています", usage: "レッスンを<ruby>受<rt>う</rt></ruby>けていることを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say you are taking lessons", examples: ["ピアノを<ruby>習<rt>なら</rt></ruby>っています。"], examples_en: ["I am taking piano lessons."] },
+        { pattern: "子どもの頃〜していました", structure: "子どもの頃 + verb (て-form) + いました", usage: "<ruby>子<rt>こ</rt></ruby>どもの<ruby>頃<rt>ころ</rt></ruby>の<ruby>習慣<rt>しゅうかん</rt></ruby>を<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to talk about childhood habits", examples: ["<ruby>子<rt>こ</rt></ruby>どもの<ruby>頃<rt>ころ</rt></ruby>ピアノをしていました。"], examples_en: ["I used to play piano as a child."] }
       ],
       followup: ["いつから弾いていますか？", "好きな曲は何ですか？", "習いたい楽器はありますか？"]
     },
@@ -668,9 +676,9 @@ const topics = {
       english: "Do you like cooking?",
       vocab: ["料理 (cooking)", "作る (to make)", "レシピ (recipe)", "得意 (good at)", "外食 (eating out)"],
       grammar: [
-        { pattern: "〜するのが好きです", usage: "〜することが<ruby>好<rt>す</rt></ruby>きだと<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say you like doing something", examples: ["<ruby>料理<rt>りょうり</rt></ruby>するのが<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like cooking."] },
-        { pattern: "〜が得意です", usage: "<ruby>得意<rt>とくい</rt></ruby>なことを<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say what you are good at", examples: ["パスタが<ruby>得意<rt>とくい</rt></ruby>です。", "カレーが<ruby>得意<rt>とくい</rt></ruby>です。"], examples_en: ["I'm good at making pasta.", "I'm good at making curry."] },
-        { pattern: "〜たり〜たりします", usage: "いくつかの<ruby>行動<rt>こうどう</rt></ruby>を<ruby>並<rt>なら</rt></ruby>べるとき", usage_en: "Used to list several actions", examples: ["<ruby>野菜<rt>やさい</rt></ruby>を<ruby>切<rt>き</rt></ruby>ったり、<ruby>炒<rt>いた</rt></ruby>めたりします。"], examples_en: ["I do things like cutting and stir-frying vegetables."] }
+        { pattern: "〜するのが好きです", structure: "verb + のが + 好きです", usage: "〜することが<ruby>好<rt>す</rt></ruby>きだと<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say you like doing something", examples: ["<ruby>料理<rt>りょうり</rt></ruby>するのが<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like cooking."] },
+        { pattern: "〜が得意です", structure: "noun + が + 得意です", usage: "<ruby>得意<rt>とくい</rt></ruby>なことを<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say what you are good at", examples: ["パスタが<ruby>得意<rt>とくい</rt></ruby>です。", "カレーが<ruby>得意<rt>とくい</rt></ruby>です。"], examples_en: ["I'm good at making pasta.", "I'm good at making curry."] },
+        { pattern: "〜たり〜たりします", structure: "verb (た-form) + り、verb (た-form) + りします", usage: "いくつかの<ruby>行動<rt>こうどう</rt></ruby>を<ruby>並<rt>なら</rt></ruby>べるとき", usage_en: "Used to list several actions", examples: ["<ruby>野菜<rt>やさい</rt></ruby>を<ruby>切<rt>き</rt></ruby>ったり、<ruby>炒<rt>いた</rt></ruby>めたりします。"], examples_en: ["I do things like cutting and stir-frying vegetables."] }
       ],
       followup: ["よく料理しますか？", "得意な料理は何ですか？", "自分で作るのと外食、どちらが好きですか？"]
     },
@@ -679,9 +687,9 @@ const topics = {
       english: "What kind of activities did you enjoy as a child?",
       vocab: ["子どもの頃 (childhood)", "遊ぶ (to play)", "外遊び (outdoor play)", "ゲーム (games)", "友達 (friends)"],
       grammar: [
-        { pattern: "子どもの頃、よく〜していました", usage: "<ruby>幼少期<rt>ようしょうき</rt></ruby>の<ruby>習慣<rt>しゅうかん</rt></ruby>を<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to talk about things you often did in childhood", examples: ["<ruby>子<rt>こ</rt></ruby>どもの<ruby>頃<rt>ころ</rt></ruby>、よく<ruby>外<rt>そと</rt></ruby>で<ruby>遊<rt>あそ</rt></ruby>んでいました。"], examples_en: ["I used to play outside a lot as a child."] },
-        { pattern: "〜が楽しかったです", usage: "<ruby>楽<rt>たの</rt></ruby>しかった<ruby>記憶<rt>きおく</rt></ruby>を<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say something was fun", examples: ["かくれんぼが<ruby>楽<rt>たの</rt></ruby>しかったです。"], examples_en: ["Hide and seek was fun."] },
-        { pattern: "今でも〜したいです", usage: "<ruby>今<rt>いま</rt></ruby>でもしたいことを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say something you still want to do", examples: ["<ruby>今<rt>いま</rt></ruby>でもゲームがしたいです。"], examples_en: ["I still want to play games."] }
+        { pattern: "子どもの頃、よく〜していました", structure: "子どもの頃、よく + verb (て-form) + いました", usage: "<ruby>幼少期<rt>ようしょうき</rt></ruby>の<ruby>習慣<rt>しゅうかん</rt></ruby>を<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to talk about things you often did in childhood", examples: ["<ruby>子<rt>こ</rt></ruby>どもの<ruby>頃<rt>ころ</rt></ruby>、よく<ruby>外<rt>そと</rt></ruby>で<ruby>遊<rt>あそ</rt></ruby>んでいました。"], examples_en: ["I used to play outside a lot as a child."] },
+        { pattern: "〜が楽しかったです", structure: "noun + が + 楽しかったです", usage: "<ruby>楽<rt>たの</rt></ruby>しかった<ruby>記憶<rt>きおく</rt></ruby>を<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say something was fun", examples: ["かくれんぼが<ruby>楽<rt>たの</rt></ruby>しかったです。"], examples_en: ["Hide and seek was fun."] },
+        { pattern: "今でも〜したいです", structure: "今でも + verb + たいです", usage: "<ruby>今<rt>いま</rt></ruby>でもしたいことを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say something you still want to do", examples: ["<ruby>今<rt>いま</rt></ruby>でもゲームがしたいです。"], examples_en: ["I still want to play games."] }
       ],
       followup: ["一番好きな遊びは何でしたか？", "今でも続けていることはありますか？", "友達と遊ぶことが多かったですか？"]
     },
@@ -690,9 +698,9 @@ const topics = {
       english: "What is a famous food from your country?",
       vocab: ["有名 (famous)", "料理 (dish)", "伝統的 (traditional)", "特別 (special)", "材料 (ingredient)"],
       grammar: [
-        { pattern: "〜という料理があります", usage: "<ruby>料理<rt>りょうり</rt></ruby>を<ruby>紹介<rt>しょうかい</rt></ruby>するとき", usage_en: "Used to introduce a dish", examples: ["キムチという<ruby>料理<rt>りょうり</rt></ruby>があります。", "タコスという<ruby>料理<rt>りょうり</rt></ruby>があります。"], examples_en: ["There's a dish called kimchi.", "There's a dish called tacos."] },
-        { pattern: "〜は〜が入っています", usage: "<ruby>材料<rt>ざいりょう</rt></ruby>を<ruby>説明<rt>せつめい</rt></ruby>するとき", usage_en: "Used to explain what's in a dish", examples: ["これには<ruby>野菜<rt>やさい</rt></ruby>と<ruby>肉<rt>にく</rt></ruby>が<ruby>入<rt>はい</rt></ruby>っています。"], examples_en: ["This has vegetables and meat in it."] },
-        { pattern: "〜のときに食べます", usage: "いつ<ruby>食<rt>た</rt></ruby>べるかを<ruby>説明<rt>せつめい</rt></ruby>するとき", usage_en: "Used to explain when you eat something", examples: ["<ruby>祭<rt>まつ</rt></ruby>りのときに<ruby>食<rt>た</rt></ruby>べます。"], examples_en: ["We eat it at festivals."] }
+        { pattern: "〜という料理があります", structure: "title + という料理があります", usage: "<ruby>料理<rt>りょうり</rt></ruby>を<ruby>紹介<rt>しょうかい</rt></ruby>するとき", usage_en: "Used to introduce a dish", examples: ["キムチという<ruby>料理<rt>りょうり</rt></ruby>があります。", "タコスという<ruby>料理<rt>りょうり</rt></ruby>があります。"], examples_en: ["There's a dish called kimchi.", "There's a dish called tacos."] },
+        { pattern: "〜は〜が入っています", structure: "noun + は + ingredient + が入っています", usage: "<ruby>材料<rt>ざいりょう</rt></ruby>を<ruby>説明<rt>せつめい</rt></ruby>するとき", usage_en: "Used to explain what's in a dish", examples: ["これには<ruby>野菜<rt>やさい</rt></ruby>と<ruby>肉<rt>にく</rt></ruby>が<ruby>入<rt>はい</rt></ruby>っています。"], examples_en: ["This has vegetables and meat in it."] },
+        { pattern: "〜のときに食べます", structure: "noun + のときに + 食べます", usage: "いつ<ruby>食<rt>た</rt></ruby>べるかを<ruby>説明<rt>せつめい</rt></ruby>するとき", usage_en: "Used to explain when you eat something", examples: ["<ruby>祭<rt>まつ</rt></ruby>りのときに<ruby>食<rt>た</rt></ruby>べます。"], examples_en: ["We eat it at festivals."] }
       ],
       followup: ["日本でも食べることができますか？", "作り方を教えてもらえますか？", "その料理を食べるのはどんな場面ですか？"]
     },
@@ -701,9 +709,9 @@ const topics = {
       english: "Are you reading anything lately?",
       vocab: ["本 (book)", "読む (to read)", "小説 (novel)", "マンガ (manga)", "電子書籍 (e-book)"],
       grammar: [
-        { pattern: "今〜を読んでいます", usage: "<ruby>今<rt>いま</rt></ruby><ruby>読<rt>よ</rt></ruby>んでいるものを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what you are currently reading", examples: ["<ruby>今<rt>いま</rt></ruby>、<ruby>小説<rt>しょうせつ</rt></ruby>を<ruby>読<rt>よ</rt></ruby>んでいます。", "<ruby>今<rt>いま</rt></ruby>、マンガを<ruby>読<rt>よ</rt></ruby>んでいます。"], examples_en: ["I'm currently reading a novel.", "I'm currently reading manga."] },
-        { pattern: "〜をよく読みます", usage: "よく<ruby>読<rt>よ</rt></ruby>むものを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what you often read", examples: ["マンガをよく<ruby>読<rt>よ</rt></ruby>みます。"], examples_en: ["I often read manga."] },
-        { pattern: "〜のような本が好きです", usage: "<ruby>好<rt>す</rt></ruby>きなジャンルを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what genre you like", examples: ["<ruby>推理<rt>すいり</rt></ruby>のような<ruby>本<rt>ほん</rt></ruby>が<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like books like mystery novels."] }
+        { pattern: "今〜を読んでいます", structure: "今 + noun + を + 読んでいます", usage: "<ruby>今<rt>いま</rt></ruby><ruby>読<rt>よ</rt></ruby>んでいるものを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what you are currently reading", examples: ["<ruby>今<rt>いま</rt></ruby>、<ruby>小説<rt>しょうせつ</rt></ruby>を<ruby>読<rt>よ</rt></ruby>んでいます。", "<ruby>今<rt>いま</rt></ruby>、マンガを<ruby>読<rt>よ</rt></ruby>んでいます。"], examples_en: ["I'm currently reading a novel.", "I'm currently reading manga."] },
+        { pattern: "〜をよく読みます", structure: "noun + を + よく読みます", usage: "よく<ruby>読<rt>よ</rt></ruby>むものを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what you often read", examples: ["マンガをよく<ruby>読<rt>よ</rt></ruby>みます。"], examples_en: ["I often read manga."] },
+        { pattern: "〜のような本が好きです", structure: "noun + のような本が + 好きです", usage: "<ruby>好<rt>す</rt></ruby>きなジャンルを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what genre you like", examples: ["<ruby>推理<rt>すいり</rt></ruby>のような<ruby>本<rt>ほん</rt></ruby>が<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like books like mystery novels."] }
       ],
       followup: ["本を読む時間はどんなときですか？", "おすすめの本はありますか？", "紙の本と電子書籍、どちらが好きですか？"]
     },
@@ -712,9 +720,9 @@ const topics = {
       english: "What do you often do with your friends?",
       vocab: ["友達 (friend)", "一緒に (together)", "カフェ (café)", "出かける (to go out)", "遊ぶ (to hang out)"],
       grammar: [
-        { pattern: "友達と〜します", usage: "<ruby>友達<rt>ともだち</rt></ruby>とすることを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what you do with friends", examples: ["<ruby>友達<rt>ともだち</rt></ruby>とカフェに<ruby>行<rt>い</rt></ruby>きます。", "<ruby>友達<rt>ともだち</rt></ruby>と<ruby>映画<rt>えいが</rt></ruby>を<ruby>見<rt>み</rt></ruby>ます。"], examples_en: ["I go to cafés with friends.", "I watch movies with friends."] },
-        { pattern: "〜で待ち合わせします", usage: "<ruby>待<rt>ま</rt></ruby>ち<ruby>合<rt>あ</rt></ruby>わせ<ruby>場所<rt>ばしょ</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say where you meet up", examples: ["<ruby>駅前<rt>えきまえ</rt></ruby>で<ruby>待<rt>ま</rt></ruby>ち<ruby>合<rt>あ</rt></ruby>わせします。"], examples_en: ["We meet in front of the station."] },
-        { pattern: "〜と過ごすのが楽しいです", usage: "<ruby>誰<rt>だれ</rt></ruby>かと<ruby>過<rt>す</rt></ruby>ごすことが<ruby>楽<rt>たの</rt></ruby>しいことを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say you enjoy spending time with someone", examples: ["<ruby>友達<rt>ともだち</rt></ruby>と<ruby>過<rt>す</rt></ruby>ごすのが<ruby>楽<rt>たの</rt></ruby>しいです。"], examples_en: ["I enjoy spending time with friends."] }
+        { pattern: "友達と〜します", structure: "友達と + verb (present)", usage: "<ruby>友達<rt>ともだち</rt></ruby>とすることを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what you do with friends", examples: ["<ruby>友達<rt>ともだち</rt></ruby>とカフェに<ruby>行<rt>い</rt></ruby>きます。", "<ruby>友達<rt>ともだち</rt></ruby>と<ruby>映画<rt>えいが</rt></ruby>を<ruby>見<rt>み</rt></ruby>ます。"], examples_en: ["I go to cafés with friends.", "I watch movies with friends."] },
+        { pattern: "〜で待ち合わせします", structure: "place + で + 待ち合わせします", usage: "<ruby>待<rt>ま</rt></ruby>ち<ruby>合<rt>あ</rt></ruby>わせ<ruby>場所<rt>ばしょ</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say where you meet up", examples: ["<ruby>駅前<rt>えきまえ</rt></ruby>で<ruby>待<rt>ま</rt></ruby>ち<ruby>合<rt>あ</rt></ruby>わせします。"], examples_en: ["We meet in front of the station."] },
+        { pattern: "〜と過ごすのが楽しいです", structure: "noun + と + 過ごすのが + 楽しいです", usage: "<ruby>誰<rt>だれ</rt></ruby>かと<ruby>過<rt>す</rt></ruby>ごすことが<ruby>楽<rt>たの</rt></ruby>しいことを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say you enjoy spending time with someone", examples: ["<ruby>友達<rt>ともだち</rt></ruby>と<ruby>過<rt>す</rt></ruby>ごすのが<ruby>楽<rt>たの</rt></ruby>しいです。"], examples_en: ["I enjoy spending time with friends."] }
       ],
       followup: ["よく会いますか？", "どんな友達ですか？", "友達との一番の思い出は？"]
     },
@@ -723,9 +731,9 @@ const topics = {
       english: "Do you prefer sweet things or spicy things?",
       vocab: ["甘い (sweet)", "辛い (spicy)", "どちら (which one)", "両方 (both)", "比べる (to compare)"],
       grammar: [
-        { pattern: "〜よりも〜の方が好きです", usage: "２つを<ruby>比<rt>くら</rt></ruby>べてどちらが<ruby>好<rt>す</rt></ruby>きか<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say which of two things you prefer", examples: ["<ruby>辛<rt>から</rt></ruby>いよりも<ruby>甘<rt>あま</rt></ruby>いものの<ruby>方<rt>ほう</rt></ruby>が<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like sweet things more than spicy things."] },
-        { pattern: "どちらかというと〜です", usage: "<ruby>強<rt>つよ</rt></ruby>い<ruby>好<rt>す</rt></ruby>みではないが<ruby>少<rt>すこ</rt></ruby>し<ruby>好<rt>す</rt></ruby>きな<ruby>方<rt>ほう</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to gently express a slight preference", examples: ["どちらかというと<ruby>甘<rt>あま</rt></ruby>い<ruby>方<rt>ほう</rt></ruby>が<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["If anything, I prefer sweet things."] },
-        { pattern: "両方好きです", usage: "どちらも<ruby>好<rt>す</rt></ruby>きだと<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say you like both", examples: ["<ruby>両方<rt>りょうほう</rt></ruby><ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like both."] }
+        { pattern: "〜よりも〜の方が好きです", structure: "noun A + よりも + noun B + の方が好きです", usage: "２つを<ruby>比<rt>くら</rt></ruby>べてどちらが<ruby>好<rt>す</rt></ruby>きか<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say which of two things you prefer", examples: ["<ruby>辛<rt>から</rt></ruby>いよりも<ruby>甘<rt>あま</rt></ruby>いものの<ruby>方<rt>ほう</rt></ruby>が<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like sweet things more than spicy things."] },
+        { pattern: "どちらかというと〜です", structure: "どちらかというと + adjective/noun + です", usage: "<ruby>強<rt>つよ</rt></ruby>い<ruby>好<rt>す</rt></ruby>みではないが<ruby>少<rt>すこ</rt></ruby>し<ruby>好<rt>す</rt></ruby>きな<ruby>方<rt>ほう</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to gently express a slight preference", examples: ["どちらかというと<ruby>甘<rt>あま</rt></ruby>い<ruby>方<rt>ほう</rt></ruby>が<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["If anything, I prefer sweet things."] },
+        { pattern: "両方好きです", structure: "両方 + 好きです", usage: "どちらも<ruby>好<rt>す</rt></ruby>きだと<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say you like both", examples: ["<ruby>両方<rt>りょうほう</rt></ruby><ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like both."] }
       ],
       followup: ["甘いものはよく食べますか？", "辛い料理で好きなものはありますか？", "デザートは毎食食べますか？"]
     },
@@ -734,9 +742,9 @@ const topics = {
       english: "Are you more of a morning person or a night person?",
       vocab: ["朝型 (morning person)", "夜型 (night person)", "得意 (better at)", "活動的 (active)", "集中する (to concentrate)"],
       grammar: [
-        { pattern: "〜の方が得意です", usage: "<ruby>得意<rt>とくい</rt></ruby>な<ruby>方<rt>ほう</rt></ruby>を<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say which you are better at", examples: ["<ruby>夜<rt>よる</rt></ruby>の<ruby>方<rt>ほう</rt></ruby>が<ruby>得意<rt>とくい</rt></ruby>です。", "<ruby>朝<rt>あさ</rt></ruby>の<ruby>方<rt>ほう</rt></ruby>が<ruby>得意<rt>とくい</rt></ruby>です。"], examples_en: ["I'm more of a night person.", "I'm more of a morning person."] },
-        { pattern: "〜はちょっと苦手です", usage: "<ruby>苦手<rt>にがて</rt></ruby>なことを<ruby>控<rt>ひか</rt></ruby>えめに<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to gently say you're not great at something", examples: ["<ruby>朝<rt>あさ</rt></ruby>はちょっと<ruby>苦手<rt>にがて</rt></ruby>です。"], examples_en: ["I'm not great in the mornings."] },
-        { pattern: "〜時間帯の方が〜です", usage: "<ruby>時間帯<rt>じかんたい</rt></ruby>による<ruby>違<rt>ちが</rt></ruby>いを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say differences by time of day", examples: ["<ruby>夜<rt>よる</rt></ruby>の<ruby>時間帯<rt>じかんたい</rt></ruby>の<ruby>方<rt>ほう</rt></ruby>が<ruby>集中<rt>しゅうちゅう</rt></ruby>できます。"], examples_en: ["I can concentrate better in the evening."] }
+        { pattern: "〜の方が得意です", structure: "noun + の方が + 得意です", usage: "<ruby>得意<rt>とくい</rt></ruby>な<ruby>方<rt>ほう</rt></ruby>を<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say which you are better at", examples: ["<ruby>夜<rt>よる</rt></ruby>の<ruby>方<rt>ほう</rt></ruby>が<ruby>得意<rt>とくい</rt></ruby>です。", "<ruby>朝<rt>あさ</rt></ruby>の<ruby>方<rt>ほう</rt></ruby>が<ruby>得意<rt>とくい</rt></ruby>です。"], examples_en: ["I'm more of a night person.", "I'm more of a morning person."] },
+        { pattern: "〜はちょっと苦手です", structure: "noun + は + ちょっと苦手です", usage: "<ruby>苦手<rt>にがて</rt></ruby>なことを<ruby>控<rt>ひか</rt></ruby>えめに<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to gently say you're not great at something", examples: ["<ruby>朝<rt>あさ</rt></ruby>はちょっと<ruby>苦手<rt>にがて</rt></ruby>です。"], examples_en: ["I'm not great in the mornings."] },
+        { pattern: "〜時間帯の方が〜です", structure: "time + 時間帯の方が + adjective + です", usage: "<ruby>時間帯<rt>じかんたい</rt></ruby>による<ruby>違<rt>ちが</rt></ruby>いを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say differences by time of day", examples: ["<ruby>夜<rt>よる</rt></ruby>の<ruby>時間帯<rt>じかんたい</rt></ruby>の<ruby>方<rt>ほう</rt></ruby>が<ruby>集中<rt>しゅうちゅう</rt></ruby>できます。"], examples_en: ["I can concentrate better in the evening."] }
       ],
       followup: ["何時に起きることが多いですか？", "朝型になりたいと思ったことはありますか？", "一番集中できる時間帯はいつですか？"]
     },
@@ -745,9 +753,9 @@ const topics = {
       english: "Do you like taking photos?",
       vocab: ["写真 (photo)", "撮る (to take a photo)", "スマホ (smartphone)", "カメラ (camera)", "SNS (social media)"],
       grammar: [
-        { pattern: "〜のが好きです", usage: "〜することが<ruby>好<rt>す</rt></ruby>きだと<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say you like doing something", examples: ["<ruby>写真<rt>しゃしん</rt></ruby>を<ruby>撮<rt>と</rt></ruby>るのが<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like taking photos."] },
-        { pattern: "〜のときに撮ります", usage: "<ruby>写真<rt>しゃしん</rt></ruby>を<ruby>撮<rt>と</rt></ruby>るタイミングを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say when you take photos", examples: ["<ruby>旅行<rt>りょこう</rt></ruby>のときに<ruby>撮<rt>と</rt></ruby>ります。"], examples_en: ["I take photos when traveling."] },
-        { pattern: "SNSに〜をあげます", usage: "SNSに<ruby>投稿<rt>とうこう</rt></ruby>することを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say you post something on social media", examples: ["SNSに<ruby>写真<rt>しゃしん</rt></ruby>をあげます。"], examples_en: ["I post photos on social media."] }
+        { pattern: "〜のが好きです", structure: "verb + のが + 好きです", usage: "〜することが<ruby>好<rt>す</rt></ruby>きだと<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say you like doing something", examples: ["<ruby>写真<rt>しゃしん</rt></ruby>を<ruby>撮<rt>と</rt></ruby>るのが<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like taking photos."] },
+        { pattern: "〜のときに撮ります", structure: "noun + のときに + 撮ります", usage: "<ruby>写真<rt>しゃしん</rt></ruby>を<ruby>撮<rt>と</rt></ruby>るタイミングを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say when you take photos", examples: ["<ruby>旅行<rt>りょこう</rt></ruby>のときに<ruby>撮<rt>と</rt></ruby>ります。"], examples_en: ["I take photos when traveling."] },
+        { pattern: "SNSに〜をあげます", structure: "SNSに + noun + を + あげます", usage: "SNSに<ruby>投稿<rt>とうこう</rt></ruby>することを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say you post something on social media", examples: ["SNSに<ruby>写真<rt>しゃしん</rt></ruby>をあげます。"], examples_en: ["I post photos on social media."] }
       ],
       followup: ["よく写真を撮りますか？", "どんなものを撮るのが好きですか？", "カメラとスマホ、どちらで撮りますか？"]
     },
@@ -756,9 +764,9 @@ const topics = {
       english: "What is your favorite place you've ever been to?",
       vocab: ["場所 (place)", "思い出 (memory)", "景色 (scenery)", "雰囲気 (atmosphere)", "また行きたい (want to go again)"],
       grammar: [
-        { pattern: "〜が一番好きです", usage: "<ruby>一番<rt>いちばん</rt></ruby><ruby>好<rt>す</rt></ruby>きなものを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what you like the most", examples: ["<ruby>京都<rt>きょうと</rt></ruby>が<ruby>一番<rt>いちばん</rt></ruby><ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["Kyoto is my favorite."] },
-        { pattern: "〜が印象に残っています", usage: "<ruby>印象<rt>いんしょう</rt></ruby>に<ruby>残<rt>のこ</rt></ruby>っていることを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what left a strong impression", examples: ["<ruby>景色<rt>けしき</rt></ruby>が<ruby>印象<rt>いんしょう</rt></ruby>に<ruby>残<rt>のこ</rt></ruby>っています。"], examples_en: ["The scenery left a strong impression on me."] },
-        { pattern: "また〜に行きたいです", usage: "<ruby>再訪<rt>さいほう</rt></ruby>したいことを<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say you want to go back somewhere", examples: ["またパリに<ruby>行<rt>い</rt></ruby>きたいです。"], examples_en: ["I want to go to Paris again."] }
+        { pattern: "〜が一番好きです", structure: "noun + が + 一番好きです", usage: "<ruby>一番<rt>いちばん</rt></ruby><ruby>好<rt>す</rt></ruby>きなものを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what you like the most", examples: ["<ruby>京都<rt>きょうと</rt></ruby>が<ruby>一番<rt>いちばん</rt></ruby><ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["Kyoto is my favorite."] },
+        { pattern: "〜が印象に残っています", structure: "noun + が + 印象に残っています", usage: "<ruby>印象<rt>いんしょう</rt></ruby>に<ruby>残<rt>のこ</rt></ruby>っていることを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what left a strong impression", examples: ["<ruby>景色<rt>けしき</rt></ruby>が<ruby>印象<rt>いんしょう</rt></ruby>に<ruby>残<rt>のこ</rt></ruby>っています。"], examples_en: ["The scenery left a strong impression on me."] },
+        { pattern: "また〜に行きたいです", structure: "また + place + に + 行きたいです", usage: "<ruby>再訪<rt>さいほう</rt></ruby>したいことを<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say you want to go back somewhere", examples: ["またパリに<ruby>行<rt>い</rt></ruby>きたいです。"], examples_en: ["I want to go to Paris again."] }
       ],
       followup: ["その場所で何をしましたか？", "誰と一緒でしたか？", "もう一度行きたいですか？"]
     },
@@ -767,9 +775,9 @@ const topics = {
       english: "Have you ever traveled with your family?",
       vocab: ["家族旅行 (family trip)", "思い出 (memory)", "計画する (to plan)", "楽しい (fun)", "温泉 (hot spring)"],
       grammar: [
-        { pattern: "〜したことがあります", usage: "<ruby>過去<rt>かこ</rt></ruby>の<ruby>経験<rt>けいけん</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say you have done something before", examples: ["<ruby>家族<rt>かぞく</rt></ruby>で<ruby>沖縄<rt>おきなわ</rt></ruby>に<ruby>行<rt>い</rt></ruby>ったことがあります。"], examples_en: ["I have been to Okinawa with my family."] },
-        { pattern: "〜のが一番の思い出です", usage: "<ruby>一番<rt>いちばん</rt></ruby>の<ruby>思<rt>おも</rt></ruby>い<ruby>出<rt>で</rt></ruby>を<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say what your best memory is", examples: ["<ruby>家族<rt>かぞく</rt></ruby>で<ruby>海<rt>うみ</rt></ruby>に<ruby>行<rt>い</rt></ruby>ったのが<ruby>一番<rt>いちばん</rt></ruby>の<ruby>思<rt>おも</rt></ruby>い<ruby>出<rt>で</rt></ruby>です。"], examples_en: ["Going to the beach with my family is my best memory."] },
-        { pattern: "また〜したいです", usage: "<ruby>再<rt>ふたた</rt></ruby>びしたいことを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say you want to do something again", examples: ["また<ruby>家族<rt>かぞく</rt></ruby>で<ruby>旅行<rt>りょこう</rt></ruby>したいです。"], examples_en: ["I want to travel with my family again."] }
+        { pattern: "〜したことがあります", structure: "verb (た-form) + ことがあります", usage: "<ruby>過去<rt>かこ</rt></ruby>の<ruby>経験<rt>けいけん</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say you have done something before", examples: ["<ruby>家族<rt>かぞく</rt></ruby>で<ruby>沖縄<rt>おきなわ</rt></ruby>に<ruby>行<rt>い</rt></ruby>ったことがあります。"], examples_en: ["I have been to Okinawa with my family."] },
+        { pattern: "〜のが一番の思い出です", structure: "verb + のが + 一番の思い出です", usage: "<ruby>一番<rt>いちばん</rt></ruby>の<ruby>思<rt>おも</rt></ruby>い<ruby>出<rt>で</rt></ruby>を<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say what your best memory is", examples: ["<ruby>家族<rt>かぞく</rt></ruby>で<ruby>海<rt>うみ</rt></ruby>に<ruby>行<rt>い</rt></ruby>ったのが<ruby>一番<rt>いちばん</rt></ruby>の<ruby>思<rt>おも</rt></ruby>い<ruby>出<rt>で</rt></ruby>です。"], examples_en: ["Going to the beach with my family is my best memory."] },
+        { pattern: "また〜したいです", structure: "また + verb + たいです", usage: "<ruby>再<rt>ふたた</rt></ruby>びしたいことを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say you want to do something again", examples: ["また<ruby>家族<rt>かぞく</rt></ruby>で<ruby>旅行<rt>りょこう</rt></ruby>したいです。"], examples_en: ["I want to travel with my family again."] }
       ],
       followup: ["どこへ行きましたか？", "家族旅行で一番の思い出は？", "また家族で行きたいですか？"]
     },
@@ -778,9 +786,9 @@ const topics = {
       english: "What do you bring when you travel?",
       vocab: ["荷物 (luggage)", "持っていく (to bring)", "カメラ (camera)", "パスポート (passport)", "必要 (necessary)"],
       grammar: [
-        { pattern: "必ず〜を持っていきます", usage: "いつも<ruby>必<rt>かなら</rt></ruby>ず<ruby>持<rt>も</rt></ruby>っていくものを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what you always bring", examples: ["<ruby>必<rt>かなら</rt></ruby>ずカメラを<ruby>持<rt>も</rt></ruby>っていきます。", "<ruby>必<rt>かなら</rt></ruby>ずパスポートを<ruby>持<rt>も</rt></ruby>っていきます。"], examples_en: ["I always bring a camera.", "I always bring my passport."] },
-        { pattern: "〜は欠かせません", usage: "<ruby>絶対<rt>ぜったい</rt></ruby>に<ruby>必要<rt>ひつよう</rt></ruby>なものを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say something is indispensable", examples: ["スマホは<ruby>欠<rt>か</rt></ruby>かせません。"], examples_en: ["My smartphone is indispensable."] },
-        { pattern: "〜があると便利です", usage: "あると<ruby>役立<rt>やくだ</rt></ruby>つものを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say something is useful to have", examples: ["モバイルバッテリーがあると<ruby>便利<rt>べんり</rt></ruby>です。"], examples_en: ["It's useful to have a portable battery."] }
+        { pattern: "必ず〜を持っていきます", structure: "必ず + noun + を + 持っていきます", usage: "いつも<ruby>必<rt>かなら</rt></ruby>ず<ruby>持<rt>も</rt></ruby>っていくものを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what you always bring", examples: ["<ruby>必<rt>かなら</rt></ruby>ずカメラを<ruby>持<rt>も</rt></ruby>っていきます。", "<ruby>必<rt>かなら</rt></ruby>ずパスポートを<ruby>持<rt>も</rt></ruby>っていきます。"], examples_en: ["I always bring a camera.", "I always bring my passport."] },
+        { pattern: "〜は欠かせません", structure: "noun + は + 欠かせません", usage: "<ruby>絶対<rt>ぜったい</rt></ruby>に<ruby>必要<rt>ひつよう</rt></ruby>なものを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say something is indispensable", examples: ["スマホは<ruby>欠<rt>か</rt></ruby>かせません。"], examples_en: ["My smartphone is indispensable."] },
+        { pattern: "〜があると便利です", structure: "noun + が + あると便利です", usage: "あると<ruby>役立<rt>やくだ</rt></ruby>つものを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say something is useful to have", examples: ["モバイルバッテリーがあると<ruby>便利<rt>べんり</rt></ruby>です。"], examples_en: ["It's useful to have a portable battery."] }
       ],
       followup: ["荷物は多い方ですか？少ない方ですか？", "準備するのは好きですか？", "旅行でよく忘れるものはありますか？"]
     },
@@ -789,9 +797,9 @@ const topics = {
       english: "What is your favorite color?",
       vocab: ["色 (color)", "青 (blue)", "赤 (red)", "緑 (green)", "落ち着く (to feel calm)"],
       grammar: [
-        { pattern: "〜が好きです", usage: "<ruby>好<rt>す</rt></ruby>きなものを<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say what you like", examples: ["<ruby>青<rt>あお</rt></ruby>が<ruby>好<rt>す</rt></ruby>きです。", "<ruby>緑<rt>みどり</rt></ruby>が<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like blue.", "I like green."] },
-        { pattern: "〜は〜な気がします", usage: "<ruby>感覚<rt>かんかく</rt></ruby>・<ruby>印象<rt>いんしょう</rt></ruby>を<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to express a feeling or impression", examples: ["<ruby>青<rt>あお</rt></ruby>は<ruby>落<rt>お</rt></ruby>ち<ruby>着<rt>つ</rt></ruby>く<ruby>気<rt>き</rt></ruby>がします。"], examples_en: ["Blue feels calm to me."] },
-        { pattern: "〜色の服をよく着ます", usage: "<ruby>服<rt>ふく</rt></ruby>の<ruby>色<rt>いろ</rt></ruby>の<ruby>話<rt>はなし</rt></ruby>をするとき", usage_en: "Used to talk about the color of clothes you often wear", examples: ["<ruby>黒<rt>くろ</rt></ruby><ruby>色<rt>いろ</rt></ruby>の<ruby>服<rt>ふく</rt></ruby>をよく<ruby>着<rt>き</rt></ruby>ます。"], examples_en: ["I often wear black clothes."] }
+        { pattern: "〜が好きです", structure: "noun + が + 好きです", usage: "<ruby>好<rt>す</rt></ruby>きなものを<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say what you like", examples: ["<ruby>青<rt>あお</rt></ruby>が<ruby>好<rt>す</rt></ruby>きです。", "<ruby>緑<rt>みどり</rt></ruby>が<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like blue.", "I like green."] },
+        { pattern: "〜は〜な気がします", structure: "noun + は + adjective + な気がします", usage: "<ruby>感覚<rt>かんかく</rt></ruby>・<ruby>印象<rt>いんしょう</rt></ruby>を<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to express a feeling or impression", examples: ["<ruby>青<rt>あお</rt></ruby>は<ruby>落<rt>お</rt></ruby>ち<ruby>着<rt>つ</rt></ruby>く<ruby>気<rt>き</rt></ruby>がします。"], examples_en: ["Blue feels calm to me."] },
+        { pattern: "〜色の服をよく着ます", structure: "color + 色の服を + よく着ます", usage: "<ruby>服<rt>ふく</rt></ruby>の<ruby>色<rt>いろ</rt></ruby>の<ruby>話<rt>はなし</rt></ruby>をするとき", usage_en: "Used to talk about the color of clothes you often wear", examples: ["<ruby>黒<rt>くろ</rt></ruby><ruby>色<rt>いろ</rt></ruby>の<ruby>服<rt>ふく</rt></ruby>をよく<ruby>着<rt>き</rt></ruby>ます。"], examples_en: ["I often wear black clothes."] }
       ],
       followup: ["その色が好きな理由は？", "よくその色の服を着ますか？", "嫌いな色はありますか？"]
     },
@@ -800,9 +808,9 @@ const topics = {
       english: "When is your birthday? Do you do anything special on your birthday?",
       vocab: ["誕生日 (birthday)", "祝う (to celebrate)", "プレゼント (present)", "ケーキ (cake)", "家族 (family)"],
       grammar: [
-        { pattern: "〜月〜日です", usage: "<ruby>日付<rt>ひづけ</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say a date", examples: ["6<ruby>月<rt>がつ</rt></ruby>15<ruby>日<rt>にち</rt></ruby>です。", "12<ruby>月<rt>がつ</rt></ruby>3<ruby>日<rt>にち</rt></ruby>です。"], examples_en: ["It's June 15th.", "It's December 3rd."] },
-        { pattern: "〜でお祝いします", usage: "<ruby>誕生日<rt>たんじょうび</rt></ruby>の<ruby>過<rt>す</rt></ruby>ごし<ruby>方<rt>かた</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say how you celebrate", examples: ["<ruby>家族<rt>かぞく</rt></ruby>で<ruby>食事<rt>しょくじ</rt></ruby>をしてお<ruby>祝<rt>いわ</rt></ruby>いします。"], examples_en: ["We celebrate with a family meal."] },
-        { pattern: "〜をもらいました", usage: "<ruby>受<rt>う</rt></ruby>け<ruby>取<rt>と</rt></ruby ったものを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what you received", examples: ["プレゼントをもらいました。"], examples_en: ["I received a present."] }
+        { pattern: "〜月〜日です", structure: "month + 月 + day + 日です", usage: "<ruby>日付<rt>ひづけ</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say a date", examples: ["6<ruby>月<rt>がつ</rt></ruby>15<ruby>日<rt>にち</rt></ruby>です。", "12<ruby>月<rt>がつ</rt></ruby>3<ruby>日<rt>にち</rt></ruby>です。"], examples_en: ["It's June 15th.", "It's December 3rd."] },
+        { pattern: "〜でお祝いします", structure: "noun + で + お祝いします", usage: "<ruby>誕生日<rt>たんじょうび</rt></ruby>の<ruby>過<rt>す</rt></ruby>ごし<ruby>方<rt>かた</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say how you celebrate", examples: ["<ruby>家族<rt>かぞく</rt></ruby>で<ruby>食事<rt>しょくじ</rt></ruby>をしてお<ruby>祝<rt>いわ</rt></ruby>いします。"], examples_en: ["We celebrate with a family meal."] },
+        { pattern: "〜をもらいました", structure: "noun + を + もらいました", usage: "<ruby>受<rt>う</rt></ruby>け<ruby>取<rt>と</rt></ruby>ったものを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what you received", examples: ["プレゼントをもらいました。"], examples_en: ["I received a present."] }
       ],
       followup: ["誕生日は家族と過ごしますか？", "もらって嬉しいプレゼントは何ですか？", "誕生日ケーキは好きですか？"]
     },
@@ -811,9 +819,9 @@ const topics = {
       english: "What is the best thing you've bought recently?",
       vocab: ["買う (to buy)", "最近 (recently)", "便利 (convenient)", "気に入る (to like/be pleased with)", "値段 (price)"],
       grammar: [
-        { pattern: "〜を買いました", usage: "<ruby>過去<rt>かこ</rt></ruby>に<ruby>買<rt>か</rt></ruby>ったものを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what you bought", examples: ["スマホを<ruby>買<rt>か</rt></ruby>いました。", "くつを<ruby>買<rt>か</rt></ruby>いました。"], examples_en: ["I bought a smartphone.", "I bought shoes."] },
-        { pattern: "〜がとても気に入っています", usage: "<ruby>気<rt>き</rt></ruby>に<ruby>入<rt>い</rt></ruby>っているものを<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say you really like something you have", examples: ["この<ruby>カバン<rt>かばん</rt></ruby>がとても<ruby>気<rt>き</rt></ruby>に<ruby>入<rt>い</rt></ruby>っています。"], examples_en: ["I really like this bag."] },
-        { pattern: "買ってよかったです", usage: "<ruby>買<rt>か</rt></ruby>ってよかったという<ruby>満足感<rt>まんぞくかん</rt></ruby>を<ruby>表<rt>あらわ</rt></ruby>すとき", usage_en: "Used to express satisfaction with a purchase", examples: ["これを<ruby>買<rt>か</rt></ruby>ってよかったです。"], examples_en: ["I'm glad I bought this."] }
+        { pattern: "〜を買いました", structure: "noun + を + 買いました", usage: "<ruby>過去<rt>かこ</rt></ruby>に<ruby>買<rt>か</rt></ruby>ったものを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what you bought", examples: ["スマホを<ruby>買<rt>か</rt></ruby>いました。", "くつを<ruby>買<rt>か</rt></ruby>いました。"], examples_en: ["I bought a smartphone.", "I bought shoes."] },
+        { pattern: "〜がとても気に入っています", structure: "noun + が + とても気に入っています", usage: "<ruby>気<rt>き</rt></ruby>に<ruby>入<rt>い</rt></ruby>っているものを<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say you really like something you have", examples: ["この<ruby>カバン<rt>かばん</rt></ruby>がとても<ruby>気<rt>き</rt></ruby>に<ruby>入<rt>い</rt></ruby>っています。"], examples_en: ["I really like this bag."] },
+        { pattern: "買ってよかったです", structure: "買って + よかったです", usage: "<ruby>買<rt>か</rt></ruby>ってよかったという<ruby>満足感<rt>まんぞくかん</rt></ruby>を<ruby>表<rt>あらわ</rt></ruby>すとき", usage_en: "Used to express satisfaction with a purchase", examples: ["これを<ruby>買<rt>か</rt></ruby>ってよかったです。"], examples_en: ["I'm glad I bought this."] }
       ],
       followup: ["どこで買いましたか？", "値段はどうでしたか？", "友達に勧めたいですか？"]
     },
@@ -822,9 +830,9 @@ const topics = {
       english: "Is there a seasonal food you enjoy?",
       vocab: ["季節 (season)", "旬 (in season)", "春 (spring)", "秋 (autumn)", "楽しみ (something to look forward to)"],
       grammar: [
-        { pattern: "〜の季節になると〜を食べます", usage: "ある<ruby>季節<rt>きせつ</rt></ruby>に<ruby>食<rt>た</rt></ruby>べるものを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what you eat when a season comes", examples: ["<ruby>冬<rt>ふゆ</rt></ruby>になると<ruby>鍋<rt>なべ</rt></ruby>を<ruby>食<rt>た</rt></ruby>べます。"], examples_en: ["When winter comes, I eat hot pot."] },
-        { pattern: "〜が楽しみです", usage: "<ruby>楽<rt>たの</rt></ruby>しみにしていることを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say you're looking forward to something", examples: ["<ruby>秋<rt>あき</rt></ruby>のさんまが<ruby>楽<rt>たの</rt></ruby>しみです。"], examples_en: ["I look forward to autumn saury fish."] },
-        { pattern: "〜は旬のものがおいしいです", usage: "旬の<ruby>食<rt>た</rt></ruby>べ<ruby>物<rt>もの</rt></ruby>が<ruby>一番<rt>いちばん</rt></ruby>おいしいと<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say in-season food is the most delicious", examples: ["<ruby>夏<rt>なつ</rt></ruby>は<ruby>旬<rt>しゅん</rt></ruby>のものがおいしいです。"], examples_en: ["In summer, in-season foods are the most delicious."] }
+        { pattern: "〜の季節になると〜を食べます", structure: "season + になると + noun + を食べます", usage: "ある<ruby>季節<rt>きせつ</rt></ruby>に<ruby>食<rt>た</rt></ruby>べるものを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what you eat when a season comes", examples: ["<ruby>冬<rt>ふゆ</rt></ruby>になると<ruby>鍋<rt>なべ</rt></ruby>を<ruby>食<rt>た</rt></ruby>べます。"], examples_en: ["When winter comes, I eat hot pot."] },
+        { pattern: "〜が楽しみです", structure: "noun + が + 楽しみです", usage: "<ruby>楽<rt>たの</rt></ruby>しみにしていることを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say you're looking forward to something", examples: ["<ruby>秋<rt>あき</rt></ruby>のさんまが<ruby>楽<rt>たの</rt></ruby>しみです。"], examples_en: ["I look forward to autumn saury fish."] },
+        { pattern: "〜は旬のものがおいしいです", structure: "season/time + は旬のものが + おいしいです", usage: "旬の<ruby>食<rt>た</rt></ruby>べ<ruby>物<rt>もの</rt></ruby>が<ruby>一番<rt>いちばん</rt></ruby>おいしいと<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say in-season food is the most delicious", examples: ["<ruby>夏<rt>なつ</rt></ruby>は<ruby>旬<rt>しゅん</rt></ruby>のものがおいしいです。"], examples_en: ["In summer, in-season foods are the most delicious."] }
       ],
       followup: ["一番好きな季節の食べ物は何ですか？", "その食べ物はどんな味ですか？", "その食べ物を食べると季節を感じますか？"]
     },
@@ -833,9 +841,9 @@ const topics = {
       english: "Do you eat breakfast?",
       vocab: ["朝ごはん (breakfast)", "食べる (to eat)", "起きる (to wake up)", "時間 (time)", "パン (bread)", "ごはん (rice)"],
       grammar: [
-        { pattern: "〜は食べますか", usage: "<ruby>食<rt>た</rt></ruby>べ<ruby>物<rt>もの</rt></ruby>について<ruby>聞<rt>き</rt></ruby>くとき", usage_en: "Used when asking about eating habits", examples: ["<ruby>朝<rt>あさ</rt></ruby>ごはんは<ruby>食<rt>た</rt></ruby>べますか。"], examples_en: ["Do you eat breakfast?"] },
-        { pattern: "〜を食べます", usage: "<ruby>食<rt>た</rt></ruby>べるものを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what you eat", examples: ["<ruby>毎朝<rt>まいあさ</rt></ruby>パンを<ruby>食<rt>た</rt></ruby>べます。"], examples_en: ["I eat bread every morning."] },
-        { pattern: "〜がないので〜", usage: "<ruby>理由<rt>りゆう</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to give a reason", examples: ["<ruby>時間<rt>じかん</rt></ruby>がないので<ruby>食<rt>た</rt></ruby>べません。"], examples_en: ["I don't eat because I have no time."] }
+        { pattern: "〜は食べますか", structure: "noun + は + 食べますか", usage: "<ruby>食<rt>た</rt></ruby>べ<ruby>物<rt>もの</rt></ruby>について<ruby>聞<rt>き</rt></ruby>くとき", usage_en: "Used when asking about eating habits", examples: ["<ruby>朝<rt>あさ</rt></ruby>ごはんは<ruby>食<rt>た</rt></ruby>べますか。"], examples_en: ["Do you eat breakfast?"] },
+        { pattern: "〜を食べます", structure: "noun + を + 食べます", usage: "<ruby>食<rt>た</rt></ruby>べるものを<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to say what you eat", examples: ["<ruby>毎朝<rt>まいあさ</rt></ruby>パンを<ruby>食<rt>た</rt></ruby>べます。"], examples_en: ["I eat bread every morning."] },
+        { pattern: "〜がないので〜", structure: "noun + がないので + [result]", usage: "<ruby>理由<rt>りゆう</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to give a reason", examples: ["<ruby>時間<rt>じかん</rt></ruby>がないので<ruby>食<rt>た</rt></ruby>べません。"], examples_en: ["I don't eat because I have no time."] }
       ],
       followup: ["朝ごはんに何を食べますか？", "朝ごはんを食べないとどうなりますか？", "朝ごはんを食べる時間はありますか？"]
     }
@@ -1872,6 +1880,18 @@ function showGrammarModal(idx) {
   const g = currentTopicData.grammar[idx];
   if (!g || typeof g === 'string') return;
   document.getElementById('modal-pattern').textContent = g.pattern;
+  const structureLabelEl = document.getElementById('modal-structure-label');
+  const structureEl = document.getElementById('modal-structure');
+  if (g.structure) {
+    const lbl = currentLevel === 'advanced' ? '🔧 構造' : '🔧 Structure';
+    structureLabelEl.textContent = lbl;
+    structureLabelEl.style.display = '';
+    structureEl.textContent = g.structure;
+    structureEl.style.display = '';
+  } else {
+    structureLabelEl.style.display = 'none';
+    structureEl.style.display = 'none';
+  }
   document.getElementById('modal-usage').innerHTML =
     `<div>${g.usage}</div><div class="modal-usage-en">${g.usage_en}</div>`;
   document.getElementById('modal-examples').innerHTML =
