@@ -515,140 +515,220 @@ const topics = {
       japanese: "<ruby>最近<rt>さいきん</rt></ruby>、<ruby>一番<rt>いちばん</rt></ruby><ruby>楽<rt>たの</rt></ruby>しかったことは<ruby>何<rt>なん</rt></ruby>ですか？",
       english: "What was the most enjoyable thing you've done recently?",
       vocab: ["最近 (recently)", "楽しい (fun/enjoyable)", "一番 (most/best)", "経験 (experience)", "思い出 (memory)"],
-      grammar: ["〜が楽しかったです", "〜たとき、〜と感じました", "一番〜だったのは〜です"],
+      grammar: [
+        { pattern: "〜が楽しかったです", usage: "<ruby>過去<rt>かこ</rt></ruby>に<ruby>楽<rt>たの</rt></ruby>しかったことを<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say something was fun in the past", examples: ["<ruby>友達<rt>ともだち</rt></ruby>と<ruby>旅行<rt>りょこう</rt></ruby>が<ruby>楽<rt>たの</rt></ruby>しかったです。", "コンサートがとても<ruby>楽<rt>たの</rt></ruby>しかったです。"], examples_en: ["Traveling with friends was fun.", "The concert was really enjoyable."] },
+        { pattern: "〜たとき、〜と感じました", usage: "<ruby>ある出来事<rt>あるできごと</rt></ruby>のときの<ruby>気持<rt>きも</rt></ruby>ちを<ruby>説明<rt>せつめい</rt></ruby>するとき", usage_en: "Used to describe how you felt during a specific event", examples: ["<ruby>山<rt>やま</rt></ruby>に<ruby>登<rt>のぼ</rt></ruby>ったとき、<ruby>達成感<rt>たっせいかん</rt></ruby>を<ruby>感<rt>かん</rt></ruby>じました。", "<ruby>その映画<rt>そのえいが</rt></ruby>を<ruby>見<rt>み</rt></ruby>たとき、<ruby>感動<rt>かんどう</rt></ruby>したと<ruby>感<rt>かん</rt></ruby>じました。"], examples_en: ["When I climbed the mountain, I felt a sense of accomplishment.", "When I watched that movie, I felt moved."] },
+        { pattern: "一番〜だったのは〜です", usage: "<ruby>最<rt>もっと</rt></ruby>も〜だったものを<ruby>具体的<rt>ぐたいてき</rt></ruby>に<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to specify what was the most 〜", examples: ["<ruby>一番<rt>いちばん</rt></ruby><ruby>楽<rt>たの</rt></ruby>しかったのは<ruby>花火<rt>はなび</rt></ruby>です。", "<ruby>一番<rt>いちばん</rt></ruby><ruby>印象<rt>いんしょう</rt></ruby>に<ruby>残<rt>のこ</rt></ruby>ったのは<ruby>景色<rt>けしき</rt></ruby>です。"], examples_en: ["The most enjoyable part was the fireworks.", "What impressed me most was the scenery."] }
+      ],
       followup: ["なぜ楽しかったですか？", "また同じことをしたいですか？", "誰かと一緒にしましたか？"]
     },
     {
       japanese: "<ruby>子<rt>こ</rt></ruby>どもの<ruby>頃<rt>ころ</rt></ruby>、<ruby>何<rt>なに</rt></ruby>になりたかったですか？",
       english: "What did you want to be when you were a child?",
       vocab: ["子どもの頃 (when I was a child)", "夢 (dream)", "将来 (future)", "なりたい (want to become)", "あこがれ (admiration)"],
-      grammar: ["〜になりたかったです", "〜ができると思っていました", "今は〜ですが、子どもの頃は〜でした"],
+      grammar: [
+        { pattern: "〜になりたかったです", usage: "<ruby>過去<rt>かこ</rt></ruby>の<ruby>夢<rt>ゆめ</rt></ruby>や<ruby>希望<rt>きぼう</rt></ruby>を<ruby>話<rt>はな</rt></ruby>すとき", usage_en: "Used to talk about a past dream or aspiration", examples: ["<ruby>医者<rt>いしゃ</rt></ruby>になりたかったです。", "パイロットになりたかったです。"], examples_en: ["I wanted to become a doctor.", "I wanted to become a pilot."] },
+        { pattern: "〜ができると思っていました", usage: "<ruby>子<rt>こ</rt></ruby>どものころに<ruby>信<rt>しん</rt></ruby>じていたことを<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to express what you believed you could do as a child", examples: ["<ruby>何<rt>なん</rt></ruby>でもできると<ruby>思<rt>おも</rt></ruby>っていました。", "<ruby>早<rt>はや</rt></ruby>く<ruby>走<rt>はし</rt></ruby>れると<ruby>思<rt>おも</rt></ruby>っていました。"], examples_en: ["I thought I could do anything.", "I thought I could run fast."] },
+        { pattern: "今は〜ですが、子どもの頃は〜でした", usage: "<ruby>現在<rt>げんざい</rt></ruby>と<ruby>過去<rt>かこ</rt></ruby>を<ruby>比較<rt>ひかく</rt></ruby>するとき", usage_en: "Used to contrast the present with the past", examples: ["<ruby>今<rt>いま</rt></ruby>は<ruby>会社員<rt>かいしゃいん</rt></ruby>ですが、<ruby>子<rt>こ</rt></ruby>どもの<ruby>頃<rt>ころ</rt></ruby>は<ruby>先生<rt>せんせい</rt></ruby>になりたかったです。", "<ruby>今<rt>いま</rt></ruby>は<ruby>東京<rt>とうきょう</rt></ruby>に<ruby>住<rt>す</rt></ruby>んでいますが、<ruby>子<rt>こ</rt></ruby>どもの<ruby>頃<rt>ころ</rt></ruby>は<ruby>田舎<rt>いなか</rt></ruby>でした。"], examples_en: ["I'm an office worker now, but as a child I wanted to be a teacher.", "I live in Tokyo now, but as a child I lived in the countryside."] }
+      ],
       followup: ["今もその夢を持っていますか？", "なぜその夢を持っていたと思いますか？", "今の仕事は子どもの頃の夢と違いますか？"]
     },
     {
       japanese: "<ruby>日本語<rt>にほんご</rt></ruby>を<ruby>勉強<rt>べんきょう</rt></ruby>している<ruby>理由<rt>りゆう</rt></ruby>を<ruby>教<rt>おし</rt></ruby>えてください。",
       english: "Please tell me why you are studying Japanese.",
       vocab: ["理由 (reason)", "きっかけ (trigger)", "興味 (interest)", "目標 (goal)", "楽しい (enjoyable)"],
-      grammar: ["〜から勉強しています", "〜がきっかけで〜するようになりました", "〜したいと思っています"],
+      grammar: [
+        { pattern: "〜から勉強しています", usage: "<ruby>勉強<rt>べんきょう</rt></ruby>している<ruby>理由<rt>りゆう</rt></ruby>を<ruby>説明<rt>せつめい</rt></ruby>するとき", usage_en: "Used to explain why you are studying", examples: ["<ruby>日本<rt>にほん</rt></ruby>に<ruby>住<rt>す</rt></ruby>みたいから<ruby>勉強<rt>べんきょう</rt></ruby>しています。", "<ruby>日本語<rt>にほんご</rt></ruby>が<ruby>好<rt>す</rt></ruby>きだから<ruby>勉強<rt>べんきょう</rt></ruby>しています。"], examples_en: ["I'm studying because I want to live in Japan.", "I'm studying because I like Japanese."] },
+        { pattern: "〜がきっかけで〜するようになりました", usage: "<ruby>何<rt>なに</rt></ruby>かを<ruby>始<rt>はじ</rt></ruby>めたきっかけを<ruby>話<rt>はな</rt></ruby>すとき", usage_en: "Used to describe what triggered you to start something", examples: ["アニメがきっかけで<ruby>日本語<rt>にほんご</rt></ruby>を<ruby>勉強<rt>べんきょう</rt></ruby>するようになりました。", "<ruby>友達<rt>ともだち</rt></ruby>がきっかけでジムに<ruby>行<rt>い</rt></ruby>くようになりました。"], examples_en: ["Anime triggered me to start studying Japanese.", "A friend triggered me to start going to the gym."] },
+        { pattern: "〜したいと思っています", usage: "<ruby>将来<rt>しょうらい</rt></ruby>の<ruby>目標<rt>もくひょう</rt></ruby>や<ruby>希望<rt>きぼう</rt></ruby>を<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to express a goal or hope for the future", examples: ["<ruby>日本語<rt>にほんご</rt></ruby>で<ruby>映画<rt>えいが</rt></ruby>を<ruby>見<rt>み</rt></ruby>たいと<ruby>思<rt>おも</rt></ruby>っています。", "<ruby>来年<rt>らいねん</rt></ruby>、<ruby>日本<rt>にほん</rt></ruby>に<ruby>行<rt>い</rt></ruby>きたいと<ruby>思<rt>おも</rt></ruby>っています。"], examples_en: ["I'm hoping to watch movies in Japanese.", "I'm thinking I'd like to go to Japan next year."] }
+      ],
       followup: ["いつ日本語の勉強を始めましたか？", "一番難しいと感じることは何ですか？", "日本語が上手になったら何をしたいですか？"]
     },
     {
       japanese: "<ruby>旅行<rt>りょこう</rt></ruby>で<ruby>一番<rt>いちばん</rt></ruby><ruby>印象<rt>いんしょう</rt></ruby>に<ruby>残<rt>のこ</rt></ruby>っている<ruby>場所<rt>ばしょ</rt></ruby>はどこですか？",
       english: "What place from your travels left the biggest impression on you?",
       vocab: ["旅行 (travel)", "印象 (impression)", "景色 (scenery)", "文化 (culture)", "忘れられない (unforgettable)"],
-      grammar: ["一番印象に残っているのは〜です", "〜に行ったとき、〜でした", "〜がとても〜かったです"],
+      grammar: [
+        { pattern: "一番印象に残っているのは〜です", usage: "<ruby>旅行<rt>りょこう</rt></ruby>の<ruby>中<rt>なか</rt></ruby>で<ruby>最<rt>もっと</rt></ruby>も<ruby>記憶<rt>きおく</rt></ruby>に<ruby>残<rt>のこ</rt></ruby>ったものを<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say what left the strongest impression during travel", examples: ["<ruby>一番<rt>いちばん</rt></ruby><ruby>印象<rt>いんしょう</rt></ruby>に<ruby>残<rt>のこ</rt></ruby>っているのは<ruby>富士山<rt>ふじさん</rt></ruby>です。", "<ruby>一番<rt>いちばん</rt></ruby><ruby>印象<rt>いんしょう</rt></ruby>に<ruby>残<rt>のこ</rt></ruby>っているのは<ruby>地元<rt>じもと</rt></ruby>の<ruby>食<rt>た</rt></ruby>べ<ruby>物<rt>もの</rt></ruby>です。"], examples_en: ["The thing that left the biggest impression on me is Mt. Fuji.", "What left the biggest impression on me is the local food."] },
+        { pattern: "〜に行ったとき、〜でした", usage: "<ruby>旅行先<rt>りょこうさき</rt></ruby>での<ruby>様子<rt>ようす</rt></ruby>や<ruby>体験<rt>たいけん</rt></ruby>を<ruby>話<rt>はな</rt></ruby>すとき", usage_en: "Used to describe what it was like when you visited a place", examples: ["パリに<ruby>行<rt>い</rt></ruby>ったとき、とても<ruby>美<rt>うつく</rt></ruby>しかったです。", "<ruby>京都<rt>きょうと</rt></ruby>に<ruby>行<rt>い</rt></ruby>ったとき、<ruby>人<rt>ひと</rt></ruby>がたくさんいました。"], examples_en: ["When I went to Paris, it was very beautiful.", "When I went to Kyoto, there were lots of people."] },
+        { pattern: "〜がとても〜かったです", usage: "<ruby>場所<rt>ばしょ</rt></ruby>や<ruby>体験<rt>たいけん</rt></ruby>の<ruby>感想<rt>かんそう</rt></ruby>を<ruby>強調<rt>きょうちょう</rt></ruby>して<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to emphasize your impression of a place or experience", examples: ["<ruby>景色<rt>けしき</rt></ruby>がとても<ruby>美<rt>うつく</rt></ruby>しかったです。", "<ruby>料理<rt>りょうり</rt></ruby>がとてもおいしかったです。"], examples_en: ["The scenery was really beautiful.", "The food was really delicious."] }
+      ],
       followup: ["どのくらい滞在しましたか？", "もう一度行きたいですか？", "現地の人と話しましたか？"]
     },
     {
       japanese: "<ruby>最近<rt>さいきん</rt></ruby><ruby>見<rt>み</rt></ruby>た<ruby>映画<rt>えいが</rt></ruby>や<ruby>動画<rt>どうが</rt></ruby>で、<ruby>面白<rt>おもしろ</rt></ruby>かったものはありますか？",
       english: "Have you seen any interesting movies or videos recently?",
       vocab: ["映画 (movie)", "動画 (video)", "面白い (interesting)", "感動する (to be moved)", "おすすめ (recommendation)"],
-      grammar: ["〜を見ました", "〜というのが面白かったです", "〜がおすすめです"],
+      grammar: [
+        { pattern: "〜を見ました", usage: "<ruby>最近<rt>さいきん</rt></ruby><ruby>見<rt>み</rt></ruby>た<ruby>映画<rt>えいが</rt></ruby>や<ruby>動画<rt>どうが</rt></ruby>を<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say what movie or video you watched", examples: ["<ruby>先週<rt>せんしゅう</rt></ruby>、アクション<ruby>映画<rt>えいが</rt></ruby>を<ruby>見<rt>み</rt></ruby>ました。", "<ruby>昨日<rt>きのう</rt></ruby>、おもしろい<ruby>動画<rt>どうが</rt></ruby>を<ruby>見<rt>み</rt></ruby>ました。"], examples_en: ["I watched an action movie last week.", "I watched an interesting video yesterday."] },
+        { pattern: "〜というのが面白かったです", usage: "<ruby>作品<rt>さくひん</rt></ruby>のタイトルを<ruby>紹介<rt>しょうかい</rt></ruby>しながら<ruby>感想<rt>かんそう</rt></ruby>を<ruby>言<rt>い</rt></ruby>うとき", usage_en: "Used to name a work and share your impression of it", examples: ["「となりのトトロ」というのが<ruby>面白<rt>おもしろ</rt></ruby>かったです。", "「<ruby>鬼滅<rt>きめつ</rt></ruby>の<ruby>刃<rt>やいば</rt></ruby>」というのが<ruby>面白<rt>おもしろ</rt></ruby>かったです。"], examples_en: ["'My Neighbor Totoro' was interesting.", "'Demon Slayer' was interesting."] },
+        { pattern: "〜がおすすめです", usage: "<ruby>相手<rt>あいて</rt></ruby>に<ruby>何<rt>なに</rt></ruby>かを<ruby>勧<rt>すす</rt></ruby>めるとき", usage_en: "Used to recommend something to someone", examples: ["このドラマがおすすめです。", "この<ruby>本<rt>ほん</rt></ruby>がおすすめです。"], examples_en: ["I recommend this drama.", "I recommend this book."] }
+      ],
       followup: ["どこで見ましたか？", "友達にもおすすめしますか？", "好きなジャンルは何ですか？"]
     },
     {
       japanese: "もし<ruby>一日<rt>いちにち</rt></ruby>だけ<ruby>違<rt>ちが</rt></ruby>う<ruby>仕事<rt>しごと</rt></ruby>ができるとしたら、<ruby>何<rt>なに</rt></ruby>をしたいですか？",
       english: "If you could do a different job for just one day, what would you do?",
       vocab: ["仕事 (job/work)", "もし (if)", "一日 (one day)", "やってみたい (want to try)", "理由 (reason)"],
-      grammar: ["もし〜できるなら、〜したいです", "〜してみたいです", "なぜなら〜からです"],
+      grammar: [
+        { pattern: "もし〜できるなら、〜したいです", usage: "<ruby>仮定<rt>かてい</rt></ruby>の<ruby>状況<rt>じょうきょう</rt></ruby>を<ruby>設<rt>もう</rt></ruby>けて<ruby>希望<rt>きぼう</rt></ruby>を<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to express a wish based on a hypothetical situation", examples: ["もし<ruby>飛<rt>と</rt></ruby>べるなら、<ruby>空<rt>そら</rt></ruby>を<ruby>飛<rt>と</rt></ruby>んでみたいです。", "もし<ruby>時間<rt>じかん</rt></ruby>があるなら、<ruby>旅行<rt>りょこう</rt></ruby>したいです。"], examples_en: ["If I could fly, I'd want to fly through the sky.", "If I had time, I'd want to travel."] },
+        { pattern: "〜してみたいです", usage: "<ruby>試<rt>ため</rt></ruby>してみたいことへの<ruby>意欲<rt>いよく</rt></ruby>を<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to express a desire to try something", examples: ["<ruby>料理人<rt>りょうりにん</rt></ruby>をしてみたいです。", "<ruby>宇宙飛行士<rt>うちゅうひこうし</rt></ruby>をしてみたいです。"], examples_en: ["I'd like to try being a chef.", "I'd like to try being an astronaut."] },
+        { pattern: "なぜなら〜からです", usage: "<ruby>理由<rt>りゆう</rt></ruby>を<ruby>丁寧<rt>ていねい</rt></ruby>に<ruby>説明<rt>せつめい</rt></ruby>するとき", usage_en: "Used to give a polite, detailed explanation of a reason", examples: ["なぜなら<ruby>料理<rt>りょうり</rt></ruby>が<ruby>好<rt>す</rt></ruby>きだからです。", "なぜなら<ruby>子<rt>こ</rt></ruby>どもの<ruby>頃<rt>ころ</rt></ruby>からの<ruby>夢<rt>ゆめ</rt></ruby>だからです。"], examples_en: ["Because I love cooking.", "Because it has been my dream since childhood."] }
+      ],
       followup: ["なぜその仕事に興味がありますか？", "難しそうだと思いますか？", "今の仕事は好きですか？"]
     },
     {
       japanese: "あなたの<ruby>国<rt>くに</rt></ruby>と<ruby>日本<rt>にほん</rt></ruby>で、<ruby>驚<rt>おどろ</rt></ruby>いた<ruby>違<rt>ちが</rt></ruby>いはありますか？",
       english: "Is there any surprising difference between your country and Japan?",
       vocab: ["違い (difference)", "驚く (to be surprised)", "文化 (culture)", "習慣 (custom)", "似ている (similar)"],
-      grammar: ["〜は〜と違います", "〜のは驚きました", "私の国では〜ですが、日本では〜です"],
+      grammar: [
+        { pattern: "〜は〜と違います", usage: "<ruby>二<rt>ふた</rt></ruby>つのものを<ruby>比較<rt>ひかく</rt></ruby>して<ruby>違<rt>ちが</rt></ruby>いを<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to compare two things and point out a difference", examples: ["<ruby>日本<rt>にほん</rt></ruby>の<ruby>食事<rt>しょくじ</rt></ruby>は<ruby>私<rt>わたし</rt></ruby>の<ruby>国<rt>くに</rt></ruby>と<ruby>違<rt>ちが</rt></ruby>います。", "<ruby>電車<rt>でんしゃ</rt></ruby>のマナーは<ruby>私<rt>わたし</rt></ruby>の<ruby>国<rt>くに</rt></ruby>と<ruby>違<rt>ちが</rt></ruby>います。"], examples_en: ["Japanese meals are different from my country's.", "Train manners are different from my country."] },
+        { pattern: "〜のは驚きました", usage: "<ruby>予想外<rt>よそうがい</rt></ruby>だったことへの<ruby>驚<rt>おどろ</rt></ruby>きを<ruby>表<rt>あらわ</rt></ruby>すとき", usage_en: "Used to express surprise at something unexpected", examples: ["<ruby>店<rt>みせ</rt></ruby>が<ruby>夜遅<rt>よるおそ</rt></ruby>くまで<ruby>開<rt>あ</rt></ruby>いているのは<ruby>驚<rt>おどろ</rt></ruby>きました。", "<ruby>自動販売機<rt>じどうはんばいき</rt></ruby>がたくさんあるのは<ruby>驚<rt>おどろ</rt></ruby>きました。"], examples_en: ["I was surprised that shops are open late at night.", "I was surprised that there are so many vending machines."] },
+        { pattern: "私の国では〜ですが、日本では〜です", usage: "<ruby>自分<rt>じぶん</rt></ruby>の<ruby>国<rt>くに</rt></ruby>と<ruby>日本<rt>にほん</rt></ruby>の<ruby>習慣<rt>しゅうかん</rt></ruby>の<ruby>違<rt>ちが</rt></ruby>いを<ruby>具体的<rt>ぐたいてき</rt></ruby>に<ruby>比較<rt>ひかく</rt></ruby>するとき", usage_en: "Used to directly compare a custom in your country with Japan", examples: ["<ruby>私<rt>わたし</rt></ruby>の<ruby>国<rt>くに</rt></ruby>では<ruby>靴<rt>くつ</rt></ruby>を<ruby>脱<rt>ぬ</rt></ruby>ぎませんが、<ruby>日本<rt>にほん</rt></ruby>では<ruby>脱<rt>ぬ</rt></ruby>ぎます。", "<ruby>私<rt>わたし</rt></ruby>の<ruby>国<rt>くに</rt></ruby>ではチップを<ruby>払<rt>はら</rt></ruby>いますが、<ruby>日本<rt>にほん</rt></ruby>では<ruby>払<rt>はら</rt></ruby>いません。"], examples_en: ["In my country we don't take off shoes, but in Japan we do.", "In my country we leave tips, but in Japan we don't."] }
+      ],
       followup: ["その違いはいいと思いますか？", "逆に似ていると思ったことはありますか？", "日本に来たら試してみたいことはありますか？"]
     },
     {
       japanese: "<ruby>最近<rt>さいきん</rt></ruby>、<ruby>新<rt>あたら</rt></ruby>しく<ruby>始<rt>はじ</rt></ruby>めたことはありますか？",
       english: "Have you started anything new recently?",
       vocab: ["始める (to start)", "新しい (new)", "挑戦 (challenge)", "続ける (to continue)", "習慣 (habit)"],
-      grammar: ["〜を始めました", "〜するようになりました", "〜てみようと思っています"],
+      grammar: [
+        { pattern: "〜を始めました", usage: "<ruby>最近<rt>さいきん</rt></ruby><ruby>新<rt>あたら</rt></ruby>しく<ruby>始<rt>はじ</rt></ruby>めたことを<ruby>報告<rt>ほうこく</rt></ruby>するとき", usage_en: "Used to report something you recently started", examples: ["<ruby>先月<rt>せんげつ</rt></ruby>、ヨガを<ruby>始<rt>はじ</rt></ruby>めました。", "<ruby>最近<rt>さいきん</rt></ruby>、<ruby>料理<rt>りょうり</rt></ruby>を<ruby>始<rt>はじ</rt></ruby>めました。"], examples_en: ["I started yoga last month.", "I recently started cooking."] },
+        { pattern: "〜するようになりました", usage: "<ruby>以前<rt>いぜん</rt></ruby>はしなかったことが<ruby>習慣<rt>しゅうかん</rt></ruby>になったことを<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say something has become a habit that wasn't before", examples: ["<ruby>毎朝<rt>まいあさ</rt></ruby><ruby>散歩<rt>さんぽ</rt></ruby>するようになりました。", "<ruby>日本語<rt>にほんご</rt></ruby>を<ruby>毎日<rt>まいにち</rt></ruby><ruby>勉強<rt>べんきょう</rt></ruby>するようになりました。"], examples_en: ["I've come to take a walk every morning.", "I've come to study Japanese every day."] },
+        { pattern: "〜てみようと思っています", usage: "<ruby>近<rt>ちか</rt></ruby>いうちに<ruby>挑戦<rt>ちょうせん</rt></ruby>しようとしていることを<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say you're thinking of trying something soon", examples: ["<ruby>水泳<rt>すいえい</rt></ruby>を<ruby>始<rt>はじ</rt></ruby>めてみようと<ruby>思<rt>おも</rt></ruby>っています。", "<ruby>新<rt>あたら</rt></ruby>しい<ruby>言語<rt>げんご</rt></ruby>を<ruby>学<rt>まな</rt></ruby>んでみようと<ruby>思<rt>おも</rt></ruby>っています。"], examples_en: ["I'm thinking of trying to start swimming.", "I'm thinking of trying to learn a new language."] }
+      ],
       followup: ["きっかけは何でしたか？", "続けることができていますか？", "難しいと感じますか？"]
     },
     {
       japanese: "<ruby>好<rt>す</rt></ruby>きな<ruby>本<rt>ほん</rt></ruby>や<ruby>漫画<rt>まんが</rt></ruby>はありますか？",
       english: "Do you have a favorite book or manga?",
       vocab: ["本 (book)", "漫画 (manga)", "作者 (author)", "ストーリー (story)", "感動する (to be moved)"],
-      grammar: ["〜が好きです", "〜というのを読みました", "〜のところが一番好きです"],
+      grammar: [
+        { pattern: "〜が好きです", usage: "<ruby>好<rt>す</rt></ruby>きな<ruby>本<rt>ほん</rt></ruby>や<ruby>漫画<rt>まんが</rt></ruby>を<ruby>紹介<rt>しょうかい</rt></ruby>するとき", usage_en: "Used to introduce a book or manga you like", examples: ["ミステリー<ruby>小説<rt>しょうせつ</rt></ruby>が<ruby>好<rt>す</rt></ruby>きです。", "<ruby>歴史<rt>れきし</rt></ruby>の<ruby>漫画<rt>まんが</rt></ruby>が<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like mystery novels.", "I like historical manga."] },
+        { pattern: "〜というのを読みました", usage: "タイトルを<ruby>紹介<rt>しょうかい</rt></ruby>しながら<ruby>読<rt>よ</rt></ruby>んだことを<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to name a title while saying you read it", examples: ["「<ruby>火花<rt>ひばな</rt></ruby>」というのを<ruby>読<rt>よ</rt></ruby>みました。", "「<ruby>君<rt>きみ</rt></ruby>の<ruby>名<rt>な</rt></ruby>は」というのを<ruby>読<rt>よ</rt></ruby>みました。"], examples_en: ["I read a book called 'Hibana'.", "I read 'Your Name'."] },
+        { pattern: "〜のところが一番好きです", usage: "<ruby>作品<rt>さくひん</rt></ruby>の<ruby>中<rt>なか</rt></ruby>で<ruby>最<rt>もっと</rt></ruby>も<ruby>気<rt>き</rt></ruby>に<ruby>入<rt>い</rt></ruby>っている<ruby>部分<rt>ぶぶん</rt></ruby>を<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say which part of a work you like best", examples: ["<ruby>主人公<rt>しゅじんこう</rt></ruby>の<ruby>成長<rt>せいちょう</rt></ruby>のところが<ruby>一番<rt>いちばん</rt></ruby><ruby>好<rt>す</rt></ruby>きです。", "<ruby>最後<rt>さいご</rt></ruby>のシーンのところが<ruby>一番<rt>いちばん</rt></ruby><ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I like the part where the main character grows the most.", "I like the final scene the best."] }
+      ],
       followup: ["何回読みましたか？", "誰かにすすめたことがありますか？", "映画やドラマになったら見たいですか？"]
     },
     {
       japanese: "<ruby>将来<rt>しょうらい</rt></ruby>、<ruby>行<rt>い</rt></ruby>ってみたい<ruby>国<rt>くに</rt></ruby>はどこですか？",
       english: "Which country would you like to visit in the future?",
       vocab: ["将来 (future)", "国 (country)", "旅行 (travel)", "文化 (culture)", "食べ物 (food)"],
-      grammar: ["〜に行ってみたいです", "〜が興味深いと思います", "〜したいと思っています"],
+      grammar: [
+        { pattern: "〜に行ってみたいです", usage: "<ruby>訪<rt>おとず</rt></ruby>れてみたい<ruby>場所<rt>ばしょ</rt></ruby>への<ruby>希望<rt>きぼう</rt></ruby>を<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to express a desire to visit a place", examples: ["イタリアに<ruby>行<rt>い</rt></ruby>ってみたいです。", "<ruby>北海道<rt>ほっかいどう</rt></ruby>に<ruby>行<rt>い</rt></ruby>ってみたいです。"], examples_en: ["I'd like to visit Italy.", "I'd like to visit Hokkaido."] },
+        { pattern: "〜が興味深いと思います", usage: "<ruby>関心<rt>かんしん</rt></ruby>を<ruby>持<rt>も</rt></ruby>っている<ruby>理由<rt>りゆう</rt></ruby>を<ruby>説明<rt>せつめい</rt></ruby>するとき", usage_en: "Used to explain why something interests you", examples: ["<ruby>歴史<rt>れきし</rt></ruby>が<ruby>興味深<rt>きょうみぶか</rt></ruby>いと<ruby>思<rt>おも</rt></ruby>います。", "<ruby>食文化<rt>しょくぶんか</rt></ruby>が<ruby>興味深<rt>きょうみぶか</rt></ruby>いと<ruby>思<rt>おも</rt></ruby>います。"], examples_en: ["I think the history is fascinating.", "I think the food culture is fascinating."] },
+        { pattern: "〜したいと思っています", usage: "<ruby>将来<rt>しょうらい</rt></ruby>したいことへの<ruby>希望<rt>きぼう</rt></ruby>を<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to express something you'd like to do in the future", examples: ["<ruby>現地<rt>げんち</rt></ruby>の<ruby>料理<rt>りょうり</rt></ruby>を<ruby>食<rt>た</rt></ruby>べたいと<ruby>思<rt>おも</rt></ruby>っています。", "<ruby>美術館<rt>びじゅつかん</rt></ruby>を<ruby>見<rt>み</rt></ruby>てまわりたいと<ruby>思<rt>おも</rt></ruby>っています。"], examples_en: ["I'm hoping to eat the local cuisine.", "I'm hoping to visit art museums."] }
+      ],
       followup: ["なぜその国に興味を持ちましたか？", "どのくらいの期間行きたいですか？", "旅行と住む、どちらがいいですか？"]
     },
     {
       japanese: "<ruby>一番<rt>いちばん</rt></ruby><ruby>大切<rt>たいせつ</rt></ruby>にしている<ruby>習慣<rt>しゅうかん</rt></ruby>は<ruby>何<rt>なん</rt></ruby>ですか？",
       english: "What is the habit you value most?",
       vocab: ["習慣 (habit)", "大切 (important)", "毎日 (every day)", "続ける (to continue)", "健康 (health)"],
-      grammar: ["〜を大切にしています", "毎日〜するようにしています", "〜ことが習慣です"],
+      grammar: [
+        { pattern: "〜を大切にしています", usage: "<ruby>自分<rt>じぶん</rt></ruby>が<ruby>重視<rt>じゅうし</rt></ruby>していることを<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say what you cherish or prioritize", examples: ["<ruby>家族<rt>かぞく</rt></ruby>との<ruby>時間<rt>じかん</rt></ruby>を<ruby>大切<rt>たいせつ</rt></ruby>にしています。", "<ruby>睡眠<rt>すいみん</rt></ruby>を<ruby>大切<rt>たいせつ</rt></ruby>にしています。"], examples_en: ["I value time with my family.", "I value getting good sleep."] },
+        { pattern: "毎日〜するようにしています", usage: "<ruby>意識的<rt>いしきてき</rt></ruby>に<ruby>毎日<rt>まいにち</rt></ruby><ruby>続<rt>つづ</rt></ruby>けていることを<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say something you consciously do every day", examples: ["<ruby>毎日<rt>まいにち</rt></ruby><ruby>水<rt>みず</rt></ruby>を2リットル<ruby>飲<rt>の</rt></ruby>むようにしています。", "<ruby>毎日<rt>まいにち</rt></ruby>10<ruby>分<rt>ぷん</rt></ruby><ruby>読書<rt>どくしょ</rt></ruby>するようにしています。"], examples_en: ["I make sure to drink 2 liters of water every day.", "I make sure to read for 10 minutes every day."] },
+        { pattern: "〜ことが習慣です", usage: "<ruby>自分<rt>じぶん</rt></ruby>の<ruby>日課<rt>にっか</rt></ruby>や<ruby>習慣<rt>しゅうかん</rt></ruby>を<ruby>紹介<rt>しょうかい</rt></ruby>するとき", usage_en: "Used to introduce one of your daily routines or habits", examples: ["<ruby>朝<rt>あさ</rt></ruby>にストレッチをすることが<ruby>習慣<rt>しゅうかん</rt></ruby>です。", "<ruby>寝<rt>ね</rt></ruby>る<ruby>前<rt>まえ</rt></ruby>に<ruby>日記<rt>にっき</rt></ruby>を<ruby>書<rt>か</rt></ruby>くことが<ruby>習慣<rt>しゅうかん</rt></ruby>です。"], examples_en: ["It's my habit to stretch in the morning.", "It's my habit to write in a diary before bed."] }
+      ],
       followup: ["いつから続けていますか？", "やめたいと思ったことはありますか？", "その習慣で何か変わりましたか？"]
     },
     {
       japanese: "<ruby>料理<rt>りょうり</rt></ruby>はしますか？<ruby>得意<rt>とくい</rt></ruby>な<ruby>料理<rt>りょうり</rt></ruby>はありますか？",
       english: "Do you cook? Is there a dish you're good at making?",
       vocab: ["料理 (cooking)", "得意 (good at)", "作る (to make)", "レシピ (recipe)", "材料 (ingredients)"],
-      grammar: ["〜を作ります", "得意なのは〜です", "〜するのが好きです"],
+      grammar: [
+        { pattern: "〜を作ります", usage: "<ruby>自分<rt>じぶん</rt></ruby>がよく<ruby>作<rt>つく</rt></ruby>る<ruby>料理<rt>りょうり</rt></ruby>を<ruby>紹介<rt>しょうかい</rt></ruby>するとき", usage_en: "Used to introduce a dish you often make", examples: ["パスタをよく<ruby>作<rt>つく</rt></ruby>ります。", "<ruby>週末<rt>しゅうまつ</rt></ruby>にカレーを<ruby>作<rt>つく</rt></ruby>ります。"], examples_en: ["I often make pasta.", "I make curry on weekends."] },
+        { pattern: "得意なのは〜です", usage: "<ruby>特<rt>とく</rt></ruby>に<ruby>上手<rt>じょうず</rt></ruby>にできる<ruby>料理<rt>りょうり</rt></ruby>を<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say which dish you are particularly good at", examples: ["<ruby>得意<rt>とくい</rt></ruby>なのはチャーハンです。", "<ruby>得意<rt>とくい</rt></ruby>なのはお<ruby>母<rt>かあ</rt></ruby>さんの<ruby>味<rt>あじ</rt></ruby>の<ruby>煮物<rt>にもの</rt></ruby>です。"], examples_en: ["The dish I'm best at is fried rice.", "The dish I'm best at is simmered food like my mom used to make."] },
+        { pattern: "〜するのが好きです", usage: "<ruby>料理<rt>りょうり</rt></ruby>の<ruby>中<rt>なか</rt></ruby>で<ruby>好<rt>す</rt></ruby>きなプロセスを<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say which part of cooking you enjoy", examples: ["<ruby>野菜<rt>やさい</rt></ruby>を<ruby>切<rt>き</rt></ruby>るのが<ruby>好<rt>す</rt></ruby>きです。", "<ruby>新<rt>あたら</rt></ruby>しいレシピを<ruby>試<rt>ため</rt></ruby>すのが<ruby>好<rt>す</rt></ruby>きです。"], examples_en: ["I enjoy cutting vegetables.", "I enjoy trying new recipes."] }
+      ],
       followup: ["誰に習いましたか？", "料理するのは好きですか？", "失敗した料理はありますか？"]
     },
     {
       japanese: "<ruby>最近<rt>さいきん</rt></ruby>、ハマっていることはありますか？",
       english: "Is there anything you've been really into lately?",
       vocab: ["ハマる (to be hooked on)", "最近 (recently)", "夢中 (absorbed)", "楽しい (fun)", "おすすめ (recommendation)"],
-      grammar: ["最近〜にハマっています", "〜が面白くて、〜しています", "〜してみてください"],
+      grammar: [
+        { pattern: "最近〜にハマっています", usage: "<ruby>今<rt>いま</rt></ruby><ruby>熱中<rt>ねっちゅう</rt></ruby>していることを<ruby>話<rt>はな</rt></ruby>すとき", usage_en: "Used to talk about something you are currently obsessed with", examples: ["<ruby>最近<rt>さいきん</rt></ruby>ボードゲームにハマっています。", "<ruby>最近<rt>さいきん</rt></ruby>ポッドキャストにハマっています。"], examples_en: ["I've been really into board games lately.", "I've been really into podcasts lately."] },
+        { pattern: "〜が面白くて、〜しています", usage: "<ruby>何<rt>なに</rt></ruby>かが<ruby>楽<rt>たの</rt></ruby>しくて<ruby>続<rt>つづ</rt></ruby>けている<ruby>理由<rt>りゆう</rt></ruby>を<ruby>説明<rt>せつめい</rt></ruby>するとき", usage_en: "Used to explain that you keep doing something because it's interesting", examples: ["<ruby>謎解<rt>なぞと</rt></ruby>きが<ruby>面白<rt>おもしろ</rt></ruby>くて、<ruby>毎週<rt>まいしゅう</rt></ruby>やっています。", "<ruby>景色<rt>けしき</rt></ruby>が<ruby>面白<rt>おもしろ</rt></ruby>くて、<ruby>毎日<rt>まいにち</rt></ruby><ruby>写真<rt>しゃしん</rt></ruby>を<ruby>撮<rt>と</rt></ruby>っています。"], examples_en: ["Puzzles are so fun I do them every week.", "The scenery is so interesting I take photos every day."] },
+        { pattern: "〜してみてください", usage: "<ruby>相手<rt>あいて</rt></ruby>に<ruby>体験<rt>たいけん</rt></ruby>を<ruby>勧<rt>すす</rt></ruby>めるとき", usage_en: "Used to recommend that someone try something", examples: ["ぜひ<ruby>一度<rt>いちど</rt></ruby>やってみてください。", "このアプリを<ruby>使<rt>つか</rt></ruby>ってみてください。"], examples_en: ["Please give it a try at least once.", "Please try using this app."] }
+      ],
       followup: ["どこで知りましたか？", "周りにも同じ趣味の人はいますか？", "いつまで続けると思いますか？"]
     },
     {
       japanese: "<ruby>友達<rt>ともだち</rt></ruby>と<ruby>何<rt>なに</rt></ruby>をして<ruby>過<rt>す</rt></ruby>ごすことが<ruby>多<rt>おお</rt></ruby>いですか？",
       english: "What do you usually do when you spend time with friends?",
       vocab: ["友達 (friend)", "過ごす (to spend time)", "食事 (meal)", "遊ぶ (to hang out)", "話す (to talk)"],
-      grammar: ["〜することが多いです", "よく〜します", "〜たり〜たりします"],
+      grammar: [
+        { pattern: "〜することが多いです", usage: "<ruby>頻繁<rt>ひんぱん</rt></ruby>にすることやよくあるパターンを<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to describe what you frequently do or a common pattern", examples: ["<ruby>友達<rt>ともだち</rt></ruby>と<ruby>外食<rt>がいしょく</rt></ruby>することが<ruby>多<rt>おお</rt></ruby>いです。", "<ruby>公園<rt>こうえん</rt></ruby>を<ruby>散歩<rt>さんぽ</rt></ruby>することが<ruby>多<rt>おお</rt></ruby>いです。"], examples_en: ["I often eat out with friends.", "I often take walks in the park."] },
+        { pattern: "よく〜します", usage: "<ruby>習慣的<rt>しゅうかんてき</rt></ruby>によくすることを<ruby>話<rt>はな</rt></ruby>すとき", usage_en: "Used to talk about something you habitually do often", examples: ["よくカフェでおしゃべりします。", "よく<ruby>映画<rt>えいが</rt></ruby>を<ruby>見<rt>み</rt></ruby>に<ruby>行<rt>い</rt></ruby>きます。"], examples_en: ["We often chat at a café.", "We often go to see movies."] },
+        { pattern: "〜たり〜たりします", usage: "<ruby>複数<rt>ふくすう</rt></ruby>の<ruby>活動<rt>かつどう</rt></ruby>を<ruby>例<rt>れい</rt></ruby>として<ruby>挙<rt>あ</rt></ruby>げるとき", usage_en: "Used to list multiple activities as examples", examples: ["<ruby>食事<rt>しょくじ</rt></ruby>したり<ruby>映画<rt>えいが</rt></ruby>を<ruby>見<rt>み</rt></ruby>たりします。", "<ruby>散歩<rt>さんぽ</rt></ruby>したりゲームをしたりします。"], examples_en: ["We eat together and watch movies, things like that.", "We take walks and play games, things like that."] }
+      ],
       followup: ["友達とはよく会いますか？", "オンラインで話すことはありますか？", "一番長い友達付き合いはどのくらいですか？"]
     },
     {
       japanese: "<ruby>日本語<rt>にほんご</rt></ruby>を<ruby>話<rt>はな</rt></ruby>すとき、<ruby>難<rt>むずか</rt></ruby>しいと<ruby>感<rt>かん</rt></ruby>じることは<ruby>何<rt>なん</rt></ruby>ですか？",
       english: "What do you find difficult when speaking Japanese?",
       vocab: ["難しい (difficult)", "敬語 (honorific language)", "発音 (pronunciation)", "助詞 (particles)", "なかなか (not easily)"],
-      grammar: ["〜が難しいです", "〜するのが苦手です", "〜ようになりたいです"],
+      grammar: [
+        { pattern: "〜が難しいです", usage: "<ruby>苦手<rt>にがて</rt></ruby>なことや<ruby>難<rt>むずか</rt></ruby>しいと<ruby>感<rt>かん</rt></ruby>じる<ruby>点<rt>てん</rt></ruby>を<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say what you find difficult", examples: ["<ruby>敬語<rt>けいご</rt></ruby>が<ruby>難<rt>むずか</rt></ruby>しいです。", "<ruby>長<rt>なが</rt></ruby>い<ruby>文<rt>ぶん</rt></ruby>を<ruby>作<rt>つく</rt></ruby>るのが<ruby>難<rt>むずか</rt></ruby>しいです。"], examples_en: ["Honorific language is difficult.", "Making long sentences is difficult."] },
+        { pattern: "〜するのが苦手です", usage: "<ruby>得意<rt>とくい</rt></ruby>でないことを<ruby>素直<rt>すなお</rt></ruby>に<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to honestly say what you are not good at", examples: ["<ruby>速<rt>はや</rt></ruby>く<ruby>話<rt>はな</rt></ruby>すのが<ruby>苦手<rt>にがて</rt></ruby>です。", "<ruby>聞<rt>き</rt></ruby>き<ruby>取<rt>と</rt></ruby>りをするのが<ruby>苦手<rt>にがて</rt></ruby>です。"], examples_en: ["I'm not good at speaking fast.", "I'm not good at listening comprehension."] },
+        { pattern: "〜ようになりたいです", usage: "<ruby>将来<rt>しょうらい</rt></ruby>できるようになりたいことへの<ruby>目標<rt>もくひょう</rt></ruby>を<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to express a goal of becoming able to do something", examples: ["<ruby>自然<rt>しぜん</rt></ruby>に<ruby>話<rt>はな</rt></ruby>せるようになりたいです。", "ニュースを<ruby>理解<rt>りかい</rt></ruby>できるようになりたいです。"], examples_en: ["I want to be able to speak naturally.", "I want to be able to understand the news."] }
+      ],
       followup: ["どんな場面で特に難しいと感じますか？", "克服するために何かしていますか？", "以前より上手になったと感じますか？"]
     },
     {
       japanese: "<ruby>子<rt>こ</rt></ruby>どもの<ruby>頃<rt>ころ</rt></ruby>、よく<ruby>何<rt>なに</rt></ruby>をして<ruby>遊<rt>あそ</rt></ruby>びましたか？",
       english: "What did you like to do when you were a child?",
       vocab: ["子どもの頃 (childhood)", "遊ぶ (to play)", "外 (outside)", "友達 (friends)", "懐かしい (nostalgic)"],
-      grammar: ["よく〜しました", "〜て遊んでいました", "〜のが好きでした"],
+      grammar: [
+        { pattern: "よく〜しました", usage: "<ruby>子<rt>こ</rt></ruby>どもの<ruby>頃<rt>ころ</rt></ruby>によくしていたことを<ruby>話<rt>はな</rt></ruby>すとき", usage_en: "Used to talk about something you often did as a child", examples: ["よく<ruby>外<rt>そと</rt></ruby>でかくれんぼをしました。", "よく<ruby>図書館<rt>としょかん</rt></ruby>に<ruby>行<rt>い</rt></ruby>きました。"], examples_en: ["I often played hide-and-seek outside.", "I often went to the library."] },
+        { pattern: "〜て遊んでいました", usage: "<ruby>子<rt>こ</rt></ruby>どもの<ruby>頃<rt>ころ</rt></ruby>の<ruby>遊<rt>あそ</rt></ruby>び<ruby>方<rt>かた</rt></ruby>を<ruby>具体的<rt>ぐたいてき</rt></ruby>に<ruby>説明<rt>せつめい</rt></ruby>するとき", usage_en: "Used to describe specifically how you used to play as a child", examples: ["<ruby>木<rt>き</rt></ruby>に<ruby>登<rt>のぼ</rt></ruby>って<ruby>遊<rt>あそ</rt></ruby>んでいました。", "<ruby>川<rt>かわ</rt></ruby>で<ruby>魚<rt>さかな</rt></ruby>をつかまえて<ruby>遊<rt>あそ</rt></ruby>んでいました。"], examples_en: ["I used to play by climbing trees.", "I used to play by catching fish in the river."] },
+        { pattern: "〜のが好きでした", usage: "<ruby>子<rt>こ</rt></ruby>どもの<ruby>頃<rt>ころ</rt></ruby>に<ruby>好<rt>す</rt></ruby>きだったことを<ruby>懐<rt>なつ</rt></ruby>かしく<ruby>振<rt>ふ</rt></ruby>り<ruby>返<rt>かえ</rt></ruby>るとき", usage_en: "Used to nostalgically look back on something you liked as a child", examples: ["<ruby>虫<rt>むし</rt></ruby>を<ruby>集<rt>あつ</rt></ruby>めるのが<ruby>好<rt>す</rt></ruby>きでした。", "<ruby>絵<rt>え</rt></ruby>を<ruby>描<rt>か</rt></ruby>くのが<ruby>好<rt>す</rt></ruby>きでした。"], examples_en: ["I used to love collecting insects.", "I used to love drawing pictures."] }
+      ],
       followup: ["誰と遊んでいましたか？", "今もできますか？", "子どもに教えたいですか？"]
     },
     {
       japanese: "あなたの<ruby>街<rt>まち</rt></ruby>のおすすめスポットを<ruby>教<rt>おし</rt></ruby>えてください。",
       english: "Please tell me about a recommended spot in your town.",
       vocab: ["おすすめ (recommendation)", "スポット (place)", "有名 (famous)", "ぜひ (by all means)"],
-      grammar: ["〜がおすすめです", "〜に行ってみてください", "〜という場所があります"],
+      grammar: [
+        { pattern: "〜がおすすめです", usage: "<ruby>相手<rt>あいて</rt></ruby>に<ruby>場所<rt>ばしょ</rt></ruby>やスポットを<ruby>勧<rt>すす</rt></ruby>めるとき", usage_en: "Used to recommend a place or spot to someone", examples: ["この<ruby>公園<rt>こうえん</rt></ruby>がおすすめです。", "<ruby>駅前<rt>えきまえ</rt></ruby>のカフェがおすすめです。"], examples_en: ["I recommend this park.", "I recommend the café in front of the station."] },
+        { pattern: "〜に行ってみてください", usage: "<ruby>相手<rt>あいて</rt></ruby>に<ruby>実際<rt>じっさい</rt></ruby>に<ruby>訪<rt>おとず</rt></ruby>れるよう<ruby>勧<rt>すす</rt></ruby>めるとき", usage_en: "Used to encourage someone to actually visit a place", examples: ["ぜひこの<ruby>神社<rt>じんじゃ</rt></ruby>に<ruby>行<rt>い</rt></ruby>ってみてください。", "<ruby>夕方<rt>ゆうがた</rt></ruby>に<ruby>海岸<rt>かいがん</rt></ruby>に<ruby>行<rt>い</rt></ruby>ってみてください。"], examples_en: ["Please do visit this shrine.", "Please try going to the beach in the evening."] },
+        { pattern: "〜という場所があります", usage: "<ruby>相手<rt>あいて</rt></ruby>が<ruby>知<rt>し</rt></ruby>らないかもしれない<ruby>場所<rt>ばしょ</rt></ruby>を<ruby>紹介<rt>しょうかい</rt></ruby>するとき", usage_en: "Used to introduce a place the listener may not know about", examples: ["「<ruby>秘密<rt>ひみつ</rt></ruby>の<ruby>庭<rt>にわ</rt></ruby>」という<ruby>場所<rt>ばしょ</rt></ruby>があります。", "<ruby>地元<rt>じもと</rt></ruby>の<ruby>人<rt>ひと</rt></ruby>しか<ruby>知<rt>し</rt></ruby>らない<ruby>温泉<rt>おんせん</rt></ruby>という<ruby>場所<rt>ばしょ</rt></ruby>があります。"], examples_en: ["There's a place called 'The Secret Garden'.", "There's a hot spring that only locals know about."] }
+      ],
       followup: ["何回行きましたか？", "友達を連れて行ったことがありますか？", "いつが一番おすすめですか？"]
     },
     {
       japanese: "<ruby>最近<rt>さいきん</rt></ruby>、<ruby>誰<rt>だれ</rt></ruby>かに<ruby>感謝<rt>かんしゃ</rt></ruby>したことはありますか？",
       english: "Is there anyone you've felt grateful to recently?",
       vocab: ["感謝 (gratitude)", "ありがたい (grateful)", "助ける (to help)", "支える (to support)", "おかげで (thanks to)"],
-      grammar: ["〜に感謝しています", "〜おかげで〜できました", "〜てくれて、ありがとうと思いました"],
+      grammar: [
+        { pattern: "〜に感謝しています", usage: "<ruby>感謝<rt>かんしゃ</rt></ruby>している<ruby>相手<rt>あいて</rt></ruby>や<ruby>対象<rt>たいしょう</rt></ruby>を<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say who or what you are grateful to", examples: ["<ruby>友達<rt>ともだち</rt></ruby>に<ruby>感謝<rt>かんしゃ</rt></ruby>しています。", "<ruby>先生<rt>せんせい</rt></ruby>のサポートに<ruby>感謝<rt>かんしゃ</rt></ruby>しています。"], examples_en: ["I'm grateful to my friend.", "I'm grateful for my teacher's support."] },
+        { pattern: "〜おかげで〜できました", usage: "<ruby>誰<rt>だれ</rt></ruby>かの<ruby>助<rt>たす</rt></ruby>けで<ruby>何<rt>なに</rt></ruby>かが<ruby>実現<rt>じつげん</rt></ruby>したことを<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say that something was made possible thanks to someone", examples: ["<ruby>先生<rt>せんせい</rt></ruby>のおかげで<ruby>試験<rt>しけん</rt></ruby>に<ruby>合格<rt>ごうかく</rt></ruby>できました。", "<ruby>友達<rt>ともだち</rt></ruby>のおかげで<ruby>立<rt>た</rt></ruby>ち<ruby>直<rt>なお</rt></ruby>れました。"], examples_en: ["Thanks to my teacher, I was able to pass the exam.", "Thanks to my friend, I was able to recover."] },
+        { pattern: "〜てくれて、ありがとうと思いました", usage: "<ruby>相手<rt>あいて</rt></ruby>の<ruby>行動<rt>こうどう</rt></ruby>に<ruby>感謝<rt>かんしゃ</rt></ruby>の<ruby>気持<rt>きも</rt></ruby>ちを<ruby>持<rt>も</rt></ruby>ったときに<ruby>使<rt>つか</rt></ruby>う", usage_en: "Used when you felt thankful for someone's action", examples: ["<ruby>助<rt>たす</rt></ruby>けてくれて、ありがとうと<ruby>思<rt>おも</rt></ruby>いました。", "<ruby>話<rt>はな</rt></ruby>を<ruby>聞<rt>き</rt></ruby>いてくれて、ありがとうと<ruby>思<rt>おも</rt></ruby>いました。"], examples_en: ["I thought, 'thank you for helping me'.", "I thought, 'thank you for listening to me'."] }
+      ],
       followup: ["何をしてもらいましたか？", "直接感謝を伝えましたか？", "感謝を言葉にするのは得意ですか？"]
     },
     {
       japanese: "<ruby>自分<rt>じぶん</rt></ruby>の<ruby>一番<rt>いちばん</rt></ruby>の<ruby>強<rt>つよ</rt></ruby>みは<ruby>何<rt>なん</rt></ruby>だと<ruby>思<rt>おも</rt></ruby>いますか？",
       english: "What do you think is your greatest strength?",
       vocab: ["強み (strength)", "得意 (good at)", "性格 (personality)", "スキル (skill)", "自信 (confidence)"],
-      grammar: ["〜が得意です", "〜だと思っています", "〜という点では自信があります"],
+      grammar: [
+        { pattern: "〜が得意です", usage: "<ruby>自分<rt>じぶん</rt></ruby>が<ruby>上手<rt>じょうず</rt></ruby>にできることを<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say what you are good at", examples: ["<ruby>人<rt>ひと</rt></ruby>の<ruby>話<rt>はなし</rt></ruby>を<ruby>聞<rt>き</rt></ruby>くのが<ruby>得意<rt>とくい</rt></ruby>です。", "<ruby>細<rt>こま</rt></ruby>かい<ruby>作業<rt>さぎょう</rt></ruby>が<ruby>得意<rt>とくい</rt></ruby>です。"], examples_en: ["I'm good at listening to others.", "I'm good at detailed work."] },
+        { pattern: "〜だと思っています", usage: "<ruby>自分<rt>じぶん</rt></ruby>の<ruby>強<rt>つよ</rt></ruby>みについての<ruby>自己評価<rt>じこひょうか</rt></ruby>を<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to share your self-assessment of your own strength", examples: ["<ruby>粘<rt>ねば</rt></ruby>り<ruby>強<rt>づよ</rt></ruby>いのが<ruby>強<rt>つよ</rt></ruby>みだと<ruby>思<rt>おも</rt></ruby>っています。", "<ruby>柔軟性<rt>じゅうなんせい</rt></ruby>があるのが<ruby>強<rt>つよ</rt></ruby>みだと<ruby>思<rt>おも</rt></ruby>っています。"], examples_en: ["I think my strength is my persistence.", "I think my strength is my flexibility."] },
+        { pattern: "〜という点では自信があります", usage: "<ruby>特定<rt>とくてい</rt></ruby>の<ruby>分野<rt>ぶんや</rt></ruby>での<ruby>自信<rt>じしん</rt></ruby>を<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to express confidence in a specific area", examples: ["コミュニケーションという<ruby>点<rt>てん</rt></ruby>では<ruby>自信<rt>じしん</rt></ruby>があります。", "<ruby>継続<rt>けいぞく</rt></ruby>するという<ruby>点<rt>てん</rt></ruby>では<ruby>自信<rt>じしん</rt></ruby>があります。"], examples_en: ["I'm confident when it comes to communication.", "I'm confident when it comes to keeping at things."] }
+      ],
       followup: ["それはいつ気づきましたか？", "その強みを仕事に使っていますか？", "弱みを強みに変えた経験はありますか？"]
     },
     {
       japanese: "もし<ruby>宝<rt>たから</rt></ruby>くじが<ruby>当<rt>あ</rt></ruby>たったら、<ruby>何<rt>なに</rt></ruby>をしたいですか？",
       english: "What would you do if you won the lottery?",
       vocab: ["宝くじ (lottery)", "当たる (to win)", "旅行 (travel)", "寄付 (donation)", "夢 (dream)"],
-      grammar: ["もし〜たら、〜したいです", "まず〜して、それから〜したいです", "〜に使いたいです"],
+      grammar: [
+        { pattern: "もし〜たら、〜したいです", usage: "<ruby>仮定<rt>かてい</rt></ruby>の<ruby>結果<rt>けっか</rt></ruby>に<ruby>基<rt>もと</rt></ruby>づく<ruby>希望<rt>きぼう</rt></ruby>を<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to express a wish based on a hypothetical outcome", examples: ["もし<ruby>当<rt>あ</rt></ruby>たったら、<ruby>世界一周<rt>せかいいっしゅう</rt></ruby>したいです。", "もし<ruby>時間<rt>じかん</rt></ruby>があったら、<ruby>本<rt>ほん</rt></ruby>を<ruby>書<rt>か</rt></ruby>きたいです。"], examples_en: ["If I won, I'd want to travel around the world.", "If I had time, I'd want to write a book."] },
+        { pattern: "まず〜して、それから〜したいです", usage: "<ruby>優先順位<rt>ゆうせんじゅんい</rt></ruby>をつけてやりたいことを<ruby>順番<rt>じゅんばん</rt></ruby>に<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to explain what you'd do first, then second, in order of priority", examples: ["まず<ruby>家族<rt>かぞく</rt></ruby>に<ruby>渡<rt>わた</rt></ruby>して、それから<ruby>旅行<rt>りょこう</rt></ruby>したいです。", "まず<ruby>貯金<rt>ちょきん</rt></ruby>して、それから<ruby>家<rt>いえ</rt></ruby>を<ruby>買<rt>か</rt></ruby>いたいです。"], examples_en: ["First I'd give some to my family, then I'd like to travel.", "First I'd save some, then I'd like to buy a house."] },
+        { pattern: "〜に使いたいです", usage: "<ruby>お金<rt>おかね</rt></ruby>の<ruby>使<rt>つか</rt></ruby>い<ruby>道<rt>みち</rt></ruby>を<ruby>具体的<rt>ぐたいてき</rt></ruby>に<ruby>伝<rt>つた</rt></ruby>えるとき", usage_en: "Used to say specifically what you would spend the money on", examples: ["<ruby>教育<rt>きょういく</rt></ruby>に<ruby>使<rt>つか</rt></ruby>いたいです。", "<ruby>慈善活動<rt>じぜんかつどう</rt></ruby>に<ruby>使<rt>つか</rt></ruby>いたいです。"], examples_en: ["I'd like to use it for education.", "I'd like to use it for charity."] }
+      ],
       followup: ["全部使いますか？貯金しますか？", "誰かにあげたいですか？", "今の生活は変えたいですか？"]
     }
   ],
